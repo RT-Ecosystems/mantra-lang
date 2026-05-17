@@ -1,0 +1,7 @@
+/home/runner/work/mantra-lang/mantra-lang/build/CMakeFiles/mantra_lib.dir
+/home/runner/work/mantra-lang/mantra-lang/build/CMakeFiles/edit_cache.dir
+/home/runner/work/mantra-lang/mantra-lang/build/CMakeFiles/rebuild_cache.dir
+/home/runner/work/mantra-lang/mantra-lang/build/CMakeFiles/list_install_components.dir
+/home/runner/work/mantra-lang/mantra-lang/build/CMakeFiles/install.dir
+/home/runner/work/mantra-lang/mantra-lang/build/CMakeFiles/install/local.dir
+/home/runner/work/mantra-lang/mantra-lang/build/CMakeFiles/install/strip.dir

@@ -1,2 +1,0 @@
-/usr/bin/ar qc lib/libmantra_lib.a CMakeFiles/mantra_lib.dir/core/lexer.cpp.o CMakeFiles/mantra_lib.dir/unicode/unicode.cpp.o CMakeFiles/mantra_lib.dir/unicode/script_detect.cpp.o CMakeFiles/mantra_lib.dir/error/error.cpp.o
-/usr/bin/ranlib lib/libmantra_lib.a

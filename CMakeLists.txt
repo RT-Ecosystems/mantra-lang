@@ -46,6 +46,13 @@ set(CORE_SOURCES
     core/token.h
     core/lexer.h
     core/lexer.cpp
+    core/ast.h
+    core/parser.h
+    core/parser.cpp
+    core/interpreter.h
+    core/interpreter.cpp
+    core/repl.h
+    core/repl.cpp
 )
 
 set(UNICODE_SOURCES
@@ -60,11 +67,17 @@ set(ERROR_SOURCES
     error/error.cpp
 )
 
+set(STDLIB_SOURCES
+    stdlib/io.h
+    stdlib/io.cpp
+)
+
 # Create library
 add_library(mantra_lib STATIC
     ${CORE_SOURCES}
     ${UNICODE_SOURCES}
     ${ERROR_SOURCES}
+    ${STDLIB_SOURCES}
 )
 
 # Set public include directory
@@ -72,6 +85,7 @@ target_include_directories(mantra_lib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/core
     ${CMAKE_CURRENT_SOURCE_DIR}/unicode
     ${CMAKE_CURRENT_SOURCE_DIR}/error
+    ${CMAKE_CURRENT_SOURCE_DIR}/stdlib
 )
 
 # Create executable (if main.cpp exists)
@@ -79,6 +93,11 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
     add_executable(mantra main.cpp)
     target_link_libraries(mantra PRIVATE mantra_lib)
 endif()
+
+enable_testing()
+add_executable(mantra_tests tests/test_lexer.cpp)
+target_link_libraries(mantra_tests PRIVATE mantra_lib)
+add_test(NAME mantra_lexer_tests COMMAND mantra_tests)
 
 # Installation targets
 install(TARGETS mantra_lib

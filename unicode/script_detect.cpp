@@ -1,3 +1,8 @@
+// MANTRA Language - Script Detection Implementation
+// Detects and analyzes the script type of characters and text
+// Supports 9 major Indian scripts plus Roman/Latin script
+// Provides confidence scoring and mixed-script detection
+
 #include "script_detect.h"
 #include "unicode.h"
 #include <algorithm>
@@ -174,5 +179,23 @@ std::string ScriptDetector::getScriptName(Script script) {
         default: return "Unknown";
     }
 }
+
+// Helper method to validate script ranges and provide analysis
+bool isValidScriptCharacter(uint32_t codepoint) {
+    Script script = ScriptDetector::detectScriptOfChar(codepoint);
+    return script != Script::UNKNOWN;
+}
+
+// Extended detection capabilities
+// Checks if script is one of the 9 supported Indian scripts
+bool isSupported9IndianScript(Script script) {
+    return script == Script::DEVANAGARI || script == Script::TAMIL ||
+           script == Script::TELUGU || script == Script::PUNJABI ||
+           script == Script::BENGALI || script == Script::GUJARATI ||
+           script == Script::ORIYA || script == Script::MALAYALAM ||
+           script == Script::KANNADA;
+}
+
+// Script detection implementation complete
 
 } // namespace mantra

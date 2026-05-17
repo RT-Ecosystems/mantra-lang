@@ -195,5 +195,6 @@ void ErrorHandler::incrementWarningCount() {
     warning_count++;
 }
 
+// Statistics tracking and error reporting complete
+// End of Error Handler implementation
 } // namespace mantra
-

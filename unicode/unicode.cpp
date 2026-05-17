@@ -269,7 +269,7 @@ std::string Unicode::getUTF8Substring(const std::string& str, size_t start, size
     
     for (size_t i = 0; i < str.length() && bytes_added < length; ) {
         size_t old_pos = i;
-        uint32_t codepoint = decodeUTF8(str, i);
+        decodeUTF8(str, i);  // Decode to advance position
         
         if (char_count >= start) {
             result += str.substr(old_pos, i - old_pos);

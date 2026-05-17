@@ -41,14 +41,6 @@ public:
     
     // Get confidence score (0.0 to 1.0)
     static double getDetectionConfidence(const std::string& text);
-    
-    // Check if script is an Indian script
-    static inline bool isIndianScript(Script script) {
-        return script != Script::ROMAN && script != Script::UNKNOWN && script != Script::MIXED;
-    }
-    
-    // Get detailed script information for debugging
-    static std::string getDetailedScriptInfo(const std::string& text);
 
 private:
     // Helper method to count scripts

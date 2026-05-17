@@ -138,12 +138,6 @@ void ErrorHandler::throwError(ErrorType type, const std::string& message,
     std::exit(exit_code);
 }
 
-void ErrorHandler::throwError(ErrorType type, const std::string& message,
-                              int line, int column, int exit_code) {
-    printError(type, message, line, column);
-    std::exit(exit_code);
-}
-
 void ErrorHandler::setVerbosity(int level) {
     verbosity_level = level;
 }

@@ -228,8 +228,8 @@ const std::unordered_map<std::string, TokenType> Lexer::keyword_map = {
     {"import", TokenType::KW_IMPORT},
 };
 
-Lexer::Lexer(const std::string& source) 
-    : source(source), position(0), line(1), column(1), line_start(0) {}
+Lexer::Lexer(const std::string& src) 
+    : source(src), position(0), line(1), column(1), line_start(0) {}
 
 char Lexer::currentChar() {
     if (position >= source.length()) {
@@ -307,7 +307,6 @@ void Lexer::skipComment() {
 Token Lexer::readString(char quote) {
     int start_line = line;
     int start_col = column;
-    size_t start_pos = position;
     
     nextChar(); // Skip opening quote
     std::string value;

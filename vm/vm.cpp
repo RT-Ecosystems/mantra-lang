@@ -168,7 +168,8 @@ bool VM::run() {
                 const auto& name = constants[instruction.operand].string_value;
                 try {
                     push(frame.environment->get(name));
-                } catch (const std::exception&) {
+                } catch (const std::exception& error) {
+                    runtimeError(std::string("Variable lookup failed: ") + error.what(), instruction);
                     return false;
                 }
                 break;

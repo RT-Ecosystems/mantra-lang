@@ -13,7 +13,7 @@ namespace {
 
 void require(bool condition, const std::string& message) {
     if (!condition) {
-        std::cerr << "टेस्ट विफल: " << message << std::endl;
+        std::cerr << "Test failed: " << message << std::endl;
         std::abort();
     }
 }

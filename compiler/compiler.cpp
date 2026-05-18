@@ -193,29 +193,11 @@ void BytecodeCompiler::compileExpression(const MantraNode& node) {
         case NodeType::BINARY_EXPR: {
             const auto& binary = static_cast<const BinaryExprNode&>(node);
             if (binary.op == TokenType::OP_AND) {
-                compileExpression(*binary.left);
-                auto jump_false = chunk->emit(OpCode::JumpIfFalse, 0, node.line, node.column);
-                chunk->emit(OpCode::Pop, 0, node.line, node.column);
-                compileExpression(*binary.right);
-                emitBooleanize(node.line, node.column);
-                auto jump_end = chunk->emit(OpCode::Jump, 0, node.line, node.column);
-                patchJump(jump_false);
-                chunk->emit(OpCode::Pop, 0, node.line, node.column);
-                chunk->emit(OpCode::FalseValue, 0, node.line, node.column);
-                patchJump(jump_end);
+                compileLogicalAnd(binary);
                 break;
             }
             if (binary.op == TokenType::OP_OR) {
-                compileExpression(*binary.left);
-                auto jump_false = chunk->emit(OpCode::JumpIfFalse, 0, node.line, node.column);
-                chunk->emit(OpCode::Pop, 0, node.line, node.column);
-                chunk->emit(OpCode::TrueValue, 0, node.line, node.column);
-                auto jump_end = chunk->emit(OpCode::Jump, 0, node.line, node.column);
-                patchJump(jump_false);
-                chunk->emit(OpCode::Pop, 0, node.line, node.column);
-                compileExpression(*binary.right);
-                emitBooleanize(node.line, node.column);
-                patchJump(jump_end);
+                compileLogicalOr(binary);
                 break;
             }
             if (binary.left) {
@@ -418,6 +400,32 @@ void BytecodeCompiler::compileFunction(const FuncDefNode& node) {
 
     auto function_index = chunk->addConstant(MantraValue::functionValue(func_value));
     chunk->emit(OpCode::DefineFunction, function_index, node.line, node.column);
+}
+
+void BytecodeCompiler::compileLogicalAnd(const BinaryExprNode& node) {
+    compileExpression(*node.left);
+    auto jump_false = chunk->emit(OpCode::JumpIfFalse, 0, node.line, node.column);
+    chunk->emit(OpCode::Pop, 0, node.line, node.column);
+    compileExpression(*node.right);
+    emitBooleanize(node.line, node.column);
+    auto jump_end = chunk->emit(OpCode::Jump, 0, node.line, node.column);
+    patchJump(jump_false);
+    chunk->emit(OpCode::Pop, 0, node.line, node.column);
+    chunk->emit(OpCode::FalseValue, 0, node.line, node.column);
+    patchJump(jump_end);
+}
+
+void BytecodeCompiler::compileLogicalOr(const BinaryExprNode& node) {
+    compileExpression(*node.left);
+    auto jump_false = chunk->emit(OpCode::JumpIfFalse, 0, node.line, node.column);
+    chunk->emit(OpCode::Pop, 0, node.line, node.column);
+    chunk->emit(OpCode::TrueValue, 0, node.line, node.column);
+    auto jump_end = chunk->emit(OpCode::Jump, 0, node.line, node.column);
+    patchJump(jump_false);
+    chunk->emit(OpCode::Pop, 0, node.line, node.column);
+    compileExpression(*node.right);
+    emitBooleanize(node.line, node.column);
+    patchJump(jump_end);
 }
 
 void BytecodeCompiler::emitConstant(const MantraValue& value, int line, int column) {

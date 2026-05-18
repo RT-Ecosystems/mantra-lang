@@ -37,6 +37,8 @@ private:
     void compileWhile(const WhileStmtNode& node);
     void compileFor(const ForStmtNode& node);
     void compileFunction(const FuncDefNode& node);
+    void compileLogicalAnd(const BinaryExprNode& node);
+    void compileLogicalOr(const BinaryExprNode& node);
 
     void emitConstant(const MantraValue& value, int line, int column);
     void emitName(OpCode op, const std::string& name, int line, int column);

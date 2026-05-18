@@ -67,6 +67,11 @@ set(ERROR_SOURCES
     error/error.cpp
 )
 
+set(SEMANTIC_SOURCES
+    semantic/semantic_analyzer.h
+    semantic/semantic_analyzer.cpp
+)
+
 set(STDLIB_SOURCES
     stdlib/io.h
     stdlib/io.cpp
@@ -81,6 +86,7 @@ add_library(mantra_lib STATIC
     ${CORE_SOURCES}
     ${UNICODE_SOURCES}
     ${ERROR_SOURCES}
+    ${SEMANTIC_SOURCES}
     ${STDLIB_SOURCES}
 )
 
@@ -101,8 +107,14 @@ endif()
 
 enable_testing()
 add_executable(mantra_tests tests/test_lexer.cpp)
+target_include_directories(mantra_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(mantra_tests PRIVATE mantra_lib)
 add_test(NAME mantra_lexer_tests COMMAND mantra_tests)
+
+add_executable(mantra_semantic_tests tests/test_semantic.cpp)
+target_include_directories(mantra_semantic_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(mantra_semantic_tests PRIVATE mantra_lib)
+add_test(NAME mantra_semantic_tests COMMAND mantra_semantic_tests)
 add_custom_target(mantra_test
     COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
     DEPENDS mantra_tests
@@ -130,6 +142,11 @@ install(FILES
 install(FILES
     error/error.h
     DESTINATION include/mantra/error
+)
+
+install(FILES
+    semantic/semantic_analyzer.h
+    DESTINATION include/mantra/semantic
 )
 
 # Print build configuration

@@ -226,6 +226,8 @@ const std::unordered_map<std::string, TokenType> Lexer::keyword_map = {
     {"create", TokenType::KW_CREATE},
     {"class", TokenType::KW_CLASS},
     {"import", TokenType::KW_IMPORT},
+    {"break", TokenType::KW_BREAK},
+    {"continue", TokenType::KW_CONTINUE},
 };
 
 Lexer::Lexer(const std::string& src) 

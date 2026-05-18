@@ -21,6 +21,7 @@ enum class NodeType {
     FUNC_DEF,
     RETURN_STMT,
     BREAK_STMT,
+    CONTINUE_STMT,
     EXPR_STMT,
     BINARY_EXPR,
     UNARY_EXPR,
@@ -115,14 +116,17 @@ struct PrintStmtNode : public MantraNode {
 struct AssignStmtNode : public MantraNode {
     std::string name;
     std::unique_ptr<MantraNode> value;
+    bool is_declaration;
 
     AssignStmtNode(std::string var_name,
                    std::unique_ptr<MantraNode> expr,
+                   bool declaration,
                    int node_line,
                    int node_column)
         : MantraNode(NodeType::ASSIGN_STMT, node_line, node_column),
           name(std::move(var_name)),
-          value(std::move(expr)) {}
+          value(std::move(expr)),
+          is_declaration(declaration) {}
 
     std::string toStringIndented(int indent) const override {
         std::ostringstream out;
@@ -130,6 +134,17 @@ struct AssignStmtNode : public MantraNode {
         if (value) {
             out << value->toStringIndented(indent + 1);
         }
+        return out.str();
+    }
+};
+
+struct ContinueStmtNode : public MantraNode {
+    ContinueStmtNode(int node_line, int node_column)
+        : MantraNode(NodeType::CONTINUE_STMT, node_line, node_column) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "ContinueStmt " << locationString() << "\n";
         return out.str();
     }
 };

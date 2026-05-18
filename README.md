@@ -102,6 +102,9 @@ mantra/
 │   ├── token.h              # Token definitions
 │   ├── lexer.h              # Lexer interface
 │   └── lexer.cpp            # Lexer implementation
+├── semantic/
+│   ├── semantic_analyzer.h  # Semantic analysis interface
+│   └── semantic_analyzer.cpp # Semantic analysis implementation
 ├── unicode/
 │   ├── unicode.h            # Unicode utilities header
 │   ├── unicode.cpp          # UTF-8 and character handling
@@ -141,6 +144,17 @@ mantra/
 - No placeholder code
 - All functions fully implemented
 - Comprehensive keyword maps with no duplicates
+
+### ✅ Semantic Analysis
+- Undefined variable checks
+- Duplicate declaration checks
+- Function arity validation
+- return/break/continue context checks
+
+### ✅ Diagnostics
+- Recovery after syntax errors
+- Colored diagnostics with context
+- Hints for common parser mistakes
 
 ## Building from Source
 

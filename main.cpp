@@ -2,6 +2,7 @@
 #include "core/lexer.h"
 #include "core/parser.h"
 #include "core/repl.h"
+#include "semantic/semantic_analyzer.h"
 #include "error/error.h"
 #include <fstream>
 #include <iostream>
@@ -140,6 +141,11 @@ int main(int argc, char** argv) {
 
     if (!program) {
         std::cerr << "प्रोग्राम नहीं पढ़ा जा सका" << std::endl;
+        return kExitRuntime;
+    }
+
+    mantra::SemanticAnalyzer semantic;
+    if (!semantic.analyze(*program)) {
         return kExitRuntime;
     }
 

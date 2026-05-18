@@ -160,7 +160,7 @@ MantraValue Environment::get(const std::string& name) const {
     }
 
     ErrorHandler::printError(ErrorType::UNKNOWN_IDENTIFIER,
-                             "अपरिचित पहचानकर्ता: " + name,
+                             "Unknown variable '" + name + "'",
                              0, 0);
     throw std::runtime_error("unknown identifier");
 }
@@ -348,6 +348,8 @@ void Interpreter::execute(const MantraNode& node) {
         }
         case NodeType::BREAK_STMT:
             throw BreakException();
+        case NodeType::CONTINUE_STMT:
+            throw ContinueException();
         case NodeType::ASSIGN_STMT:
         case NodeType::BINARY_EXPR:
         case NodeType::UNARY_EXPR:
@@ -513,7 +515,14 @@ MantraValue Interpreter::evaluateCall(const CallExprNode& node) {
     }
 
     if (args.size() != callee.function->params.size()) {
-        runtimeError("आर्ग्युमेंट की संख्या मेल नहीं खाती", node);
+        runtimeError("Function '" + callee.function->name + "' expects " +
+                     std::to_string(callee.function->params.size()) + " arguments but got " +
+                     std::to_string(args.size()), node);
+        return MantraValue::nullValue();
+    }
+
+    if (call_depth >= kMaxCallDepth) {
+        runtimeError("Maximum call depth exceeded", node);
         return MantraValue::nullValue();
     }
 
@@ -522,14 +531,20 @@ MantraValue Interpreter::evaluateCall(const CallExprNode& node) {
         call_env->define(callee.function->params[i], args[i]);
     }
 
+    ++call_depth;
+    struct CallDepthGuard {
+        size_t& depth;
+        ~CallDepthGuard() { --depth; }
+    } guard{call_depth};
+    (void)guard;
     try {
         executeBlock(*callee.function->body, call_env);
     } catch (const ReturnException& ret) {
         return ret.value();
     } catch (const BreakException&) {
-        runtimeError("break को यहाँ उपयोग नहीं किया जा सकता", node);
+        runtimeError("break cannot be used here", node);
     } catch (const ContinueException&) {
-        runtimeError("continue को यहाँ उपयोग नहीं किया जा सकता", node);
+        runtimeError("continue cannot be used here", node);
     }
 
     return MantraValue::nullValue();

@@ -19,6 +19,13 @@ std::string toLowerCopy(const std::string& value) {
     return out;
 }
 
+std::string tokenLabel(const Token& token) {
+    if (!token.lexeme.empty()) {
+        return "'" + token.lexeme + "'";
+    }
+    return tokenTypeToString(token.type);
+}
+
 template <typename T>
 bool containsTokenType(std::initializer_list<T> types, T value) {
     return std::find(types.begin(), types.end(), value) != types.end();
@@ -73,22 +80,22 @@ void Parser::skipNewlines() {
     while (match(TokenType::NEWLINE)) {}
 }
 
-const Token& Parser::consume(TokenType type, ErrorCode code) {
+const Token& Parser::consume(TokenType type, const std::string& message) {
     if (check(type)) {
         return advance();
     }
-    reportError(code, language, peek().line);
+    errorAtCurrent(message);
     had_error = true;
     throw std::runtime_error("parse error");
 }
 
-const Token& Parser::consumeAny(std::initializer_list<TokenType> types, ErrorCode code) {
+const Token& Parser::consumeAny(std::initializer_list<TokenType> types, const std::string& message) {
     for (auto type : types) {
         if (check(type)) {
             return advance();
         }
     }
-    reportError(code, language, peek().line);
+    errorAtCurrent(message);
     had_error = true;
     throw std::runtime_error("parse error");
 }
@@ -123,7 +130,7 @@ std::unique_ptr<MantraNode> Parser::statement() {
         return parsePrint();
     }
     if (matchAny({TokenType::KW_LET, TokenType::KW_RAKHO})) {
-        return parseAssignmentOrLet();
+        return parseAssignmentOrLet(true);
     }
     if (isIfKeyword(peek().type)) {
         return parseIf();
@@ -143,6 +150,9 @@ std::unique_ptr<MantraNode> Parser::statement() {
     if (isBreakKeyword(peek())) {
         return parseBreak();
     }
+    if (isContinueKeyword(peek())) {
+        return parseContinue();
+    }
     if (match(TokenType::LBRACE)) {
         auto suite = std::make_unique<BlockStmtNode>(previous().line, previous().column);
         while (!check(TokenType::RBRACE) && !isAtEnd()) {
@@ -153,12 +163,12 @@ std::unique_ptr<MantraNode> Parser::statement() {
             suite->statements.push_back(declaration());
             skipNewlines();
         }
-        consume(TokenType::RBRACE, ErrorCode::MISSING_RBRACE);
+        consume(TokenType::RBRACE, "Expected '}' to close block");
         return suite;
     }
     if (check(TokenType::IDENTIFIER) && current + 1 < tokens.size() &&
         tokens[current + 1].type == TokenType::OP_ASSIGN) {
-        return parseAssignmentOrLet();
+        return parseAssignmentOrLet(false);
     }
     return parseExpressionStatement();
 }
@@ -170,13 +180,12 @@ std::unique_ptr<MantraNode> Parser::parsePrint() {
     return std::make_unique<PrintStmtNode>(std::move(expr), keyword.line, keyword.column);
 }
 
-std::unique_ptr<MantraNode> Parser::parseAssignmentOrLet() {
-    const Token& keyword = previous();
-    Token name = consume(TokenType::IDENTIFIER, ErrorCode::LET_MISSING_ID);
-    consume(TokenType::OP_ASSIGN, ErrorCode::INVALID_ASSIGN);
+std::unique_ptr<MantraNode> Parser::parseAssignmentOrLet(bool isDeclaration) {
+    Token name = consume(TokenType::IDENTIFIER, isDeclaration ? "Expected identifier after declaration"
+                                                               : "Expected identifier for assignment");
+    consume(TokenType::OP_ASSIGN, "Expected '=' after identifier");
     auto value = expression();
-    (void)keyword;
-    return std::make_unique<AssignStmtNode>(name.lexeme, std::move(value), name.line, name.column);
+    return std::make_unique<AssignStmtNode>(name.lexeme, std::move(value), isDeclaration, name.line, name.column);
 }
 
 std::unique_ptr<MantraNode> Parser::parseIf() {
@@ -205,12 +214,12 @@ std::unique_ptr<MantraNode> Parser::parseWhile() {
 
 std::unique_ptr<MantraNode> Parser::parseFor() {
     const Token& keyword = advance();
-    Token variable = consume(TokenType::IDENTIFIER, ErrorCode::SYNTAX_ERROR);
+    Token variable = consume(TokenType::IDENTIFIER, "Expected loop variable after 'baarbaar'");
     if (match(TokenType::OP_ASSIGN)) {
         // optional equals
     }
     auto start = expression();
-    consumeAny({TokenType::KW_FROM, TokenType::KW_SE}, ErrorCode::SYNTAX_ERROR);
+    consumeAny({TokenType::KW_FROM, TokenType::KW_SE}, "Expected 'se'/'from' in for loop");
     auto end = expression();
     matchAny({TokenType::KW_TO, TokenType::KW_TAK});
     auto body = parseSuite();
@@ -220,16 +229,16 @@ std::unique_ptr<MantraNode> Parser::parseFor() {
 
 std::unique_ptr<MantraNode> Parser::parseFunction() {
     const Token& keyword = advance();
-    Token name = consume(TokenType::IDENTIFIER, ErrorCode::SYNTAX_ERROR);
-    consume(TokenType::LPAREN, ErrorCode::MISSING_RPAREN);
+    Token name = consume(TokenType::IDENTIFIER, "Expected function name");
+    consume(TokenType::LPAREN, "Expected '(' after function name");
     std::vector<std::string> params;
     if (!check(TokenType::RPAREN)) {
         do {
-            Token param = consume(TokenType::IDENTIFIER, ErrorCode::SYNTAX_ERROR);
+            Token param = consume(TokenType::IDENTIFIER, "Expected parameter name");
             params.push_back(param.lexeme);
         } while (match(TokenType::COMMA));
     }
-    consume(TokenType::RPAREN, ErrorCode::MISSING_RPAREN);
+    consume(TokenType::RPAREN, "Expected ')' after parameters");
     auto body = parseSuite();
     return std::make_unique<FuncDefNode>(name.lexeme, std::move(params), std::move(body), keyword.line, keyword.column);
 }
@@ -246,6 +255,11 @@ std::unique_ptr<MantraNode> Parser::parseReturn() {
 std::unique_ptr<MantraNode> Parser::parseBreak() {
     const Token& token = advance();
     return std::make_unique<BreakStmtNode>(token.line, token.column);
+}
+
+std::unique_ptr<MantraNode> Parser::parseContinue() {
+    const Token& token = advance();
+    return std::make_unique<ContinueStmtNode>(token.line, token.column);
 }
 
 std::unique_ptr<MantraNode> Parser::parseExpressionStatement() {
@@ -267,7 +281,7 @@ std::unique_ptr<BlockStmtNode> Parser::parseSuite() {
             block->statements.push_back(declaration());
             skipNewlines();
         }
-        consume(TokenType::RBRACE, ErrorCode::MISSING_RBRACE);
+        consume(TokenType::RBRACE, "Expected '}' to close block");
         return block;
     }
 
@@ -382,13 +396,13 @@ std::unique_ptr<MantraNode> Parser::finishCall(std::unique_ptr<MantraNode> calle
             args.push_back(expression());
         } while (match(TokenType::COMMA));
     }
-    Token close = consume(TokenType::RPAREN, ErrorCode::MISSING_RPAREN);
+    Token close = consume(TokenType::RPAREN, "Expected ')' after arguments");
     return std::make_unique<CallExprNode>(std::move(callee), std::move(args), close.line, close.column);
 }
 
 std::unique_ptr<MantraNode> Parser::finishIndex(std::unique_ptr<MantraNode> target) {
     auto idx = expression();
-    Token close = consume(TokenType::RBRACKET, ErrorCode::SYNTAX_ERROR);
+    Token close = consume(TokenType::RBRACKET, "Expected ']' after index");
     return std::make_unique<IndexExprNode>(std::move(target), std::move(idx), close.line, close.column);
 }
 
@@ -422,12 +436,12 @@ std::unique_ptr<MantraNode> Parser::primary() {
                 elements.push_back(expression());
             } while (match(TokenType::COMMA));
         }
-        consume(TokenType::RBRACKET, ErrorCode::SYNTAX_ERROR);
+        consume(TokenType::RBRACKET, "Expected ']' after array literal");
         return std::make_unique<ArrayLitNode>(std::move(elements), open.line, open.column);
     }
     if (match(TokenType::LPAREN)) {
         auto expr = expression();
-        consume(TokenType::RPAREN, ErrorCode::MISSING_RPAREN);
+        consume(TokenType::RPAREN, "Expected ')' after expression");
         return expr;
     }
     if (match(TokenType::IDENTIFIER)) {
@@ -438,7 +452,7 @@ std::unique_ptr<MantraNode> Parser::primary() {
         return std::make_unique<IdentifierNode>(tok.lexeme, tok.line, tok.column);
     }
 
-    errorAtCurrent("Unexpected token");
+    errorAtCurrent("Unexpected token " + tokenLabel(peek()) + " while parsing expression");
     throw std::runtime_error("parse error");
 }
 
@@ -505,7 +519,11 @@ bool Parser::isReturnKeyword(TokenType type) const {
 }
 
 bool Parser::isBreakKeyword(const Token& token) const {
-    return toLowerCopy(token.lexeme) == "break";
+    return token.type == TokenType::KW_BREAK || toLowerCopy(token.lexeme) == "break";
+}
+
+bool Parser::isContinueKeyword(const Token& token) const {
+    return token.type == TokenType::KW_CONTINUE || toLowerCopy(token.lexeme) == "continue";
 }
 
 bool Parser::isTrueKeyword(TokenType type) const {
@@ -573,7 +591,15 @@ void Parser::synchronize() {
             case TokenType::KW_AGAR:
             case TokenType::KW_DIKHAO:
             case TokenType::KW_LET:
-                return;
+            case TokenType::KW_RAKHO:
+            case TokenType::KW_WHILE:
+            case TokenType::KW_BAARBAAR:
+            case TokenType::KW_FUNCTION:
+            case TokenType::KW_KAAM:
+            case TokenType::KW_BREAK:
+            case TokenType::KW_CONTINUE:
+            case TokenType::KW_RETURN:
+            return;
             default:
                 break;
         }
@@ -587,8 +613,8 @@ void Parser::errorAtCurrent(const std::string& message) {
 
 void Parser::errorAt(const Token& token, const std::string& message) {
     had_error = true;
-    reportError(ErrorCode::SYNTAX_ERROR, language, token.line);
-    (void)message;
+    const std::string context = tokenLabel(token);
+    ErrorHandler::printErrorWithContext(ErrorType::SYNTAX_ERROR, message, context, token.line, token.column);
 }
 
 } // namespace mantra

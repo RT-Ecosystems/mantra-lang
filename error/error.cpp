@@ -82,6 +82,13 @@ std::string localizedPrefix(UserLanguage language, const std::string& english) {
     }
 }
 
+const char* colorForTitle(const std::string& title) {
+    if (title == "warning") {
+        return "\033[33m";
+    }
+    return "\033[31m";
+}
+
 std::string errorMessageForCode(ErrorCode code) {
     switch (code) {
         case ErrorCode::MISSING_THEN: return "missing then/tab";
@@ -127,16 +134,24 @@ void printMantraError(const MantraError& err, const std::string& title) {
     }
 
     std::ostringstream out;
-    out << "\n=== MANTRA " << title << " ===\n";
+    out << "\n" << colorForTitle(title) << "=== MANTRA " << title << " ===\033[0m\n";
     if (err.line > 0 && err.column > 0) {
         out << "Location: line " << err.line << ", col " << err.column << "\n";
     }
 
     auto it_en = err.messages.find(UserLanguage::ENGLISH);
     if (it_en != err.messages.end()) {
-        out << it_en->second << "\n";
+        std::istringstream lines(it_en->second);
+        std::string line;
+        while (std::getline(lines, line)) {
+            out << line << "\n";
+        }
     } else {
-        out << errorMessageForCode(err.code) << ": " << err.detail << "\n";
+        std::istringstream lines(errorMessageForCode(err.code) + ": " + err.detail);
+        std::string line;
+        while (std::getline(lines, line)) {
+            out << line << "\n";
+        }
     }
 
     auto it_hi = err.messages.find(UserLanguage::HINGLISH);
@@ -250,11 +265,11 @@ std::string ErrorHandler::formatLocation(int line, int column) {
 }
 
 void ErrorHandler::printErrorWithContext(ErrorType type, const std::string& message,
-                                         const std::string& context, int line, int column) {
+                                          const std::string& context, int line, int column) {
     MantraError err;
     err.type = type;
     err.detail = message;
-    err.messages = buildMessages(message + (context.empty() ? "" : ": " + context));
+    err.messages = buildMessages(message + (context.empty() ? "" : "\n" + context));
     err.line = line;
     err.column = column;
     printMantraError(err, "error");

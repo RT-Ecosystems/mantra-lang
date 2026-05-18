@@ -1,6 +1,6 @@
-#include "../core/interpreter.h"
-#include "../core/lexer.h"
-#include "../core/parser.h"
+#include "core/interpreter.h"
+#include "core/lexer.h"
+#include "core/parser.h"
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
@@ -70,7 +70,9 @@ void testKeywords() {
         {"asathyam", TokenType::KW_ASATHYAM},
         {"jodi", TokenType::KW_JODI},
         {"nahole", TokenType::KW_NAHOLE},
-        {"print", TokenType::KW_PRINT}
+        {"print", TokenType::KW_PRINT},
+        {"break", TokenType::KW_BREAK},
+        {"continue", TokenType::KW_CONTINUE}
     };
 
     for (const auto& entry : keywords) {

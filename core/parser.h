@@ -32,19 +32,20 @@ private:
     bool matchAny(std::initializer_list<TokenType> types);
     void skipNewlines();
 
-    const Token& consume(TokenType type, ErrorCode code);
-    const Token& consumeAny(std::initializer_list<TokenType> types, ErrorCode code);
+    const Token& consume(TokenType type, const std::string& message);
+    const Token& consumeAny(std::initializer_list<TokenType> types, const std::string& message);
 
     std::unique_ptr<MantraNode> declaration();
     std::unique_ptr<MantraNode> statement();
     std::unique_ptr<MantraNode> parsePrint();
-    std::unique_ptr<MantraNode> parseAssignmentOrLet();
+    std::unique_ptr<MantraNode> parseAssignmentOrLet(bool isDeclaration);
     std::unique_ptr<MantraNode> parseIf();
     std::unique_ptr<MantraNode> parseWhile();
     std::unique_ptr<MantraNode> parseFor();
     std::unique_ptr<MantraNode> parseFunction();
     std::unique_ptr<MantraNode> parseReturn();
     std::unique_ptr<MantraNode> parseBreak();
+    std::unique_ptr<MantraNode> parseContinue();
     std::unique_ptr<MantraNode> parseExpressionStatement();
 
     std::unique_ptr<BlockStmtNode> parseSuite();
@@ -71,6 +72,7 @@ private:
     bool isFunctionKeyword(TokenType type) const;
     bool isReturnKeyword(TokenType type) const;
     bool isBreakKeyword(const Token& token) const;
+    bool isContinueKeyword(const Token& token) const;
     bool isTrueKeyword(TokenType type) const;
     bool isFalseKeyword(TokenType type) const;
     bool isNullKeyword(const Token& token) const;

@@ -89,6 +89,8 @@ public:
 private:
     std::shared_ptr<Environment> globals;
     std::shared_ptr<Environment> environment;
+    size_t call_depth = 0;
+    static constexpr size_t kMaxCallDepth = 1024;
 
     void execute(const MantraNode& node);
     void executeBlock(const BlockStmtNode& block, std::shared_ptr<Environment> new_env);

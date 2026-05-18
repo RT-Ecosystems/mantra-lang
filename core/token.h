@@ -236,6 +236,8 @@ enum class TokenType {
     KW_CREATE,      // create
     KW_CLASS,       // class
     KW_IMPORT,      // import
+    KW_BREAK,       // break
+    KW_CONTINUE,    // continue
 
     // Operators
     OP_PLUS,        // +
@@ -520,6 +522,8 @@ inline std::string tokenTypeToString(TokenType type) {
         case TokenType::KW_CREATE: return "CREATE";
         case TokenType::KW_CLASS: return "CLASS";
         case TokenType::KW_IMPORT: return "IMPORT";
+        case TokenType::KW_BREAK: return "BREAK";
+        case TokenType::KW_CONTINUE: return "CONTINUE";
 
         // Operators
         case TokenType::OP_PLUS: return "OP_PLUS";

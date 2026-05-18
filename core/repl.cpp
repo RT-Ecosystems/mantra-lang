@@ -1,5 +1,6 @@
 #include "repl.h"
 #include "../error/error.h"
+#include "../semantic/semantic_analyzer.h"
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -204,6 +205,12 @@ void Repl::run() {
             }
 
             if (!program || program->statements.empty()) {
+                continue;
+            }
+
+            SemanticAnalyzer semantic;
+            if (!semantic.analyze(*program)) {
+                printErrorHint();
                 continue;
             }
 

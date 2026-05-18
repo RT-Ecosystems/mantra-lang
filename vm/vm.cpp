@@ -17,10 +17,6 @@
 
 namespace mantra {
 
-namespace {
-
-} // namespace
-
 VM::VM()
     : globals(std::make_shared<Environment>()),
       max_stack_depth(4096),
@@ -525,7 +521,7 @@ bool VM::callValue(const MantraValue& callee, const std::vector<MantraValue>& ar
 
     auto env = std::make_shared<Environment>(function->closure);
     for (std::size_t i = 0; i < function->params.size(); ++i) {
-        env->define(function->params[i], i < args.size() ? args[i] : MantraValue::nullValue());
+        env->define(function->params[i], args[i]);
     }
 
     frames.push_back(Frame{function->bytecode, 0, env, {}});

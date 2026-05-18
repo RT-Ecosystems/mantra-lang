@@ -44,6 +44,7 @@ private:
     void patchJump(std::size_t instruction_index);
     std::size_t makeTempName();
     std::string tempName(const std::string& prefix);
+    void emitBooleanize(int line, int column);
 
     void pushLoop(std::size_t loop_start, bool has_continue_target = false, std::size_t continue_target = 0);
     LoopContext& currentLoop();

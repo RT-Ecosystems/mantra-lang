@@ -197,8 +197,7 @@ void BytecodeCompiler::compileExpression(const MantraNode& node) {
                 auto jump_false = chunk->emit(OpCode::JumpIfFalse, 0, node.line, node.column);
                 chunk->emit(OpCode::Pop, 0, node.line, node.column);
                 compileExpression(*binary.right);
-                chunk->emit(OpCode::Not, 0, node.line, node.column);
-                chunk->emit(OpCode::Not, 0, node.line, node.column);
+                emitBooleanize(node.line, node.column);
                 auto jump_end = chunk->emit(OpCode::Jump, 0, node.line, node.column);
                 patchJump(jump_false);
                 chunk->emit(OpCode::Pop, 0, node.line, node.column);
@@ -215,8 +214,7 @@ void BytecodeCompiler::compileExpression(const MantraNode& node) {
                 patchJump(jump_false);
                 chunk->emit(OpCode::Pop, 0, node.line, node.column);
                 compileExpression(*binary.right);
-                chunk->emit(OpCode::Not, 0, node.line, node.column);
-                chunk->emit(OpCode::Not, 0, node.line, node.column);
+                emitBooleanize(node.line, node.column);
                 patchJump(jump_end);
                 break;
             }
@@ -463,6 +461,11 @@ void BytecodeCompiler::popLoop() {
     if (!loops.empty()) {
         loops.pop_back();
     }
+}
+
+void BytecodeCompiler::emitBooleanize(int line, int column) {
+    chunk->emit(OpCode::Not, 0, line, column);
+    chunk->emit(OpCode::Not, 0, line, column);
 }
 
 } // namespace mantra

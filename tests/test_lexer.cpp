@@ -1,7 +1,10 @@
+#include "../core/interpreter.h"
 #include "../core/lexer.h"
+#include "../core/parser.h"
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -191,6 +194,29 @@ void testErrors() {
     assert(tokens[1].type == TokenType::UNKNOWN);
 }
 
+void testBaarBaarForLoopParsing() {
+    const std::string source = "baarbaar i = 1 se 5 tak\n  dikhao i\n";
+    Lexer lexer(source);
+    auto tokens = lexer.tokenize();
+    mantra::Parser parser(tokens);
+    auto program = parser.parseProgram();
+    require(!parser.hasError(), "Loop example failed to parse");
+    require(program != nullptr, "Program node not found");
+
+    std::ostringstream output;
+    auto* previous = std::cout.rdbuf(output.rdbuf());
+    try {
+        mantra::Interpreter interpreter;
+        interpreter.interpret(*program);
+    } catch (...) {
+        std::cout.rdbuf(previous);
+        throw;
+    }
+    std::cout.rdbuf(previous);
+
+    require(output.str() == "1\n2\n3\n4\n5\n", "for-loop output is incorrect");
+}
+
 } // namespace
 
 int main() {
@@ -205,6 +231,7 @@ int main() {
     testCommentsAndNewlines();
     testWindowsNewline();
     testErrors();
+    testBaarBaarForLoopParsing();
 
     std::cout << "सभी लेक्सर टेस्ट सफल रहे।" << std::endl;
     return 0;

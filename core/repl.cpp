@@ -69,7 +69,7 @@ void printHelpKeywords() {
     std::cout << "  jodi ... tab ... nahole" << std::endl;
     std::cout << "  agre ... tab ... illandre" << std::endl;
     std::cout << "  endral ... illena" << std::endl;
-    std::cout << "  baarbaar/while ..." << std::endl;
+    std::cout << "  baarbaar/for ..." << std::endl;
     std::cout << "  for i = 0 to 10 step 2" << std::endl;
     std::cout << "  kaam/function name(...) ... wapas/return ..." << std::endl;
     std::cout << "  or/ya, and/aur, not/nahi" << std::endl;

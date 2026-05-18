@@ -474,7 +474,7 @@ bool Parser::isElseKeyword(TokenType type) const {
 
 bool Parser::isWhileKeyword(TokenType type) const {
     return containsTokenType({
-        TokenType::KW_BAARBAAR, TokenType::KW_MARUMURAI, TokenType::KW_MURHKE, TokenType::KW_JABOTOKKHON,
+        TokenType::KW_MARUMURAI, TokenType::KW_MURHKE, TokenType::KW_JABOTOKKHON,
         TokenType::KW_JABTAK, TokenType::KW_PARAT, TokenType::KW_ANDAKA, TokenType::KW_JOTAGJE,
         TokenType::KW_VARETHUM, TokenType::KW_JABAT, TokenType::KW_JABOTLOI, TokenType::KW_JABSAMMA,
         TokenType::KW_YAVAT, TokenType::KW_WAATAV, TokenType::KW_JABSIM, TokenType::KW_CHATLABA,

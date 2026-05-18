@@ -1,91 +1,83 @@
-#include "compiler/compiler.h"
-#include "core/lexer.h"
-#include "core/parser.h"
-#include "semantic/semantic_analyzer.h"
-#include "vm/vm.h"
+#include "mantra/vm/bytecode.h"
+#include "mantra/vm/vm.h"
 
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
-#include <string>
 
 namespace {
 
-void require(bool condition, const std::string& message) {
+void require(bool condition, const char* message) {
     if (!condition) {
         std::cerr << "Test failed: " << message << std::endl;
         std::abort();
     }
 }
 
-std::string runProgram(const std::string& source) {
-    mantra::Lexer lexer(source);
-    auto tokens = lexer.tokenize();
-    mantra::Parser parser(tokens);
-    auto program = parser.parseProgram();
-    require(!parser.hasError(), "Parser error");
-    require(program != nullptr, "Program missing");
+void test_add_and_print() {
+    mantra::BytecodeProgram program;
+    const auto two = program.addConstant(mantra::Value::number(2));
+    const auto three = program.addConstant(mantra::Value::number(3));
 
-    mantra::SemanticAnalyzer analyzer;
-    require(analyzer.analyze(*program), "Semantic analysis failed");
+    program.emit(mantra::OpCode::PUSH_CONST, two);
+    program.emit(mantra::OpCode::PUSH_CONST, three);
+    program.emit(mantra::OpCode::ADD);
+    program.emit(mantra::OpCode::PRINT);
+    program.emit(mantra::OpCode::HALT);
 
-    mantra::BytecodeCompiler compiler;
-    auto chunk = compiler.compile(*program);
     mantra::VM vm;
-
     std::ostringstream output;
-    auto* previous = std::cout.rdbuf(output.rdbuf());
-    bool ok = vm.execute(chunk);
-    std::cout.rdbuf(previous);
-
-    require(ok, "VM execution failed");
-    return output.str();
+    require(vm.execute(program, output), "VM execution failed");
+    require(output.str() == "5\n", "Unexpected output");
 }
 
-void testCalculator() {
-    const std::string output = runProgram(
-        "rakho a = 10\n"
-        "rakho b = 5\n"
-        "dikhao = a + b\n"
-        "dikhao = a - b\n"
-        "dikhao = a * b\n"
-        "dikhao = a / b\n");
-    require(output == "15\n5\n50\n2\n", "Calculator output mismatch");
+void test_sub_and_halt() {
+    mantra::BytecodeProgram program;
+    const auto ten = program.addConstant(mantra::Value::number(10));
+    const auto four = program.addConstant(mantra::Value::number(4));
+
+    program.emit(mantra::OpCode::PUSH_CONST, ten);
+    program.emit(mantra::OpCode::PUSH_CONST, four);
+    program.emit(mantra::OpCode::SUB);
+    program.emit(mantra::OpCode::PRINT);
+    program.emit(mantra::OpCode::HALT);
+    program.emit(mantra::OpCode::PRINT);
+
+    mantra::VM vm;
+    std::ostringstream output;
+    require(vm.execute(program, output), "VM execution failed");
+    require(output.str() == "6\n", "HALT did not stop execution");
 }
 
-void testLoop() {
-    const std::string output = runProgram(
-        "baarbaar i = 1 se 3 tak\n"
-        "  dikhao = i\n");
-    require(output == "1\n2\n3\n", "Loop output mismatch");
+void test_stack_underflow() {
+    mantra::BytecodeProgram program;
+    program.emit(mantra::OpCode::PRINT);
+    program.emit(mantra::OpCode::HALT);
+
+    mantra::VM vm;
+    std::ostringstream output;
+    require(!vm.execute(program, output), "Underflow should fail");
+    require(vm.lastError() == "Stack underflow", "Unexpected underflow error");
 }
 
-void testFunctionCall() {
-    const std::string output = runProgram(
-        "kaam jodoba(a, b)\n"
-        "  wapas a + b\n"
-        "result = jodoba(10, 20)\n"
-        "dikhao = result\n");
-    require(output == "30\n", "Function output mismatch");
-}
+void test_invalid_constant_index() {
+    mantra::BytecodeProgram program;
+    program.emit(mantra::OpCode::PUSH_CONST, 99);
+    program.emit(mantra::OpCode::HALT);
 
-void testConditionAndArrayAccess() {
-    const std::string output = runProgram(
-        "rakho values = [1, 2, 3]\n"
-        "agar values[1] == 2 tab\n"
-        "  dikhao = \"ok\"\n"
-        "warna\n"
-        "  dikhao = \"no\"\n");
-    require(output == "ok\n", "Condition/array output mismatch");
+    mantra::VM vm;
+    std::ostringstream output;
+    require(!vm.execute(program, output), "Invalid constant should fail");
+    require(vm.lastError() == "Constant index out of range", "Unexpected constant error");
 }
 
 } // namespace
 
 int main() {
-    testCalculator();
-    testLoop();
-    testFunctionCall();
-    testConditionAndArrayAccess();
-    std::cout << "सभी VM टेस्ट सफल रहे।" << std::endl;
+    test_add_and_print();
+    test_sub_and_halt();
+    test_stack_underflow();
+    test_invalid_constant_index();
+    std::cout << "VM foundation test passed" << std::endl;
     return 0;
 }

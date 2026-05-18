@@ -48,6 +48,13 @@ std::vector<size_t> utf8Offsets(const std::string& text) {
     return offsets;
 }
 
+size_t utf8ByteLength(unsigned char ch) {
+    if ((ch & 0x80u) == 0) return 1;
+    if ((ch & 0xE0u) == 0xC0u) return 2;
+    if ((ch & 0xF0u) == 0xE0u) return 3;
+    return 4;
+}
+
 std::string utf8Slice(const std::string& text, long start, long end) {
     auto offsets = utf8Offsets(text);
     long size = static_cast<long>(offsets.size()) - 1;
@@ -116,7 +123,7 @@ MantraValue builtinSplit(const std::vector<MantraValue>& args) {
     if (delim.empty()) {
         for (size_t i = 0; i < s.size();) {
             unsigned char ch = static_cast<unsigned char>(s[i]);
-            size_t len = (ch & 0x80u) == 0 ? 1 : ((ch & 0xE0u) == 0xC0u ? 2 : ((ch & 0xF0u) == 0xE0u ? 3 : 4));
+            size_t len = utf8ByteLength(ch);
             parts.push_back(MantraValue::string(s.substr(i, len)));
             i += len;
         }

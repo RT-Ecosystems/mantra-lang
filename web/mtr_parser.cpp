@@ -7,6 +7,10 @@
 namespace mantra::web {
 namespace {
 
+constexpr const char* kStructureSection = "dhanche";
+constexpr const char* kStyleSection = "roop";
+constexpr const char* kLogicSection = "kaam";
+
 std::string trim(const std::string& text) {
     size_t start = text.find_first_not_of(" \t\r\n");
     if (start == std::string::npos) {
@@ -41,11 +45,11 @@ MtrDocument MtrParser::parse(const std::string& source) const {
             section = lower(trimmed.substr(1, trimmed.size() - 2));
             continue;
         }
-        if (section == "dhanche") {
+        if (section == kStructureSection) {
             doc.structure += line + "\n";
-        } else if (section == "roop") {
+        } else if (section == kStyleSection) {
             doc.style += line + "\n";
-        } else if (section == "kaam") {
+        } else if (section == kLogicSection) {
             doc.logic += line + "\n";
         }
     }

@@ -84,7 +84,7 @@ add_library(mantra_lib STATIC
     ${STDLIB_SOURCES}
 )
 
-# Set public include directory
+# Keep the library's internal headers private; the executable includes files by repo-relative paths.
 target_include_directories(mantra_lib PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/core

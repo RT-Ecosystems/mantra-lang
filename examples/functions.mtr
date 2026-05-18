@@ -1,0 +1,5 @@
+kaam jodoba(a, b)
+  wapas a + b
+
+result = jodoba(10, 20)
+dikhao = result

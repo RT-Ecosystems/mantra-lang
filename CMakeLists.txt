@@ -98,6 +98,10 @@ enable_testing()
 add_executable(mantra_tests tests/test_lexer.cpp)
 target_link_libraries(mantra_tests PRIVATE mantra_lib)
 add_test(NAME mantra_lexer_tests COMMAND mantra_tests)
+add_custom_target(mantra_test
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+    DEPENDS mantra_tests
+)
 
 # Installation targets
 install(TARGETS mantra_lib

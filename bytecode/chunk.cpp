@@ -1,60 +1,35 @@
 #include "chunk.h"
 
-#include <stdexcept>
-#include <utility>
-
 namespace mantra {
+namespace bytecode {
 
-BytecodeChunk::BytecodeChunk(std::string name)
-    : chunk_name(std::move(name)) {}
-
-std::size_t BytecodeChunk::addConstant(const MantraValue& value) {
-    constant_pool.push_back(value);
-    return constant_pool.size() - 1;
+void Chunk::write(uint8_t byte, int line) {
+    code.push_back(byte);
+    lines.push_back(line);
 }
 
-std::size_t BytecodeChunk::emit(OpCode op, std::size_t operand, int line, int column) {
-    code.push_back(Instruction{op, operand, line, column});
-    return code.size() - 1;
+int Chunk::addConstant(const ConstantValue& value) {
+    constants.push_back(value);
+    return static_cast<int>(constants.size() - 1);
 }
 
-void BytecodeChunk::patchOperand(std::size_t instruction_index, std::size_t operand) {
-    if (instruction_index >= code.size()) {
-        throw std::out_of_range("Invalid bytecode patch index");
-    }
-    code[instruction_index].operand = operand;
-}
-
-std::size_t BytecodeChunk::size() const {
-    return code.size();
-}
-
-Instruction& BytecodeChunk::at(std::size_t index) {
-    return code.at(index);
-}
-
-const Instruction& BytecodeChunk::at(std::size_t index) const {
-    return code.at(index);
-}
-
-const std::vector<Instruction>& BytecodeChunk::instructions() const {
+const std::vector<uint8_t>& Chunk::getCode() const {
     return code;
 }
 
-std::vector<Instruction>& BytecodeChunk::instructions() {
-    return code;
+const std::vector<int>& Chunk::getLines() const {
+    return lines;
 }
 
-const std::vector<MantraValue>& BytecodeChunk::constants() const {
-    return constant_pool;
+const std::vector<ConstantValue>& Chunk::getConstants() const {
+    return constants;
 }
 
-std::vector<MantraValue>& BytecodeChunk::constants() {
-    return constant_pool;
+void Chunk::clear() {
+    code.clear();
+    lines.clear();
+    constants.clear();
 }
 
-const std::string& BytecodeChunk::name() const {
-    return chunk_name;
-}
-
+} // namespace bytecode
 } // namespace mantra

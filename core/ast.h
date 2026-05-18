@@ -11,23 +11,30 @@
 namespace mantra {
 
 enum class NodeType {
-    Program,
-    Block,
-    Print,
-    If,
-    While,
-    For,
-    Function,
-    Return,
-    Assign,
-    Binary,
-    Unary,
-    Number,
-    String,
-    Identifier,
-    Call,
-    Boolean,
-    ExprStatement
+    PROGRAM,
+    PRINT_STMT,
+    IF_STMT,
+    WHILE_STMT,
+    FOR_STMT,
+    FUNC_DEF,
+    RETURN_STMT,
+    ASSIGN_STMT,
+    BINARY_EXPR,
+    UNARY_EXPR,
+    NUMBER_LIT,
+    STRING_LIT,
+    BOOL_LIT,
+    NULL_LIT,
+    IDENTIFIER,
+    CALL_EXPR,
+    BLOCK_STMT,
+    BREAK_STMT,
+    CONTINUE_STMT,
+    IMPORT_STMT,
+    CLASS_DEF,
+    ARRAY_LIT,
+    INDEX_EXPR,
+    EXPR_STMT
 };
 
 inline std::string indentString(int indent) {
@@ -44,174 +51,179 @@ struct MantraNode {
 
     virtual ~MantraNode() = default;
 
-    virtual std::string prettyPrint(int indent = 0) const = 0;
+    virtual std::string toString() const { return toStringIndented(0); }
+    virtual std::string toStringIndented(int indent) const = 0;
 };
 
 struct ProgramNode : public MantraNode {
     std::vector<std::unique_ptr<MantraNode>> statements;
 
     ProgramNode(int node_line, int node_column)
-        : MantraNode(NodeType::Program, node_line, node_column) {}
+        : MantraNode(NodeType::PROGRAM, node_line, node_column) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
         out << indentString(indent) << "Program" << "\n";
         for (const auto& stmt : statements) {
-            out << stmt->prettyPrint(indent + 1);
+            if (stmt) {
+                out << stmt->toStringIndented(indent + 1);
+            }
         }
         return out.str();
     }
 };
 
-struct BlockNode : public MantraNode {
-    std::vector<std::unique_ptr<MantraNode>> statements;
-
-    BlockNode(int node_line, int node_column)
-        : MantraNode(NodeType::Block, node_line, node_column) {}
-
-    std::string prettyPrint(int indent = 0) const override {
-        std::ostringstream out;
-        out << indentString(indent) << "Block" << "\n";
-        for (const auto& stmt : statements) {
-            out << stmt->prettyPrint(indent + 1);
-        }
-        return out.str();
-    }
-};
-
-struct PrintNode : public MantraNode {
+struct PrintStmtNode : public MantraNode {
     std::unique_ptr<MantraNode> expression;
 
-    PrintNode(std::unique_ptr<MantraNode> expr, int node_line, int node_column)
-        : MantraNode(NodeType::Print, node_line, node_column),
+    PrintStmtNode(std::unique_ptr<MantraNode> expr, int node_line, int node_column)
+        : MantraNode(NodeType::PRINT_STMT, node_line, node_column),
           expression(std::move(expr)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Print" << "\n";
+        out << indentString(indent) << "PrintStmt" << "\n";
         if (expression) {
-            out << expression->prettyPrint(indent + 1);
+            out << expression->toStringIndented(indent + 1);
         }
         return out.str();
     }
 };
 
-struct IfNode : public MantraNode {
-    std::unique_ptr<MantraNode> condition;
-    std::unique_ptr<BlockNode> then_branch;
-    std::unique_ptr<BlockNode> else_branch;
+struct BlockStmtNode : public MantraNode {
+    std::vector<std::unique_ptr<MantraNode>> statements;
 
-    IfNode(std::unique_ptr<MantraNode> cond,
-           std::unique_ptr<BlockNode> then_block,
-           std::unique_ptr<BlockNode> else_block,
-           int node_line,
-           int node_column)
-        : MantraNode(NodeType::If, node_line, node_column),
+    BlockStmtNode(int node_line, int node_column)
+        : MantraNode(NodeType::BLOCK_STMT, node_line, node_column) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "BlockStmt" << "\n";
+        for (const auto& stmt : statements) {
+            if (stmt) {
+                out << stmt->toStringIndented(indent + 1);
+            }
+        }
+        return out.str();
+    }
+};
+
+struct IfStmtNode : public MantraNode {
+    std::unique_ptr<MantraNode> condition;
+    std::unique_ptr<BlockStmtNode> then_branch;
+    std::unique_ptr<BlockStmtNode> else_branch;
+
+    IfStmtNode(std::unique_ptr<MantraNode> cond,
+               std::unique_ptr<BlockStmtNode> then_block,
+               std::unique_ptr<BlockStmtNode> else_block,
+               int node_line,
+               int node_column)
+        : MantraNode(NodeType::IF_STMT, node_line, node_column),
           condition(std::move(cond)),
           then_branch(std::move(then_block)),
           else_branch(std::move(else_block)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "If" << "\n";
+        out << indentString(indent) << "IfStmt" << "\n";
         out << indentString(indent + 1) << "Condition" << "\n";
         if (condition) {
-            out << condition->prettyPrint(indent + 2);
+            out << condition->toStringIndented(indent + 2);
         }
         out << indentString(indent + 1) << "Then" << "\n";
         if (then_branch) {
-            out << then_branch->prettyPrint(indent + 2);
+            out << then_branch->toStringIndented(indent + 2);
         }
         if (else_branch) {
             out << indentString(indent + 1) << "Else" << "\n";
-            out << else_branch->prettyPrint(indent + 2);
+            out << else_branch->toStringIndented(indent + 2);
         }
         return out.str();
     }
 };
 
-struct WhileNode : public MantraNode {
+struct WhileStmtNode : public MantraNode {
     std::unique_ptr<MantraNode> condition;
-    std::unique_ptr<BlockNode> body;
+    std::unique_ptr<BlockStmtNode> body;
 
-    WhileNode(std::unique_ptr<MantraNode> cond,
-              std::unique_ptr<BlockNode> body_block,
-              int node_line,
-              int node_column)
-        : MantraNode(NodeType::While, node_line, node_column),
+    WhileStmtNode(std::unique_ptr<MantraNode> cond,
+                  std::unique_ptr<BlockStmtNode> body_block,
+                  int node_line,
+                  int node_column)
+        : MantraNode(NodeType::WHILE_STMT, node_line, node_column),
           condition(std::move(cond)),
           body(std::move(body_block)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "While" << "\n";
+        out << indentString(indent) << "WhileStmt" << "\n";
         out << indentString(indent + 1) << "Condition" << "\n";
         if (condition) {
-            out << condition->prettyPrint(indent + 2);
+            out << condition->toStringIndented(indent + 2);
         }
         out << indentString(indent + 1) << "Body" << "\n";
         if (body) {
-            out << body->prettyPrint(indent + 2);
+            out << body->toStringIndented(indent + 2);
         }
         return out.str();
     }
 };
 
-struct ForNode : public MantraNode {
+struct ForStmtNode : public MantraNode {
     std::string variable;
     std::unique_ptr<MantraNode> start;
     std::unique_ptr<MantraNode> end;
-    std::unique_ptr<BlockNode> body;
+    std::unique_ptr<BlockStmtNode> body;
 
-    ForNode(std::string var,
-            std::unique_ptr<MantraNode> start_expr,
-            std::unique_ptr<MantraNode> end_expr,
-            std::unique_ptr<BlockNode> body_block,
-            int node_line,
-            int node_column)
-        : MantraNode(NodeType::For, node_line, node_column),
+    ForStmtNode(std::string var,
+                std::unique_ptr<MantraNode> start_expr,
+                std::unique_ptr<MantraNode> end_expr,
+                std::unique_ptr<BlockStmtNode> body_block,
+                int node_line,
+                int node_column)
+        : MantraNode(NodeType::FOR_STMT, node_line, node_column),
           variable(std::move(var)),
           start(std::move(start_expr)),
           end(std::move(end_expr)),
           body(std::move(body_block)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "For" << " " << variable << "\n";
+        out << indentString(indent) << "ForStmt" << " " << variable << "\n";
         out << indentString(indent + 1) << "Start" << "\n";
         if (start) {
-            out << start->prettyPrint(indent + 2);
+            out << start->toStringIndented(indent + 2);
         }
         out << indentString(indent + 1) << "End" << "\n";
         if (end) {
-            out << end->prettyPrint(indent + 2);
+            out << end->toStringIndented(indent + 2);
         }
         out << indentString(indent + 1) << "Body" << "\n";
         if (body) {
-            out << body->prettyPrint(indent + 2);
+            out << body->toStringIndented(indent + 2);
         }
         return out.str();
     }
 };
 
-struct FunctionNode : public MantraNode {
+struct FuncDefNode : public MantraNode {
     std::string name;
     std::vector<std::string> parameters;
-    std::unique_ptr<BlockNode> body;
+    std::unique_ptr<BlockStmtNode> body;
 
-    FunctionNode(std::string func_name,
-                 std::vector<std::string> params,
-                 std::unique_ptr<BlockNode> body_block,
-                 int node_line,
-                 int node_column)
-        : MantraNode(NodeType::Function, node_line, node_column),
+    FuncDefNode(std::string func_name,
+                std::vector<std::string> params,
+                std::unique_ptr<BlockStmtNode> body_block,
+                int node_line,
+                int node_column)
+        : MantraNode(NodeType::FUNC_DEF, node_line, node_column),
           name(std::move(func_name)),
           parameters(std::move(params)),
           body(std::move(body_block)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Function" << " " << name << "(";
+        out << indentString(indent) << "FuncDef" << " " << name << "(";
         for (size_t i = 0; i < parameters.size(); ++i) {
             out << parameters[i];
             if (i + 1 < parameters.size()) {
@@ -220,133 +232,158 @@ struct FunctionNode : public MantraNode {
         }
         out << ")" << "\n";
         if (body) {
-            out << body->prettyPrint(indent + 1);
+            out << body->toStringIndented(indent + 1);
         }
         return out.str();
     }
 };
 
-struct ReturnNode : public MantraNode {
+struct ReturnStmtNode : public MantraNode {
     std::unique_ptr<MantraNode> value;
 
-    ReturnNode(std::unique_ptr<MantraNode> expr, int node_line, int node_column)
-        : MantraNode(NodeType::Return, node_line, node_column),
+    ReturnStmtNode(std::unique_ptr<MantraNode> expr, int node_line, int node_column)
+        : MantraNode(NodeType::RETURN_STMT, node_line, node_column),
           value(std::move(expr)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Return" << "\n";
+        out << indentString(indent) << "ReturnStmt" << "\n";
         if (value) {
-            out << value->prettyPrint(indent + 1);
+            out << value->toStringIndented(indent + 1);
         }
         return out.str();
     }
 };
 
-struct AssignNode : public MantraNode {
+struct AssignStmtNode : public MantraNode {
     std::string name;
     std::unique_ptr<MantraNode> value;
 
-    AssignNode(std::string var_name,
-               std::unique_ptr<MantraNode> expr,
-               int node_line,
-               int node_column)
-        : MantraNode(NodeType::Assign, node_line, node_column),
+    AssignStmtNode(std::string var_name,
+                   std::unique_ptr<MantraNode> expr,
+                   int node_line,
+                   int node_column)
+        : MantraNode(NodeType::ASSIGN_STMT, node_line, node_column),
           name(std::move(var_name)),
           value(std::move(expr)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Assign" << " " << name << "\n";
+        out << indentString(indent) << "AssignStmt" << " " << name << "\n";
         if (value) {
-            out << value->prettyPrint(indent + 1);
+            out << value->toStringIndented(indent + 1);
         }
         return out.str();
     }
 };
 
-struct BinaryNode : public MantraNode {
+struct BinaryExprNode : public MantraNode {
     TokenType op;
     std::unique_ptr<MantraNode> left;
     std::unique_ptr<MantraNode> right;
 
-    BinaryNode(TokenType oper,
-               std::unique_ptr<MantraNode> lhs,
-               std::unique_ptr<MantraNode> rhs,
-               int node_line,
-               int node_column)
-        : MantraNode(NodeType::Binary, node_line, node_column),
+    BinaryExprNode(TokenType oper,
+                   std::unique_ptr<MantraNode> lhs,
+                   std::unique_ptr<MantraNode> rhs,
+                   int node_line,
+                   int node_column)
+        : MantraNode(NodeType::BINARY_EXPR, node_line, node_column),
           op(oper),
           left(std::move(lhs)),
           right(std::move(rhs)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Binary" << " " << tokenTypeToString(op) << "\n";
+        out << indentString(indent) << "BinaryExpr" << " " << tokenTypeToString(op) << "\n";
         if (left) {
-            out << left->prettyPrint(indent + 1);
+            out << left->toStringIndented(indent + 1);
         }
         if (right) {
-            out << right->prettyPrint(indent + 1);
+            out << right->toStringIndented(indent + 1);
         }
         return out.str();
     }
 };
 
-struct UnaryNode : public MantraNode {
+struct UnaryExprNode : public MantraNode {
     TokenType op;
     std::unique_ptr<MantraNode> operand;
 
-    UnaryNode(TokenType oper,
-              std::unique_ptr<MantraNode> expr,
-              int node_line,
-              int node_column)
-        : MantraNode(NodeType::Unary, node_line, node_column),
+    UnaryExprNode(TokenType oper,
+                  std::unique_ptr<MantraNode> expr,
+                  int node_line,
+                  int node_column)
+        : MantraNode(NodeType::UNARY_EXPR, node_line, node_column),
           op(oper),
           operand(std::move(expr)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Unary" << " " << tokenTypeToString(op) << "\n";
+        out << indentString(indent) << "UnaryExpr" << " " << tokenTypeToString(op) << "\n";
         if (operand) {
-            out << operand->prettyPrint(indent + 1);
+            out << operand->toStringIndented(indent + 1);
         }
         return out.str();
     }
 };
 
-struct NumberNode : public MantraNode {
+struct NumberLitNode : public MantraNode {
     double value;
     bool is_integer;
     std::string raw;
 
-    NumberNode(double num_value,
-               bool is_int,
-               std::string raw_text,
-               int node_line,
-               int node_column)
-        : MantraNode(NodeType::Number, node_line, node_column),
+    NumberLitNode(double num_value,
+                  bool is_int,
+                  std::string raw_text,
+                  int node_line,
+                  int node_column)
+        : MantraNode(NodeType::NUMBER_LIT, node_line, node_column),
           value(num_value),
           is_integer(is_int),
           raw(std::move(raw_text)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Number" << " " << raw << "\n";
+        out << indentString(indent) << "NumberLit" << " " << raw << "\n";
         return out.str();
     }
 };
 
-struct StringNode : public MantraNode {
+struct StringLitNode : public MantraNode {
     std::string value;
 
-    StringNode(std::string str_value, int node_line, int node_column)
-        : MantraNode(NodeType::String, node_line, node_column),
+    StringLitNode(std::string str_value, int node_line, int node_column)
+        : MantraNode(NodeType::STRING_LIT, node_line, node_column),
           value(std::move(str_value)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "String" << " \"" << value << "\"" << "\n";
+        out << indentString(indent) << "StringLit" << " \"" << value << "\"" << "\n";
+        return out.str();
+    }
+};
+
+struct BoolLitNode : public MantraNode {
+    bool value;
+
+    BoolLitNode(bool bool_value, int node_line, int node_column)
+        : MantraNode(NodeType::BOOL_LIT, node_line, node_column),
+          value(bool_value) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "BoolLit" << " " << (value ? "true" : "false") << "\n";
+        return out.str();
+    }
+};
+
+struct NullLitNode : public MantraNode {
+    NullLitNode(int node_line, int node_column)
+        : MantraNode(NodeType::NULL_LIT, node_line, node_column) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "NullLit" << "\n";
         return out.str();
     }
 };
@@ -355,68 +392,187 @@ struct IdentifierNode : public MantraNode {
     std::string name;
 
     IdentifierNode(std::string ident, int node_line, int node_column)
-        : MantraNode(NodeType::Identifier, node_line, node_column),
+        : MantraNode(NodeType::IDENTIFIER, node_line, node_column),
           name(std::move(ident)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
         out << indentString(indent) << "Identifier" << " " << name << "\n";
         return out.str();
     }
 };
 
-struct CallNode : public MantraNode {
+struct CallExprNode : public MantraNode {
     std::unique_ptr<MantraNode> callee;
     std::vector<std::unique_ptr<MantraNode>> arguments;
 
-    CallNode(std::unique_ptr<MantraNode> call_target,
-             std::vector<std::unique_ptr<MantraNode>> args,
-             int node_line,
-             int node_column)
-        : MantraNode(NodeType::Call, node_line, node_column),
+    CallExprNode(std::unique_ptr<MantraNode> call_target,
+                 std::vector<std::unique_ptr<MantraNode>> args,
+                 int node_line,
+                 int node_column)
+        : MantraNode(NodeType::CALL_EXPR, node_line, node_column),
           callee(std::move(call_target)),
           arguments(std::move(args)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Call" << "\n";
+        out << indentString(indent) << "CallExpr" << "\n";
         if (callee) {
-            out << callee->prettyPrint(indent + 1);
+            out << callee->toStringIndented(indent + 1);
         }
         for (const auto& arg : arguments) {
-            out << arg->prettyPrint(indent + 1);
+            if (arg) {
+                out << arg->toStringIndented(indent + 1);
+            }
         }
         return out.str();
     }
 };
 
-struct BooleanNode : public MantraNode {
-    bool value;
+struct ExprStmtNode : public MantraNode {
+    std::unique_ptr<MantraNode> expression;
 
-    BooleanNode(bool bool_value, int node_line, int node_column)
-        : MantraNode(NodeType::Boolean, node_line, node_column),
-          value(bool_value) {}
+    ExprStmtNode(std::unique_ptr<MantraNode> expr, int node_line, int node_column)
+        : MantraNode(NodeType::EXPR_STMT, node_line, node_column),
+          expression(std::move(expr)) {}
 
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Boolean" << " " << (value ? "true" : "false")
-            << "\n";
+        out << indentString(indent) << "ExprStmt" << "\n";
+        if (expression) {
+            out << expression->toStringIndented(indent + 1);
+        }
         return out.str();
     }
 };
 
-struct ExprStatementNode : public MantraNode {
-    std::unique_ptr<MantraNode> expression;
+struct BreakStmtNode : public MantraNode {
+    BreakStmtNode(int node_line, int node_column)
+        : MantraNode(NodeType::BREAK_STMT, node_line, node_column) {}
 
-    ExprStatementNode(std::unique_ptr<MantraNode> expr, int node_line, int node_column)
-        : MantraNode(NodeType::ExprStatement, node_line, node_column),
-          expression(std::move(expr)) {}
-
-    std::string prettyPrint(int indent = 0) const override {
+    std::string toStringIndented(int indent) const override {
         std::ostringstream out;
-        out << indentString(indent) << "Expression" << "\n";
-        if (expression) {
-            out << expression->prettyPrint(indent + 1);
+        out << indentString(indent) << "BreakStmt" << "\n";
+        return out.str();
+    }
+};
+
+struct ContinueStmtNode : public MantraNode {
+    ContinueStmtNode(int node_line, int node_column)
+        : MantraNode(NodeType::CONTINUE_STMT, node_line, node_column) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "ContinueStmt" << "\n";
+        return out.str();
+    }
+};
+
+struct ImportStmtNode : public MantraNode {
+    std::string module;
+    std::vector<std::string> names;
+    std::string alias;
+
+    ImportStmtNode(std::string module_name,
+                   std::vector<std::string> import_names,
+                   std::string alias_name,
+                   int node_line,
+                   int node_column)
+        : MantraNode(NodeType::IMPORT_STMT, node_line, node_column),
+          module(std::move(module_name)),
+          names(std::move(import_names)),
+          alias(std::move(alias_name)) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "ImportStmt" << " " << module;
+        if (!alias.empty()) {
+            out << " as " << alias;
+        }
+        out << "\n";
+        if (!names.empty()) {
+            out << indentString(indent + 1) << "Names";
+            for (const auto& name : names) {
+                out << " " << name;
+            }
+            out << "\n";
+        }
+        return out.str();
+    }
+};
+
+struct ClassDefNode : public MantraNode {
+    std::string name;
+    std::string base_class;
+    std::vector<std::unique_ptr<MantraNode>> body;
+
+    ClassDefNode(std::string class_name,
+                 std::string base_name,
+                 std::vector<std::unique_ptr<MantraNode>> members,
+                 int node_line,
+                 int node_column)
+        : MantraNode(NodeType::CLASS_DEF, node_line, node_column),
+          name(std::move(class_name)),
+          base_class(std::move(base_name)),
+          body(std::move(members)) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "ClassDef" << " " << name;
+        if (!base_class.empty()) {
+            out << " : " << base_class;
+        }
+        out << "\n";
+        for (const auto& member : body) {
+            if (member) {
+                out << member->toStringIndented(indent + 1);
+            }
+        }
+        return out.str();
+    }
+};
+
+struct ArrayLitNode : public MantraNode {
+    std::vector<std::unique_ptr<MantraNode>> elements;
+
+    ArrayLitNode(std::vector<std::unique_ptr<MantraNode>> elems,
+                 int node_line,
+                 int node_column)
+        : MantraNode(NodeType::ARRAY_LIT, node_line, node_column),
+          elements(std::move(elems)) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "ArrayLit" << "\n";
+        for (const auto& element : elements) {
+            if (element) {
+                out << element->toStringIndented(indent + 1);
+            }
+        }
+        return out.str();
+    }
+};
+
+struct IndexExprNode : public MantraNode {
+    std::unique_ptr<MantraNode> collection;
+    std::unique_ptr<MantraNode> index;
+
+    IndexExprNode(std::unique_ptr<MantraNode> target,
+                  std::unique_ptr<MantraNode> idx,
+                  int node_line,
+                  int node_column)
+        : MantraNode(NodeType::INDEX_EXPR, node_line, node_column),
+          collection(std::move(target)),
+          index(std::move(idx)) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "IndexExpr" << "\n";
+        if (collection) {
+            out << collection->toStringIndented(indent + 1);
+        }
+        if (index) {
+            out << index->toStringIndented(indent + 1);
         }
         return out.str();
     }

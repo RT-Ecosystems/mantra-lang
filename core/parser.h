@@ -44,8 +44,8 @@ private:
     std::unique_ptr<MantraNode> returnStatement();
     std::unique_ptr<MantraNode> expressionStatement();
 
-    std::unique_ptr<BlockNode> block();
-    std::unique_ptr<BlockNode> blockOrSingle();
+    std::unique_ptr<BlockStmtNode> block();
+    std::unique_ptr<BlockStmtNode> blockOrSingle();
 
     std::unique_ptr<MantraNode> assignment();
     std::unique_ptr<MantraNode> expression();

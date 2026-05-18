@@ -22,7 +22,7 @@ struct FunctionValue {
     bool is_native = false;
     std::string name;
     std::vector<std::string> params;
-    const BlockNode* body = nullptr;
+    const BlockStmtNode* body = nullptr;
     std::shared_ptr<class Environment> closure;
     std::function<class MantraValue(const std::vector<class MantraValue>&)> native;
 };
@@ -77,11 +77,11 @@ private:
     std::shared_ptr<Environment> environment;
 
     void execute(const MantraNode& node);
-    void executeBlock(const BlockNode& block, std::shared_ptr<Environment> new_env);
+    void executeBlock(const BlockStmtNode& block, std::shared_ptr<Environment> new_env);
 
-    MantraValue evaluateBinary(const BinaryNode& node);
-    MantraValue evaluateUnary(const UnaryNode& node);
-    MantraValue evaluateCall(const CallNode& node);
+    MantraValue evaluateBinary(const BinaryExprNode& node);
+    MantraValue evaluateUnary(const UnaryExprNode& node);
+    MantraValue evaluateCall(const CallExprNode& node);
 
     bool isTruthy(const MantraValue& value) const;
     bool valuesEqual(const MantraValue& left, const MantraValue& right) const;

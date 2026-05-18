@@ -121,38 +121,40 @@ void Interpreter::interpret(const ProgramNode& program) {
 
 MantraValue Interpreter::evaluate(const MantraNode& node) {
     switch (node.type) {
-        case NodeType::Number: {
-            const auto& number_node = static_cast<const NumberNode&>(node);
+        case NodeType::NUMBER_LIT: {
+            const auto& number_node = static_cast<const NumberLitNode&>(node);
             return MantraValue::number(number_node.value);
         }
-        case NodeType::String: {
-            const auto& string_node = static_cast<const StringNode&>(node);
+        case NodeType::STRING_LIT: {
+            const auto& string_node = static_cast<const StringLitNode&>(node);
             return MantraValue::string(string_node.value);
         }
-        case NodeType::Boolean: {
-            const auto& bool_node = static_cast<const BooleanNode&>(node);
+        case NodeType::BOOL_LIT: {
+            const auto& bool_node = static_cast<const BoolLitNode&>(node);
             return MantraValue::boolean(bool_node.value);
         }
-        case NodeType::Identifier: {
+        case NodeType::NULL_LIT:
+            return MantraValue::nullValue();
+        case NodeType::IDENTIFIER: {
             const auto& ident_node = static_cast<const IdentifierNode&>(node);
             return environment->get(ident_node.name);
         }
-        case NodeType::Binary:
-            return evaluateBinary(static_cast<const BinaryNode&>(node));
-        case NodeType::Unary:
-            return evaluateUnary(static_cast<const UnaryNode&>(node));
-        case NodeType::Call:
-            return evaluateCall(static_cast<const CallNode&>(node));
-        case NodeType::Assign: {
-            const auto& assign_node = static_cast<const AssignNode&>(node);
+        case NodeType::BINARY_EXPR:
+            return evaluateBinary(static_cast<const BinaryExprNode&>(node));
+        case NodeType::UNARY_EXPR:
+            return evaluateUnary(static_cast<const UnaryExprNode&>(node));
+        case NodeType::CALL_EXPR:
+            return evaluateCall(static_cast<const CallExprNode&>(node));
+        case NodeType::ASSIGN_STMT: {
+            const auto& assign_node = static_cast<const AssignStmtNode&>(node);
             MantraValue value = evaluate(*assign_node.value);
             if (!environment->assign(assign_node.name, value)) {
                 environment->define(assign_node.name, value);
             }
             return value;
         }
-        case NodeType::ExprStatement: {
-            const auto& expr_node = static_cast<const ExprStatementNode&>(node);
+        case NodeType::EXPR_STMT: {
+            const auto& expr_node = static_cast<const ExprStmtNode&>(node);
             if (expr_node.expression) {
                 return evaluate(*expr_node.expression);
             }
@@ -166,24 +168,24 @@ MantraValue Interpreter::evaluate(const MantraNode& node) {
 
 void Interpreter::execute(const MantraNode& node) {
     switch (node.type) {
-        case NodeType::Program: {
+        case NodeType::PROGRAM: {
             const auto& program = static_cast<const ProgramNode&>(node);
             interpret(program);
             break;
         }
-        case NodeType::Block: {
-            const auto& block = static_cast<const BlockNode&>(node);
+        case NodeType::BLOCK_STMT: {
+            const auto& block = static_cast<const BlockStmtNode&>(node);
             executeBlock(block, environment);
             break;
         }
-        case NodeType::Print: {
-            const auto& print_node = static_cast<const PrintNode&>(node);
+        case NodeType::PRINT_STMT: {
+            const auto& print_node = static_cast<const PrintStmtNode&>(node);
             MantraValue value = evaluate(*print_node.expression);
             std::cout << value.toString() << std::endl;
             break;
         }
-        case NodeType::If: {
-            const auto& if_node = static_cast<const IfNode&>(node);
+        case NodeType::IF_STMT: {
+            const auto& if_node = static_cast<const IfStmtNode&>(node);
             if (isTruthy(evaluate(*if_node.condition))) {
                 executeBlock(*if_node.then_branch, environment);
             } else if (if_node.else_branch) {
@@ -191,15 +193,15 @@ void Interpreter::execute(const MantraNode& node) {
             }
             break;
         }
-        case NodeType::While: {
-            const auto& while_node = static_cast<const WhileNode&>(node);
+        case NodeType::WHILE_STMT: {
+            const auto& while_node = static_cast<const WhileStmtNode&>(node);
             while (isTruthy(evaluate(*while_node.condition))) {
                 executeBlock(*while_node.body, environment);
             }
             break;
         }
-        case NodeType::For: {
-            const auto& for_node = static_cast<const ForNode&>(node);
+        case NodeType::FOR_STMT: {
+            const auto& for_node = static_cast<const ForStmtNode&>(node);
             MantraValue start_val = evaluate(*for_node.start);
             MantraValue end_val = evaluate(*for_node.end);
             if (start_val.type != ValueType::Number || end_val.type != ValueType::Number) {
@@ -218,8 +220,8 @@ void Interpreter::execute(const MantraNode& node) {
             }
             break;
         }
-        case NodeType::Function: {
-            const auto& func_node = static_cast<const FunctionNode&>(node);
+        case NodeType::FUNC_DEF: {
+            const auto& func_node = static_cast<const FuncDefNode&>(node);
             auto func_value = std::make_shared<FunctionValue>();
             func_value->is_native = false;
             func_value->name = func_node.name;
@@ -229,19 +231,19 @@ void Interpreter::execute(const MantraNode& node) {
             environment->define(func_node.name, MantraValue::functionValue(func_value));
             break;
         }
-        case NodeType::Return: {
-            const auto& return_node = static_cast<const ReturnNode&>(node);
+        case NodeType::RETURN_STMT: {
+            const auto& return_node = static_cast<const ReturnStmtNode&>(node);
             MantraValue value = MantraValue::nullValue();
             if (return_node.value) {
                 value = evaluate(*return_node.value);
             }
             throw ReturnException(value);
         }
-        case NodeType::Assign:
-        case NodeType::Binary:
-        case NodeType::Unary:
-        case NodeType::Call:
-        case NodeType::ExprStatement:
+        case NodeType::ASSIGN_STMT:
+        case NodeType::BINARY_EXPR:
+        case NodeType::UNARY_EXPR:
+        case NodeType::CALL_EXPR:
+        case NodeType::EXPR_STMT:
             evaluate(node);
             break;
         default:
@@ -250,7 +252,7 @@ void Interpreter::execute(const MantraNode& node) {
     }
 }
 
-void Interpreter::executeBlock(const BlockNode& block, std::shared_ptr<Environment> new_env) {
+void Interpreter::executeBlock(const BlockStmtNode& block, std::shared_ptr<Environment> new_env) {
     auto previous = environment;
     environment = std::move(new_env);
     try {
@@ -264,7 +266,7 @@ void Interpreter::executeBlock(const BlockNode& block, std::shared_ptr<Environme
     environment = previous;
 }
 
-MantraValue Interpreter::evaluateBinary(const BinaryNode& node) {
+MantraValue Interpreter::evaluateBinary(const BinaryExprNode& node) {
     MantraValue left = evaluate(*node.left);
     MantraValue right = evaluate(*node.right);
 
@@ -330,7 +332,7 @@ MantraValue Interpreter::evaluateBinary(const BinaryNode& node) {
     }
 }
 
-MantraValue Interpreter::evaluateUnary(const UnaryNode& node) {
+MantraValue Interpreter::evaluateUnary(const UnaryExprNode& node) {
     MantraValue right = evaluate(*node.operand);
 
     switch (node.op) {
@@ -348,7 +350,7 @@ MantraValue Interpreter::evaluateUnary(const UnaryNode& node) {
     }
 }
 
-MantraValue Interpreter::evaluateCall(const CallNode& node) {
+MantraValue Interpreter::evaluateCall(const CallExprNode& node) {
     MantraValue callee = evaluate(*node.callee);
     if (callee.type != ValueType::Function || !callee.function) {
         runtimeError("कॉल करने के लिए फ़ंक्शन चाहिए", node);

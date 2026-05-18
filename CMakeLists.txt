@@ -55,6 +55,22 @@ set(CORE_SOURCES
     core/repl.cpp
 )
 
+set(BYTECODE_SOURCES
+    bytecode/opcode.h
+    bytecode/chunk.h
+    bytecode/chunk.cpp
+)
+
+set(COMPILER_SOURCES
+    compiler/compiler.h
+    compiler/compiler.cpp
+)
+
+set(VM_SOURCES
+    vm/vm.h
+    vm/vm.cpp
+)
+
 set(UNICODE_SOURCES
     unicode/unicode.h
     unicode/unicode.cpp
@@ -84,6 +100,9 @@ set(STDLIB_SOURCES
 # Create library
 add_library(mantra_lib STATIC
     ${CORE_SOURCES}
+    ${BYTECODE_SOURCES}
+    ${COMPILER_SOURCES}
+    ${VM_SOURCES}
     ${UNICODE_SOURCES}
     ${ERROR_SOURCES}
     ${SEMANTIC_SOURCES}
@@ -115,6 +134,11 @@ add_executable(mantra_semantic_tests tests/test_semantic.cpp)
 target_include_directories(mantra_semantic_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(mantra_semantic_tests PRIVATE mantra_lib)
 add_test(NAME mantra_semantic_tests COMMAND mantra_semantic_tests)
+
+add_executable(mantra_vm_tests tests/test_vm.cpp)
+target_include_directories(mantra_vm_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(mantra_vm_tests PRIVATE mantra_lib)
+add_test(NAME mantra_vm_tests COMMAND mantra_vm_tests)
 add_custom_target(mantra_test
     COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
     DEPENDS mantra_tests

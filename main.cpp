@@ -2,7 +2,9 @@
 #include "core/lexer.h"
 #include "core/parser.h"
 #include "core/repl.h"
+#include "compiler/compiler.h"
 #include "semantic/semantic_analyzer.h"
+#include "vm/vm.h"
 #include "error/error.h"
 #include <fstream>
 #include <iostream>
@@ -147,6 +149,17 @@ int main(int argc, char** argv) {
     mantra::SemanticAnalyzer semantic;
     if (!semantic.analyze(*program)) {
         return kExitRuntime;
+    }
+
+    try {
+        mantra::BytecodeCompiler compiler;
+        auto chunk = compiler.compile(*program);
+        mantra::VM vm;
+        if (vm.execute(chunk)) {
+            return kExitOk;
+        }
+    } catch (const std::exception&) {
+        // Fall back to the tree-walk interpreter.
     }
 
     try {

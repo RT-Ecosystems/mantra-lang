@@ -88,7 +88,7 @@ MantraValue builtinPi(const std::vector<MantraValue>& args) {
         ErrorHandler::printError(ErrorType::RUNTIME_ERROR, "pi expects no args", 0, 0);
         throw std::runtime_error("pi");
     }
-    return MantraValue::number(3.14159265358979);
+    return MantraValue::number(3.14159265358979323846);
 }
 
 MantraValue builtinE(const std::vector<MantraValue>& args) {
@@ -96,7 +96,7 @@ MantraValue builtinE(const std::vector<MantraValue>& args) {
         ErrorHandler::printError(ErrorType::RUNTIME_ERROR, "e expects no args", 0, 0);
         throw std::runtime_error("e");
     }
-    return MantraValue::number(2.71828182845905);
+    return MantraValue::number(2.71828182845904523536);
 }
 
 MantraValue builtinInfinity(const std::vector<MantraValue>& args) {

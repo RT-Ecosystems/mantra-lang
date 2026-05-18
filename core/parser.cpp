@@ -355,7 +355,8 @@ std::unique_ptr<MantraNode> Parser::unary() {
     if (matchAny({TokenType::OP_MINUS, TokenType::OP_NOT, TokenType::KW_NOT, TokenType::KW_NAHI})) {
         Token op = previous();
         auto right = unary();
-        return std::make_unique<UnaryExprNode>(TokenType::OP_NOT, std::move(right), op.line, op.column);
+        TokenType normalized = op.type == TokenType::OP_MINUS ? TokenType::OP_MINUS : TokenType::OP_NOT;
+        return std::make_unique<UnaryExprNode>(normalized, std::move(right), op.line, op.column);
     }
     return call();
 }

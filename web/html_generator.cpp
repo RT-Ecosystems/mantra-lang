@@ -49,6 +49,9 @@ std::string renderStructure(const std::string& structure) {
             value = value.substr(1, value.size() - 2);
         }
         std::string tag = tagForKey(key);
+        if (tag == "button" && value.empty()) {
+            value = "Button";
+        }
         out << "<" << tag;
         if (tag == "button") {
             out << " type=\"button\"";

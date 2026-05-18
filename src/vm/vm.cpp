@@ -67,14 +67,14 @@ VM::StepResult VM::executeInstruction(const BytecodeProgram& program,
             }
             case OpCode::HALT:
                 return StepResult::Halt;
+            default:
+                fail("Unknown instruction");
+                return StepResult::Error;
         }
     } catch (const std::exception& error) {
         fail(error.what());
         return StepResult::Error;
     }
-
-    fail("Unknown instruction");
-    return StepResult::Error;
 }
 
 void VM::fail(const std::string& message) {

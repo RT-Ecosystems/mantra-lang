@@ -92,7 +92,22 @@ std::string Value::toString() const {
 }
 
 bool operator==(const Value& left, const Value& right) {
-    return left.type() == right.type() && left.toString() == right.toString();
+    if (left.type() != right.type()) {
+        return false;
+    }
+
+    switch (left.type()) {
+        case ValueType::Number:
+            return left.asNumber() == right.asNumber();
+        case ValueType::String:
+            return left.asString() == right.asString();
+        case ValueType::Boolean:
+            return left.asBoolean() == right.asBoolean();
+        case ValueType::Null:
+            return true;
+    }
+
+    return false;
 }
 
 bool operator!=(const Value& left, const Value& right) {

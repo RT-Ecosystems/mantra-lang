@@ -14,13 +14,18 @@ public:
     const std::string& lastError() const;
 
 private:
+    enum class StepResult {
+        Continue,
+        Halt,
+        Error
+    };
+
     Stack stack_;
     std::string last_error_;
 
-    bool executeInstruction(const BytecodeProgram& program,
-                            const Instruction& instruction,
-                            std::size_t instruction_index,
-                            std::ostream& output);
+    StepResult executeInstruction(const BytecodeProgram& program,
+                                  const Instruction& instruction,
+                                  std::ostream& output);
     void fail(const std::string& message);
 };
 

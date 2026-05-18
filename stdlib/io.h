@@ -8,8 +8,11 @@ namespace mantra::stdlib {
 
 MantraValue builtinPrint(const std::vector<MantraValue>& args);
 MantraValue builtinInput(const std::vector<MantraValue>& args);
-MantraValue builtinReadFile(const std::vector<MantraValue>& args);
-MantraValue builtinWriteFile(const std::vector<MantraValue>& args);
+MantraValue builtinLength(const std::vector<MantraValue>& args);
+MantraValue builtinConcat(const std::vector<MantraValue>& args);
+MantraValue builtinToNumber(const std::vector<MantraValue>& args);
+MantraValue builtinToString(const std::vector<MantraValue>& args);
+MantraValue builtinType(const std::vector<MantraValue>& args);
 
 } // namespace mantra::stdlib
 

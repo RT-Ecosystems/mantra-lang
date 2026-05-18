@@ -15,7 +15,8 @@ enum class ValueType {
     String,
     Boolean,
     Null,
-    Function
+    Function,
+    Array
 };
 
 struct FunctionValue {
@@ -33,13 +34,16 @@ struct MantraValue {
     std::string string_value;
     bool bool_value = false;
     std::shared_ptr<FunctionValue> function;
+    std::vector<MantraValue> array_value;
 
     static MantraValue number(double value);
     static MantraValue string(const std::string& value);
     static MantraValue boolean(bool value);
     static MantraValue nullValue();
     static MantraValue functionValue(std::shared_ptr<FunctionValue> func);
+    static MantraValue array(std::vector<MantraValue> elements);
 
+    std::string typeName() const;
     std::string toString() const;
 };
 
@@ -48,7 +52,7 @@ public:
     explicit Environment(std::shared_ptr<Environment> parent_env = nullptr);
 
     void define(const std::string& name, const MantraValue& value);
-    bool assign(const std::string& name, const MantraValue& value);
+    bool set(const std::string& name, const MantraValue& value);
     MantraValue get(const std::string& name) const;
 
 private:
@@ -63,6 +67,16 @@ public:
 
 private:
     MantraValue return_value;
+};
+
+class BreakException : public std::exception {
+public:
+    BreakException() = default;
+};
+
+class ContinueException : public std::exception {
+public:
+    ContinueException() = default;
 };
 
 class Interpreter {
@@ -82,11 +96,12 @@ private:
     MantraValue evaluateBinary(const BinaryExprNode& node);
     MantraValue evaluateUnary(const UnaryExprNode& node);
     MantraValue evaluateCall(const CallExprNode& node);
+    MantraValue evaluateIndex(const IndexExprNode& node);
 
     bool isTruthy(const MantraValue& value) const;
     bool valuesEqual(const MantraValue& left, const MantraValue& right) const;
-    void registerStdlib();
 
+    void registerStdlib();
     void runtimeError(const std::string& message, const MantraNode& node) const;
 };
 

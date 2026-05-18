@@ -2,10 +2,35 @@
 #include "error.h"
 #include "io.h"
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
+#include <utility>
 
 namespace mantra {
+
+namespace {
+
+std::string numberToString(double value) {
+    std::ostringstream out;
+    out << std::setprecision(15) << value;
+    std::string text = out.str();
+    if (text.find('.') != std::string::npos) {
+        while (!text.empty() && text.back() == '0') {
+            text.pop_back();
+        }
+        if (!text.empty() && text.back() == '.') {
+            text.pop_back();
+        }
+    }
+    if (text.empty()) {
+        return "0";
+    }
+    return text;
+}
+
+} // namespace
 
 MantraValue MantraValue::number(double value) {
     MantraValue result;
@@ -41,23 +66,61 @@ MantraValue MantraValue::functionValue(std::shared_ptr<FunctionValue> func) {
     return result;
 }
 
-std::string MantraValue::toString() const {
-    std::ostringstream out;
+MantraValue MantraValue::array(std::vector<MantraValue> elements) {
+    MantraValue result;
+    result.type = ValueType::Array;
+    result.array_value = std::move(elements);
+    return result;
+}
+
+std::string MantraValue::typeName() const {
     switch (type) {
         case ValueType::Number:
-            out << number_value;
-            return out.str();
+            return "number";
+        case ValueType::String:
+            return "string";
+        case ValueType::Boolean:
+            return "boolean";
+        case ValueType::Null:
+            return "null";
+        case ValueType::Function:
+            return "function";
+        case ValueType::Array:
+            return "array";
+        default:
+            return "unknown";
+    }
+}
+
+std::string MantraValue::toString() const {
+    switch (type) {
+        case ValueType::Number:
+            return numberToString(number_value);
         case ValueType::String:
             return string_value;
         case ValueType::Boolean:
-            return bool_value ? "सच" : "झूठ";
+            return bool_value ? "true" : "false";
         case ValueType::Null:
             return "null";
         case ValueType::Function:
             if (function) {
-                return "<function " + function->name + ">";
+                if (!function->name.empty()) {
+                    return "<function " + function->name + ">";
+                }
             }
             return "<function>";
+        case ValueType::Array: {
+            std::ostringstream out;
+            out << "[";
+            for (size_t i = 0; i < array_value.size(); ++i) {
+                out << array_value[i].toString();
+                if (i + 1 < array_value.size()) {
+                    out << ", ";
+                }
+            }
+            out << "]";
+            return out.str();
+        }
         default:
             return "<unknown>";
     }
@@ -70,7 +133,7 @@ void Environment::define(const std::string& name, const MantraValue& value) {
     values[name] = value;
 }
 
-bool Environment::assign(const std::string& name, const MantraValue& value) {
+bool Environment::set(const std::string& name, const MantraValue& value) {
     auto it = values.find(name);
     if (it != values.end()) {
         it->second = value;
@@ -78,7 +141,7 @@ bool Environment::assign(const std::string& name, const MantraValue& value) {
     }
 
     if (parent) {
-        return parent->assign(name, value);
+        return parent->set(name, value);
     }
 
     return false;
@@ -94,10 +157,10 @@ MantraValue Environment::get(const std::string& name) const {
         return parent->get(name);
     }
 
-    ErrorHandler::throwError(ErrorType::UNKNOWN_IDENTIFIER,
+    ErrorHandler::printError(ErrorType::UNKNOWN_IDENTIFIER,
                              "अपरिचित पहचानकर्ता: " + name,
-                             0, 0, 1);
-    return MantraValue::nullValue();
+                             0, 0);
+    throw std::runtime_error("unknown identifier");
 }
 
 ReturnException::ReturnException(MantraValue value)
@@ -139,6 +202,17 @@ MantraValue Interpreter::evaluate(const MantraNode& node) {
             const auto& ident_node = static_cast<const IdentifierNode&>(node);
             return environment->get(ident_node.name);
         }
+        case NodeType::ARRAY_LIT: {
+            const auto& array_node = static_cast<const ArrayLitNode&>(node);
+            std::vector<MantraValue> elements;
+            elements.reserve(array_node.elements.size());
+            for (const auto& element : array_node.elements) {
+                elements.push_back(evaluate(*element));
+            }
+            return MantraValue::array(std::move(elements));
+        }
+        case NodeType::INDEX_EXPR:
+            return evaluateIndex(static_cast<const IndexExprNode&>(node));
         case NodeType::BINARY_EXPR:
             return evaluateBinary(static_cast<const BinaryExprNode&>(node));
         case NodeType::UNARY_EXPR:
@@ -148,7 +222,7 @@ MantraValue Interpreter::evaluate(const MantraNode& node) {
         case NodeType::ASSIGN_STMT: {
             const auto& assign_node = static_cast<const AssignStmtNode&>(node);
             MantraValue value = evaluate(*assign_node.value);
-            if (!environment->assign(assign_node.name, value)) {
+            if (!environment->set(assign_node.name, value)) {
                 environment->define(assign_node.name, value);
             }
             return value;
@@ -196,7 +270,13 @@ void Interpreter::execute(const MantraNode& node) {
         case NodeType::WHILE_STMT: {
             const auto& while_node = static_cast<const WhileStmtNode&>(node);
             while (isTruthy(evaluate(*while_node.condition))) {
-                executeBlock(*while_node.body, environment);
+                try {
+                    executeBlock(*while_node.body, environment);
+                } catch (const ContinueException&) {
+                    continue;
+                } catch (const BreakException&) {
+                    break;
+                }
             }
             break;
         }
@@ -204,6 +284,9 @@ void Interpreter::execute(const MantraNode& node) {
             const auto& for_node = static_cast<const ForStmtNode&>(node);
             MantraValue start_val = evaluate(*for_node.start);
             MantraValue end_val = evaluate(*for_node.end);
+            MantraValue step_val = for_node.step ? evaluate(*for_node.step)
+                                                 : MantraValue::number(0.0);
+
             if (start_val.type != ValueType::Number || end_val.type != ValueType::Number) {
                 runtimeError("for/बारबार में संख्या अपेक्षित है", node);
                 return;
@@ -211,12 +294,32 @@ void Interpreter::execute(const MantraNode& node) {
 
             double start = start_val.number_value;
             double end = end_val.number_value;
-            double step = (start <= end) ? 1.0 : -1.0;
+            double step = step_val.type == ValueType::Number ? step_val.number_value : 0.0;
+
+            if (for_node.step) {
+                if (step == 0.0) {
+                    runtimeError("step/qadam शून्य नहीं हो सकता", node);
+                    return;
+                }
+            } else {
+                step = (start <= end) ? 1.0 : -1.0;
+            }
 
             environment->define(for_node.variable, MantraValue::number(start));
-            for (double i = start; (step > 0) ? i <= end : i >= end; i += step) {
-                environment->assign(for_node.variable, MantraValue::number(i));
-                executeBlock(*for_node.body, environment);
+
+            auto condition = [&](double value) {
+                return step > 0 ? value < end : value > end;
+            };
+
+            for (double i = start; condition(i); i += step) {
+                environment->set(for_node.variable, MantraValue::number(i));
+                try {
+                    executeBlock(*for_node.body, environment);
+                } catch (const ContinueException&) {
+                    continue;
+                } catch (const BreakException&) {
+                    break;
+                }
             }
             break;
         }
@@ -239,11 +342,20 @@ void Interpreter::execute(const MantraNode& node) {
             }
             throw ReturnException(value);
         }
+        case NodeType::BREAK_STMT:
+            throw BreakException();
         case NodeType::ASSIGN_STMT:
         case NodeType::BINARY_EXPR:
         case NodeType::UNARY_EXPR:
         case NodeType::CALL_EXPR:
         case NodeType::EXPR_STMT:
+        case NodeType::ARRAY_LIT:
+        case NodeType::INDEX_EXPR:
+        case NodeType::NUMBER_LIT:
+        case NodeType::STRING_LIT:
+        case NodeType::BOOL_LIT:
+        case NodeType::NULL_LIT:
+        case NodeType::IDENTIFIER:
             evaluate(node);
             break;
         default:
@@ -252,7 +364,8 @@ void Interpreter::execute(const MantraNode& node) {
     }
 }
 
-void Interpreter::executeBlock(const BlockStmtNode& block, std::shared_ptr<Environment> new_env) {
+void Interpreter::executeBlock(const BlockStmtNode& block,
+                              std::shared_ptr<Environment> new_env) {
     auto previous = environment;
     environment = std::move(new_env);
     try {
@@ -267,6 +380,24 @@ void Interpreter::executeBlock(const BlockStmtNode& block, std::shared_ptr<Envir
 }
 
 MantraValue Interpreter::evaluateBinary(const BinaryExprNode& node) {
+    if (node.op == TokenType::OP_AND) {
+        MantraValue left = evaluate(*node.left);
+        if (!isTruthy(left)) {
+            return MantraValue::boolean(false);
+        }
+        MantraValue right = evaluate(*node.right);
+        return MantraValue::boolean(isTruthy(right));
+    }
+
+    if (node.op == TokenType::OP_OR) {
+        MantraValue left = evaluate(*node.left);
+        if (isTruthy(left)) {
+            return MantraValue::boolean(true);
+        }
+        MantraValue right = evaluate(*node.right);
+        return MantraValue::boolean(isTruthy(right));
+    }
+
     MantraValue left = evaluate(*node.left);
     MantraValue right = evaluate(*node.right);
 
@@ -297,6 +428,16 @@ MantraValue Interpreter::evaluateBinary(const BinaryExprNode& node) {
                 return MantraValue::number(left.number_value / right.number_value);
             }
             runtimeError("'/' के लिए संख्या अपेक्षित है", node);
+            return MantraValue::nullValue();
+        case TokenType::OP_MODULO:
+            if (left.type == ValueType::Number && right.type == ValueType::Number) {
+                if (std::abs(right.number_value) < 1e-12) {
+                    runtimeError("शून्य से भाग नहीं हो सकता", node);
+                    return MantraValue::nullValue();
+                }
+                return MantraValue::number(std::fmod(left.number_value, right.number_value));
+            }
+            runtimeError("'%' के लिए संख्या अपेक्षित है", node);
             return MantraValue::nullValue();
         case TokenType::OP_EQUAL:
             return MantraValue::boolean(valuesEqual(left, right));
@@ -381,8 +522,42 @@ MantraValue Interpreter::evaluateCall(const CallExprNode& node) {
         executeBlock(*callee.function->body, call_env);
     } catch (const ReturnException& ret) {
         return ret.value();
+    } catch (const BreakException&) {
+        runtimeError("break को यहाँ उपयोग नहीं किया जा सकता", node);
+    } catch (const ContinueException&) {
+        runtimeError("continue को यहाँ उपयोग नहीं किया जा सकता", node);
     }
 
+    return MantraValue::nullValue();
+}
+
+MantraValue Interpreter::evaluateIndex(const IndexExprNode& node) {
+    MantraValue target = evaluate(*node.collection);
+    MantraValue index_val = evaluate(*node.index);
+
+    if (index_val.type != ValueType::Number) {
+        runtimeError("index के लिए संख्या अपेक्षित है", node);
+        return MantraValue::nullValue();
+    }
+
+    int index = static_cast<int>(index_val.number_value);
+    if (target.type == ValueType::Array) {
+        if (index < 0 || static_cast<size_t>(index) >= target.array_value.size()) {
+            runtimeError("array index सीमा से बाहर है", node);
+            return MantraValue::nullValue();
+        }
+        return target.array_value[static_cast<size_t>(index)];
+    }
+
+    if (target.type == ValueType::String) {
+        if (index < 0 || static_cast<size_t>(index) >= target.string_value.size()) {
+            runtimeError("string index सीमा से बाहर है", node);
+            return MantraValue::nullValue();
+        }
+        return MantraValue::string(std::string(1, target.string_value[static_cast<size_t>(index)]));
+    }
+
+    runtimeError("केवल array या string का index लिया जा सकता है", node);
     return MantraValue::nullValue();
 }
 
@@ -398,6 +573,8 @@ bool Interpreter::isTruthy(const MantraValue& value) const {
             return !value.string_value.empty();
         case ValueType::Function:
             return true;
+        case ValueType::Array:
+            return !value.array_value.empty();
         default:
             return false;
     }
@@ -419,43 +596,83 @@ bool Interpreter::valuesEqual(const MantraValue& left, const MantraValue& right)
             return true;
         case ValueType::Function:
             return left.function == right.function;
+        case ValueType::Array:
+            if (left.array_value.size() != right.array_value.size()) {
+                return false;
+            }
+            for (size_t i = 0; i < left.array_value.size(); ++i) {
+                if (!valuesEqual(left.array_value[i], right.array_value[i])) {
+                    return false;
+                }
+            }
+            return true;
         default:
             return false;
     }
 }
 
 void Interpreter::registerStdlib() {
-    auto print_func = std::make_shared<FunctionValue>();
-    print_func->is_native = true;
-    print_func->name = "print";
-    print_func->native = stdlib::builtinPrint;
-    globals->define("print", MantraValue::functionValue(print_func));
-    globals->define("dikhao", MantraValue::functionValue(print_func));
+    auto addNative = [&](const std::string& name,
+                         const std::function<MantraValue(const std::vector<MantraValue>&)>& fn) {
+        auto func_value = std::make_shared<FunctionValue>();
+        func_value->is_native = true;
+        func_value->name = name;
+        func_value->native = fn;
+        globals->define(name, MantraValue::functionValue(func_value));
+    };
 
-    auto input_func = std::make_shared<FunctionValue>();
-    input_func->is_native = true;
-    input_func->name = "input";
-    input_func->native = stdlib::builtinInput;
-    globals->define("input", MantraValue::functionValue(input_func));
-    globals->define("lo", MantraValue::functionValue(input_func));
+    const std::vector<std::string> print_aliases = {
+        "print",
+        "println",
+        "dikhao",
+        "kaado",
+        "dakho",
+        "dekhao",
+        "batavo",
+        "dakhav",
+        "chupinchu",
+        "toro",
+        "kaaniku",
+        "jadi",
+        "nohole",
+        "dekhaow",
+        "dakhoi",
+        "dekhau",
+        "darshaya",
+        "waatav",
+        "dikhay",
+        "wekho",
+        "nungsi",
+        "nangi",
+        "dado"
+    };
 
-    auto read_func = std::make_shared<FunctionValue>();
-    read_func->is_native = true;
-    read_func->name = "read_file";
-    read_func->native = stdlib::builtinReadFile;
-    globals->define("read_file", MantraValue::functionValue(read_func));
-    globals->define("file_padho", MantraValue::functionValue(read_func));
+    for (const auto& name : print_aliases) {
+        addNative(name, stdlib::builtinPrint);
+    }
 
-    auto write_func = std::make_shared<FunctionValue>();
-    write_func->is_native = true;
-    write_func->name = "write_file";
-    write_func->native = stdlib::builtinWriteFile;
-    globals->define("write_file", MantraValue::functionValue(write_func));
-    globals->define("file_likho", MantraValue::functionValue(write_func));
+    addNative("input", stdlib::builtinInput);
+    addNative("lo", stdlib::builtinInput);
+    addNative("loo", stdlib::builtinInput);
+
+    addNative("lambai", stdlib::builtinLength);
+    addNative("length", stdlib::builtinLength);
+
+    addNative("jodo_shabd", stdlib::builtinConcat);
+    addNative("concat", stdlib::builtinConcat);
+
+    addNative("sankhya", stdlib::builtinToNumber);
+    addNative("toNumber", stdlib::builtinToNumber);
+
+    addNative("shabd", stdlib::builtinToString);
+    addNative("toString", stdlib::builtinToString);
+
+    addNative("type", stdlib::builtinType);
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {
-    ErrorHandler::throwError(ErrorType::RUNTIME_ERROR, message, node.line, node.column, 1);
+    ErrorHandler::printError(ErrorType::RUNTIME_ERROR, message, node.line, node.column);
+    throw std::runtime_error(message);
 }
 
 } // namespace mantra

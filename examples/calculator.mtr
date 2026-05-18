@@ -1,0 +1,7 @@
+# Simple calculator in Hinglish
+rakho a = 10
+rakho b = 5
+dikhao = a + b
+dikhao = a - b
+dikhao = a * b
+dikhao = a / b

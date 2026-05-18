@@ -18,14 +18,14 @@ constexpr int kExitRuntime = 70;
 
 void printUsage(const std::string& program) {
     std::cout << "MANTRA Language Interpreter\n";
-    std::cout << "उपयोग: " << program << " [options] [file.mantra]\n\n";
+    std::cout << "उपयोग: " << program << " [options] [file.mtr]\n\n";
     std::cout << "Options:\n";
     std::cout << "  --help      यह सहायता संदेश दिखाएं\n";
     std::cout << "  --version   संस्करण दिखाएं\n";
     std::cout << "  --lex       केवल टोकन प्रिंट करें\n";
     std::cout << "\nउदाहरण:\n";
-    std::cout << "  " << program << " hello.mantra\n";
-    std::cout << "  " << program << " --lex hello.mantra\n";
+    std::cout << "  " << program << " hello.mtr\n";
+    std::cout << "  " << program << " --lex hello.mtr\n";
     std::cout << "  " << program << " --version\n";
     std::cout << "\nटिप: बिना फाइल दिए REPL शुरू होगा।\n";
     std::cout << "उदाहरण REPL: dikhao \"Namaste Duniya\"\n";
@@ -38,11 +38,17 @@ void printVersion() {
 }
 
 bool hasMantraExtension(const std::string& path) {
-    const std::string suffix = ".mantra";
-    if (path.size() < suffix.size()) {
-        return false;
+    const std::string suffix1 = ".mantra";
+    const std::string suffix2 = ".mtr";
+    if (path.size() >= suffix1.size() &&
+        path.compare(path.size() - suffix1.size(), suffix1.size(), suffix1) == 0) {
+        return true;
     }
-    return path.compare(path.size() - suffix.size(), suffix.size(), suffix) == 0;
+    if (path.size() >= suffix2.size() &&
+        path.compare(path.size() - suffix2.size(), suffix2.size(), suffix2) == 0) {
+        return true;
+    }
+    return false;
 }
 
 bool readFileContents(const std::string& path, std::string& out_source) {
@@ -101,7 +107,7 @@ int main(int argc, char** argv) {
     }
 
     if (!hasMantraExtension(file_path)) {
-        std::cerr << "केवल .mantra फाइल स्वीकार है" << std::endl;
+        std::cerr << "केवल .mantra या .mtr फाइल स्वीकार है" << std::endl;
         return kExitUsage;
     }
 
@@ -120,9 +126,8 @@ int main(int argc, char** argv) {
 
     mantra::Lexer lexer(source);
     auto tokens = lexer.tokenize();
-    lexer.printTokens();
-
     if (lex_only) {
+        lexer.printTokens();
         return kExitOk;
     }
 
@@ -141,8 +146,7 @@ int main(int argc, char** argv) {
     try {
         mantra::Interpreter interpreter;
         interpreter.interpret(*program);
-    } catch (const std::exception& ex) {
-        std::cerr << "रनटाइम त्रुटि: " << ex.what() << std::endl;
+    } catch (const std::exception&) {
         return kExitRuntime;
     }
 

@@ -16,16 +16,19 @@ public:
 private:
     Interpreter interpreter;
 
-    void printWelcome() const;
+    void printBanner() const;
     void printGoodbye() const;
-    void printHint() const;
-    std::string prompt(bool first_line) const;
-    bool isExitCommand(const std::string& input) const;
-    bool isInputComplete(const std::string& input) const;
+    void printHelp() const;
+    void printErrorHint() const;
+
+    std::string prompt() const;
     std::string trim(const std::string& value) const;
-    void updateDelimiterBalance(char ch, int& braces, int& parens) const;
-    bool isBlank(const std::string& value) const;
-    std::string normalizeLine(const std::string& line) const;
+
+    bool isExitCommand(const std::string& input) const;
+    bool isClearCommand(const std::string& input) const;
+    bool isHelpCommand(const std::string& input) const;
+
+    void clearScreen() const;
 };
 
 } // namespace mantra

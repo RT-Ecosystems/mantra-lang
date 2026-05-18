@@ -1,5 +1,8 @@
 #pragma once
+
+#include <exception>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace mantra {
@@ -25,7 +28,11 @@ enum class ErrorCode {
     MISSING_RPAREN,
     MISSING_RBRACE,
     UNDEFINED_FUNCTION,
-    WRONG_ARG_COUNT
+    WRONG_ARG_COUNT,
+    UNKNOWN_IDENTIFIER,
+    INVALID_OPERATION,
+    FILE_NOT_FOUND,
+    IO_ERROR
 };
 
 enum class ErrorType {
@@ -34,58 +41,51 @@ enum class ErrorType {
     SEMANTIC_ERROR,
     RUNTIME_ERROR,
     TYPE_ERROR,
+    UNKNOWN_IDENTIFIER,
+    INVALID_OPERATION,
+    FILE_NOT_FOUND,
     IO_ERROR,
+    WARNING,
+    INFO,
     UNKNOWN_ERROR
 };
 
 struct MantraError {
-    ErrorType type;
-    std::string messageEn;
-    std::string messageHi;
-    std::string messageTa;
-    std::string messagePa;
-    std::string messageBn;
-    std::string messageGu;
-    std::string messageMr;
-    std::string messageTe;
-    std::string messageKn;
-    std::string messageMl;
-    int line;
-    int column;
-
-    MantraError(ErrorType t,
-        const std::string& en,
-        const std::string& hi,
-        const std::string& ta,
-        const std::string& pa,
-        const std::string& bn,
-        const std::string& gu,
-        const std::string& mr,
-        const std::string& te,
-        const std::string& kn,
-        const std::string& ml,
-        int l, int c)
-        : type(t), messageEn(en), messageHi(hi),
-          messageTa(ta), messagePa(pa), messageBn(bn),
-          messageGu(gu), messageMr(mr), messageTe(te),
-          messageKn(kn), messageMl(ml), line(l), column(c) {}
+    ErrorType type = ErrorType::UNKNOWN_ERROR;
+    ErrorCode code = ErrorCode::SYNTAX_ERROR;
+    std::string detail;
+    std::unordered_map<UserLanguage, std::string> messages;
+    int line = 0;
+    int column = 0;
 };
 
-UserLanguage detectUserLanguage(
-    const std::vector<std::string>& lexemes);
+UserLanguage detectUserLanguage(const std::vector<std::string>& lexemes);
 
-void reportError(ErrorCode code,
-    UserLanguage language, int line);
+void reportError(ErrorCode code, UserLanguage language, int line);
 
-MantraError makeLexicalError(
-    const std::string& details, int line, int col);
-MantraError makeSyntaxError(
-    const std::string& details, int line, int col);
-MantraError makeSemanticError(
-    const std::string& details, int line, int col);
+MantraError makeLexicalError(const std::string& details, int line, int col);
+MantraError makeSyntaxError(const std::string& details, int line, int col);
+MantraError makeSemanticError(const std::string& details, int line, int col);
 
 void printError(const MantraError& err);
 void throwError(const MantraError& err);
 void warnError(const MantraError& err);
+
+class ErrorHandler {
+public:
+    static void printError(ErrorType type, const std::string& message, int line, int column);
+    static void printWarning(const std::string& message, int line, int column);
+    static void throwError(ErrorType type, const std::string& message, int line, int column, int exit_code = 1);
+    static void setVerbosity(int level);
+    static int getVerbosity();
+    static std::string formatLocation(int line, int column);
+    static void printErrorWithContext(ErrorType type, const std::string& message,
+                                      const std::string& context, int line, int column);
+    static int getErrorCount();
+    static int getWarningCount();
+    static void resetCounts();
+    static void incrementErrorCount();
+    static void incrementWarningCount();
+};
 
 } // namespace mantra

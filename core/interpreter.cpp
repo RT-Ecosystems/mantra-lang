@@ -1,6 +1,8 @@
 #include "interpreter.h"
-#include "error.h"
-#include "io.h"
+#include "../error/error.h"
+#include "../stdlib/io.h"
+#include "../stdlib/math.h"
+#include "../stdlib/string.h"
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -308,7 +310,7 @@ void Interpreter::execute(const MantraNode& node) {
             environment->define(for_node.variable, MantraValue::number(start));
 
             auto condition = [&](double value) {
-                return step > 0 ? value < end : value > end;
+                return step > 0 ? value <= end : value >= end;
             };
 
             for (double i = start; condition(i); i += step) {
@@ -668,6 +670,61 @@ void Interpreter::registerStdlib() {
     addNative("toString", stdlib::builtinToString);
 
     addNative("type", stdlib::builtinType);
+    addNative("roke", stdlib::builtinExit);
+    addNative("exit", stdlib::builtinExit);
+    addNative("saaf", stdlib::builtinClear);
+    addNative("clear", stdlib::builtinClear);
+
+    addNative("upper", stdlib::builtinUpper);
+    addNative("upar_case", stdlib::builtinUpper);
+    addNative("lower", stdlib::builtinLower);
+    addNative("neeche_case", stdlib::builtinLower);
+    addNative("trim", stdlib::builtinTrim);
+    addNative("katao", stdlib::builtinTrim);
+    addNative("split", stdlib::builtinSplit);
+    addNative("vibhajit", stdlib::builtinSplit);
+    addNative("replace", stdlib::builtinReplace);
+    addNative("badlo", stdlib::builtinReplace);
+    addNative("slice", stdlib::builtinSlice);
+    addNative("part", stdlib::builtinSlice);
+    addNative("contains", stdlib::builtinContains);
+    addNative("shamil", stdlib::builtinContains);
+    addNative("startsWith", stdlib::builtinStartsWith);
+    addNative("shuru", stdlib::builtinStartsWith);
+    addNative("endsWith", stdlib::builtinEndsWith);
+    addNative("ant", stdlib::builtinEndsWith);
+    addNative("repeat", stdlib::builtinRepeat);
+    addNative("dohrao", stdlib::builtinRepeat);
+
+    addNative("sin", stdlib::builtinSin);
+    addNative("cos", stdlib::builtinCos);
+    addNative("tan", stdlib::builtinTan);
+    addNative("asin", stdlib::builtinAsin);
+    addNative("acos", stdlib::builtinAcos);
+    addNative("atan", stdlib::builtinAtan);
+    addNative("log", stdlib::builtinLog);
+    addNative("log10", stdlib::builtinLog10);
+    addNative("exp", stdlib::builtinExp);
+    addNative("pow", stdlib::builtinPow);
+    addNative("abs", stdlib::builtinAbs);
+    addNative("mutlak", stdlib::builtinAbs);
+    addNative("sqrt", stdlib::builtinSqrt);
+    addNative("varga", stdlib::builtinSqrt);
+    addNative("round", stdlib::builtinRound);
+    addNative("gol", stdlib::builtinRound);
+    addNative("ceil", stdlib::builtinCeil);
+    addNative("upar", stdlib::builtinCeil);
+    addNative("floor", stdlib::builtinFloor);
+    addNative("neeche", stdlib::builtinFloor);
+    addNative("random", stdlib::builtinRandom);
+    addNative("pi", stdlib::builtinPi);
+    addNative("PI", stdlib::builtinPi);
+    addNative("e", stdlib::builtinE);
+    addNative("E", stdlib::builtinE);
+    addNative("infinity", stdlib::builtinInfinity);
+    addNative("nan", stdlib::builtinNaN);
+    addNative("is_infinity", stdlib::builtinIsInfinity);
+    addNative("is_nan", stdlib::builtinIsNaN);
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {

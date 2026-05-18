@@ -361,6 +361,24 @@ MantraValue builtinType(const std::vector<MantraValue>& args) {
     return makeStringValue(args[0].typeName());
 }
 
+MantraValue builtinExit(const std::vector<MantraValue>& args) {
+    if (!args.empty()) {
+        double code = 0.0;
+        if (args[0].type == ValueType::Number) {
+            code = args[0].number_value;
+        }
+        std::exit(static_cast<int>(code));
+    }
+    std::exit(0);
+}
+
+MantraValue builtinClear(const std::vector<MantraValue>& args) {
+    (void)args;
+    std::cout << "\033[2J\033[H";
+    std::cout.flush();
+    return MantraValue::nullValue();
+}
+
 
 
 

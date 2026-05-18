@@ -1,5 +1,5 @@
 #include "repl.h"
-#include "error.h"
+#include "../error/error.h"
 #include <algorithm>
 #include <iostream>
 #include <sstream>

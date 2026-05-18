@@ -13,6 +13,8 @@ MantraValue builtinConcat(const std::vector<MantraValue>& args);
 MantraValue builtinToNumber(const std::vector<MantraValue>& args);
 MantraValue builtinToString(const std::vector<MantraValue>& args);
 MantraValue builtinType(const std::vector<MantraValue>& args);
+MantraValue builtinExit(const std::vector<MantraValue>& args);
+MantraValue builtinClear(const std::vector<MantraValue>& args);
 
 } // namespace mantra::stdlib
 

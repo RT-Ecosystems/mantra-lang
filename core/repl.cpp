@@ -47,7 +47,7 @@ void Repl::run() {
 
         if (!parser.hasError()) {
             if (program && program->statements.size() == 1 &&
-                program->statements.front()->type == NodeType::ExprStatement) {
+                program->statements.front()->type == NodeType::EXPR_STMT) {
                 auto value = interpreter.evaluate(*program->statements.front());
                 if (value.type != ValueType::Null) {
                     std::cout << value.toString() << std::endl;

@@ -2,7 +2,13 @@ build/
 *.o
 *.out
 *.exe
+*.a
+*.so
 .DS_Store
+.vscode/
+.idea/
 cmake-build-*/
+CMakeFiles/
 __pycache__/
 *.pyc
+Makefile

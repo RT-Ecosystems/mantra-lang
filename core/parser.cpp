@@ -127,7 +127,7 @@ std::unique_ptr<MantraNode> Parser::statement() {
 std::unique_ptr<MantraNode> Parser::printStatement() {
     const Token& keyword = previous();
     auto value = expression();
-    return std::make_unique<PrintNode>(std::move(value), keyword.line, keyword.column);
+    return std::make_unique<PrintStmtNode>(std::move(value), keyword.line, keyword.column);
 }
 
 std::unique_ptr<MantraNode> Parser::ifStatement() {
@@ -138,14 +138,14 @@ std::unique_ptr<MantraNode> Parser::ifStatement() {
     }
 
     auto then_block = blockOrSingle();
-    std::unique_ptr<BlockNode> else_block;
+    std::unique_ptr<BlockStmtNode> else_block;
 
     if (isElseKeyword(peek().type)) {
         advance();
         else_block = blockOrSingle();
     }
 
-    return std::make_unique<IfNode>(std::move(condition), std::move(then_block),
+    return std::make_unique<IfStmtNode>(std::move(condition), std::move(then_block),
                                    std::move(else_block), keyword.line, keyword.column);
 }
 
@@ -153,7 +153,7 @@ std::unique_ptr<MantraNode> Parser::whileStatement() {
     const Token& keyword = previous();
     auto condition = expression();
     auto body_block = blockOrSingle();
-    return std::make_unique<WhileNode>(std::move(condition), std::move(body_block),
+    return std::make_unique<WhileStmtNode>(std::move(condition), std::move(body_block),
                                        keyword.line, keyword.column);
 }
 
@@ -193,7 +193,7 @@ std::unique_ptr<MantraNode> Parser::forStatement() {
 
     auto body_block = blockOrSingle();
 
-    return std::make_unique<ForNode>(name_token.lexeme, std::move(start_expr),
+    return std::make_unique<ForStmtNode>(name_token.lexeme, std::move(start_expr),
                                      std::move(end_expr), std::move(body_block),
                                      keyword.line, keyword.column);
 }
@@ -235,7 +235,7 @@ std::unique_ptr<MantraNode> Parser::functionStatement() {
 
     auto body_block = blockOrSingle();
 
-    return std::make_unique<FunctionNode>(name_token.lexeme, params,
+    return std::make_unique<FuncDefNode>(name_token.lexeme, params,
                                           std::move(body_block),
                                           keyword.line, keyword.column);
 }
@@ -245,22 +245,22 @@ std::unique_ptr<MantraNode> Parser::returnStatement() {
 
     if (check(TokenType::NEWLINE) || check(TokenType::SEMICOLON) ||
         check(TokenType::RBRACE) || check(TokenType::EOF_TOKEN)) {
-        return std::make_unique<ReturnNode>(nullptr, keyword.line, keyword.column);
+        return std::make_unique<ReturnStmtNode>(nullptr, keyword.line, keyword.column);
     }
 
     auto value = expression();
-    return std::make_unique<ReturnNode>(std::move(value), keyword.line, keyword.column);
+    return std::make_unique<ReturnStmtNode>(std::move(value), keyword.line, keyword.column);
 }
 
 std::unique_ptr<MantraNode> Parser::expressionStatement() {
     auto expr = expression();
     const Token& token = previous();
-    return std::make_unique<ExprStatementNode>(std::move(expr), token.line, token.column);
+    return std::make_unique<ExprStmtNode>(std::move(expr), token.line, token.column);
 }
 
-std::unique_ptr<BlockNode> Parser::block() {
+std::unique_ptr<BlockStmtNode> Parser::block() {
     const Token& start = previous();
-    auto block_node = std::make_unique<BlockNode>(start.line, start.column);
+    auto block_node = std::make_unique<BlockStmtNode>(start.line, start.column);
 
     skipNewlines();
 
@@ -279,12 +279,12 @@ std::unique_ptr<BlockNode> Parser::block() {
     return block_node;
 }
 
-std::unique_ptr<BlockNode> Parser::blockOrSingle() {
+std::unique_ptr<BlockStmtNode> Parser::blockOrSingle() {
     if (match(TokenType::LBRACE)) {
         return block();
     }
 
-    auto block_node = std::make_unique<BlockNode>(peek().line, peek().column);
+    auto block_node = std::make_unique<BlockStmtNode>(peek().line, peek().column);
     auto stmt = statement();
     if (stmt) {
         block_node->statements.push_back(std::move(stmt));
@@ -305,7 +305,7 @@ std::unique_ptr<MantraNode> Parser::assignment() {
             return value;
         }
 
-        return std::make_unique<AssignNode>(identifier->name, std::move(value),
+        return std::make_unique<AssignStmtNode>(identifier->name, std::move(value),
                                             equals.line, equals.column);
     }
 
@@ -322,7 +322,7 @@ std::unique_ptr<MantraNode> Parser::equality() {
     while (match({TokenType::OP_EQUAL, TokenType::OP_NOT_EQUAL})) {
         TokenType oper = previous().type;
         auto right = comparison();
-        expr = std::make_unique<BinaryNode>(oper, std::move(expr), std::move(right),
+        expr = std::make_unique<BinaryExprNode>(oper, std::move(expr), std::move(right),
                                             previous().line, previous().column);
     }
 
@@ -336,7 +336,7 @@ std::unique_ptr<MantraNode> Parser::comparison() {
                   TokenType::OP_GREATER, TokenType::OP_GREATER_EQUAL})) {
         TokenType oper = previous().type;
         auto right = term();
-        expr = std::make_unique<BinaryNode>(oper, std::move(expr), std::move(right),
+        expr = std::make_unique<BinaryExprNode>(oper, std::move(expr), std::move(right),
                                             previous().line, previous().column);
     }
 
@@ -349,7 +349,7 @@ std::unique_ptr<MantraNode> Parser::term() {
     while (match({TokenType::OP_PLUS, TokenType::OP_MINUS})) {
         TokenType oper = previous().type;
         auto right = factor();
-        expr = std::make_unique<BinaryNode>(oper, std::move(expr), std::move(right),
+        expr = std::make_unique<BinaryExprNode>(oper, std::move(expr), std::move(right),
                                             previous().line, previous().column);
     }
 
@@ -362,7 +362,7 @@ std::unique_ptr<MantraNode> Parser::factor() {
     while (match({TokenType::OP_MULTIPLY, TokenType::OP_DIVIDE})) {
         TokenType oper = previous().type;
         auto right = unary();
-        expr = std::make_unique<BinaryNode>(oper, std::move(expr), std::move(right),
+        expr = std::make_unique<BinaryExprNode>(oper, std::move(expr), std::move(right),
                                             previous().line, previous().column);
     }
 
@@ -373,7 +373,7 @@ std::unique_ptr<MantraNode> Parser::unary() {
     if (match({TokenType::OP_MINUS, TokenType::OP_NOT})) {
         TokenType oper = previous().type;
         auto right = unary();
-        return std::make_unique<UnaryNode>(oper, std::move(right),
+        return std::make_unique<UnaryExprNode>(oper, std::move(right),
                                            previous().line, previous().column);
     }
 
@@ -381,7 +381,7 @@ std::unique_ptr<MantraNode> Parser::unary() {
         advance();
         TokenType oper = TokenType::OP_NOT;
         auto right = unary();
-        return std::make_unique<UnaryNode>(oper, std::move(right),
+        return std::make_unique<UnaryExprNode>(oper, std::move(right),
                                            previous().line, previous().column);
     }
 
@@ -406,7 +406,7 @@ std::unique_ptr<MantraNode> Parser::call() {
             return expr;
         }
 
-        expr = std::make_unique<CallNode>(std::move(expr), std::move(args),
+        expr = std::make_unique<CallExprNode>(std::move(expr), std::move(args),
                                           call_token.line, call_token.column);
     }
 
@@ -427,24 +427,24 @@ std::unique_ptr<MantraNode> Parser::primary() {
         } catch (const std::exception&) {
             errorAt(number_token, "संख्या को पढ़ा नहीं जा सका");
         }
-        return std::make_unique<NumberNode>(number_value, is_integer, number_token.lexeme,
+        return std::make_unique<NumberLitNode>(number_value, is_integer, number_token.lexeme,
                                             number_token.line, number_token.column);
     }
 
     if (match(TokenType::STRING)) {
         const Token& string_token = previous();
-        return std::make_unique<StringNode>(string_token.value,
+        return std::make_unique<StringLitNode>(string_token.value,
                                             string_token.line, string_token.column);
     }
 
     if (isTrueKeyword(peek().type)) {
         Token tok = advance();
-        return std::make_unique<BooleanNode>(true, tok.line, tok.column);
+        return std::make_unique<BoolLitNode>(true, tok.line, tok.column);
     }
 
     if (isFalseKeyword(peek().type)) {
         Token tok = advance();
-        return std::make_unique<BooleanNode>(false, tok.line, tok.column);
+        return std::make_unique<BoolLitNode>(false, tok.line, tok.column);
     }
 
     if (match(TokenType::IDENTIFIER)) {

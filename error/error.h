@@ -1,76 +1,91 @@
-#ifndef MANTRA_ERROR_H
-#define MANTRA_ERROR_H
-
+#pragma once
 #include <string>
+#include <vector>
 
 namespace mantra {
 
-enum class ErrorType {
+struct Token;
+
+enum class UserLanguage {
+    HINGLISH, TANGLISH, PUNGLISH, BENGLISH,
+    GUJLISH, MARATHLISH, TELGLISH, KANGLISH,
+    MANGLISH, ODLISH, URLISH, ASSLISH,
+    MAITHLISH, KONKLISH, NEPLISH, SANGLISH,
+    KASHLISH, SINDLISH, DOGLISH, MANLISH,
+    BODLISH, SANTLISH, ENGLISH, UNKNOWN
+};
+
+enum class ErrorCode {
+    MISSING_THEN,
+    VAR_UNDEFINED,
+    TYPE_MISMATCH,
     SYNTAX_ERROR,
-    LEXER_ERROR,
+    LET_MISSING_ID,
+    INVALID_ASSIGN,
+    MISSING_RPAREN,
+    MISSING_RBRACE,
+    UNDEFINED_FUNCTION,
+    WRONG_ARG_COUNT
+};
+
+enum class ErrorType {
+    LEXICAL_ERROR,
+    SYNTAX_ERROR,
     SEMANTIC_ERROR,
     RUNTIME_ERROR,
     TYPE_ERROR,
-    UNKNOWN_IDENTIFIER,
-    INVALID_OPERATION,
-    FILE_NOT_FOUND,
     IO_ERROR,
-    WARNING,
-    INFO
+    UNKNOWN_ERROR
 };
 
-class ErrorHandler {
-public:
-    // Print error with Hindi and English messages
-    static void printError(ErrorType type, const std::string& message, 
-                          int line, int column);
-    
-    // Print warning (non-fatal)
-    static void printWarning(const std::string& message, int line, int column);
-    
-    // Throw error and exit
-    static void throwError(ErrorType type, const std::string& message,
-                          int line, int column, int exit_code = 1);
-    
-    // Get error message in Hindi
-    static std::string getHindiMessage(ErrorType type, const std::string& detail);
-    
-    // Get error message in English
-    static std::string getEnglishMessage(ErrorType type, const std::string& detail);
-    
-    // Print colored output
-    static void printColored(const std::string& text, const std::string& color);
-    
-    // Format location information
-    static std::string formatLocation(int line, int column);
-    
-    // Print error with source context
-    static void printErrorWithContext(ErrorType type, const std::string& message,
-                                     const std::string& context, int line, int column);
-    
-    // Error statistics
-    static int getErrorCount();
-    static int getWarningCount();
-    static void resetCounts();
-    static void incrementErrorCount();
-    static void incrementWarningCount();
-    
-    // Set verbosity level (0 = quiet, 1 = normal, 2 = verbose)
-    static void setVerbosity(int level);
-    
-    // Get current verbosity level
-    static int getVerbosity();
+struct MantraError {
+    ErrorType type;
+    std::string messageEn;
+    std::string messageHi;
+    std::string messageTa;
+    std::string messagePa;
+    std::string messageBn;
+    std::string messageGu;
+    std::string messageMr;
+    std::string messageTe;
+    std::string messageKn;
+    std::string messageMl;
+    int line;
+    int column;
 
-private:
-    static int verbosity_level;
-    
-    // Color codes
-    static const std::string COLOR_RED;
-    static const std::string COLOR_YELLOW;
-    static const std::string COLOR_GREEN;
-    static const std::string COLOR_RESET;
+    MantraError(ErrorType t,
+        const std::string& en,
+        const std::string& hi,
+        const std::string& ta,
+        const std::string& pa,
+        const std::string& bn,
+        const std::string& gu,
+        const std::string& mr,
+        const std::string& te,
+        const std::string& kn,
+        const std::string& ml,
+        int l, int c)
+        : type(t), messageEn(en), messageHi(hi),
+          messageTa(ta), messagePa(pa), messageBn(bn),
+          messageGu(gu), messageMr(mr), messageTe(te),
+          messageKn(kn), messageMl(ml), line(l), column(c) {}
 };
+
+UserLanguage detectUserLanguage(
+    const std::vector<std::string>& lexemes);
+
+void reportError(ErrorCode code,
+    UserLanguage language, int line);
+
+MantraError makeLexicalError(
+    const std::string& details, int line, int col);
+MantraError makeSyntaxError(
+    const std::string& details, int line, int col);
+MantraError makeSemanticError(
+    const std::string& details, int line, int col);
+
+void printError(const MantraError& err);
+void throwError(const MantraError& err);
+void warnError(const MantraError& err);
 
 } // namespace mantra
-
-#endif // MANTRA_ERROR_H

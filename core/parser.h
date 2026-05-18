@@ -1,10 +1,10 @@
-#ifndef MANTRA_PARSER_H
-#define MANTRA_PARSER_H
+#pragma once
 
 #include "ast.h"
+#include "../error/error.h"
 #include "token.h"
+
 #include <memory>
-#include <string>
 #include <vector>
 
 namespace mantra {
@@ -14,49 +14,43 @@ public:
     explicit Parser(const std::vector<Token>& tokens);
 
     std::unique_ptr<ProgramNode> parseProgram();
-
     bool hasError() const { return had_error; }
 
 private:
     const std::vector<Token>& tokens;
     size_t current;
     bool had_error;
+    UserLanguage language;
 
     const Token& peek() const;
     const Token& previous() const;
-    const Token& peekNextNonNewline(size_t start, size_t& out_index) const;
     bool isAtEnd() const;
 
     const Token& advance();
     bool check(TokenType type) const;
     bool match(TokenType type);
-    bool matchAny(const std::vector<TokenType>& types);
-
-    bool skipSeparators();
+    bool matchAny(std::initializer_list<TokenType> types);
     void skipNewlines();
 
-    int peekIndent() const;
-    void parseIndentedStatements(std::vector<std::unique_ptr<MantraNode>>& out, int indent_level);
+    const Token& consume(TokenType type, ErrorCode code);
+    const Token& consumeAny(std::initializer_list<TokenType> types, ErrorCode code);
 
-    std::unique_ptr<MantraNode> declaration(int indent_level);
-    std::unique_ptr<MantraNode> statement(int indent_level);
+    std::unique_ptr<MantraNode> declaration();
+    std::unique_ptr<MantraNode> statement();
+    std::unique_ptr<MantraNode> parsePrint();
+    std::unique_ptr<MantraNode> parseAssignmentOrLet();
+    std::unique_ptr<MantraNode> parseIf();
+    std::unique_ptr<MantraNode> parseWhile();
+    std::unique_ptr<MantraNode> parseFor();
+    std::unique_ptr<MantraNode> parseFunction();
+    std::unique_ptr<MantraNode> parseReturn();
+    std::unique_ptr<MantraNode> parseBreak();
+    std::unique_ptr<MantraNode> parseExpressionStatement();
 
-    std::unique_ptr<MantraNode> printStatement(const Token& keyword);
-    std::unique_ptr<MantraNode> ifStatement(const Token& keyword, int indent_level);
-    std::unique_ptr<MantraNode> whileStatement(const Token& keyword, int indent_level);
-    std::unique_ptr<MantraNode> forStatement(const Token& keyword, int indent_level);
-    std::unique_ptr<MantraNode> functionStatement(const Token& keyword, int indent_level);
-    std::unique_ptr<MantraNode> returnStatement(const Token& keyword);
-    std::unique_ptr<MantraNode> breakStatement(const Token& keyword);
-    std::unique_ptr<MantraNode> variableDeclaration(const Token& keyword);
-    std::unique_ptr<MantraNode> expressionStatement();
-
-    std::unique_ptr<BlockStmtNode> braceBlock(const Token& owner);
-    std::unique_ptr<BlockStmtNode> indentBlock(const Token& owner, int indent_level);
-    std::unique_ptr<BlockStmtNode> blockOrSingle(const Token& owner, int indent_level);
+    std::unique_ptr<BlockStmtNode> parseSuite();
+    std::unique_ptr<BlockStmtNode> wrapBlock(std::unique_ptr<MantraNode> stmt);
 
     std::unique_ptr<MantraNode> expression();
-    std::unique_ptr<MantraNode> assignment();
     std::unique_ptr<MantraNode> logicalOr();
     std::unique_ptr<MantraNode> logicalAnd();
     std::unique_ptr<MantraNode> equality();
@@ -66,6 +60,8 @@ private:
     std::unique_ptr<MantraNode> unary();
     std::unique_ptr<MantraNode> call();
     std::unique_ptr<MantraNode> primary();
+    std::unique_ptr<MantraNode> finishCall(std::unique_ptr<MantraNode> callee);
+    std::unique_ptr<MantraNode> finishIndex(std::unique_ptr<MantraNode> target);
 
     bool isPrintKeyword(TokenType type) const;
     bool isIfKeyword(TokenType type) const;
@@ -74,8 +70,10 @@ private:
     bool isForKeyword(TokenType type) const;
     bool isFunctionKeyword(TokenType type) const;
     bool isReturnKeyword(TokenType type) const;
+    bool isBreakKeyword(const Token& token) const;
     bool isTrueKeyword(TokenType type) const;
     bool isFalseKeyword(TokenType type) const;
+    bool isNullKeyword(const Token& token) const;
     bool isNotKeyword(TokenType type) const;
     bool isAndKeyword(TokenType type) const;
     bool isOrKeyword(TokenType type) const;
@@ -83,15 +81,9 @@ private:
     bool isToKeyword(TokenType type) const;
     bool isThenKeyword(TokenType type) const;
 
-    bool looksLikeForLoop() const;
-    bool isStepToken(const Token& token) const;
-    bool isBreakToken(const Token& token) const;
-
-    void synchronizeLine();
+    void synchronize();
     void errorAtCurrent(const std::string& message);
     void errorAt(const Token& token, const std::string& message);
 };
 
 } // namespace mantra
-
-#endif // MANTRA_PARSER_H

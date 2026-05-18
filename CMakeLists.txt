@@ -70,6 +70,10 @@ set(ERROR_SOURCES
 set(STDLIB_SOURCES
     stdlib/io.h
     stdlib/io.cpp
+    stdlib/math.h
+    stdlib/math.cpp
+    stdlib/string.h
+    stdlib/string.cpp
 )
 
 # Create library
@@ -80,8 +84,9 @@ add_library(mantra_lib STATIC
     ${STDLIB_SOURCES}
 )
 
-# Set public include directory
-target_include_directories(mantra_lib PUBLIC
+# Keep the library's internal headers private; the executable includes files by repo-relative paths.
+target_include_directories(mantra_lib PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/core
     ${CMAKE_CURRENT_SOURCE_DIR}/unicode
     ${CMAKE_CURRENT_SOURCE_DIR}/error

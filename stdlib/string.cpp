@@ -55,7 +55,10 @@ std::string utf8Slice(const std::string& text, long start, long end) {
     if (end < 0) end += size;
     start = std::clamp(start, 0L, size);
     end = std::clamp(end, 0L, size);
-    if (end < start) std::swap(start, end);
+    if (end < start) {
+        ErrorHandler::printError(ErrorType::RUNTIME_ERROR, "slice end must be >= start", 0, 0);
+        throw std::runtime_error("slice");
+    }
     return text.substr(offsets[static_cast<size_t>(start)], offsets[static_cast<size_t>(end)] - offsets[static_cast<size_t>(start)]);
 }
 
@@ -174,7 +177,10 @@ MantraValue builtinRepeat(const std::vector<MantraValue>& args) {
     ensureArgs(args, 2, "repeat");
     std::string s = requireString(args[0], "repeat");
     int count = static_cast<int>(requireNumber(args[1], "repeat"));
-    if (count < 0) count = 0;
+    if (count < 0) {
+        ErrorHandler::printError(ErrorType::RUNTIME_ERROR, "repeat count must be non-negative", 0, 0);
+        throw std::runtime_error("repeat");
+    }
     std::string out;
     out.reserve(s.size() * static_cast<size_t>(count));
     for (int i = 0; i < count; ++i) out += s;

@@ -309,6 +309,7 @@ void Interpreter::execute(const MantraNode& node) {
 
             environment->define(for_node.variable, MantraValue::number(start));
 
+            // The loop is inclusive on the end value to match MANTRA's range syntax.
             auto condition = [&](double value) {
                 return step > 0 ? value <= end : value >= end;
             };

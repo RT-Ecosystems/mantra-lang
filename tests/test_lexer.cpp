@@ -221,7 +221,7 @@ void testBaarBaarForLoopParsing() {
 
 } // namespace
 
-int main() {
+void runLexerTests() {
     testKeywords();
     testStrings();
     testTripleQuotedStrings();
@@ -236,5 +236,4 @@ int main() {
     testBaarBaarForLoopParsing();
 
     std::cout << "सभी लेक्सर टेस्ट सफल रहे।" << std::endl;
-    return 0;
 }

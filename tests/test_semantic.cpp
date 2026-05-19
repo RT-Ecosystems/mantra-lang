@@ -65,12 +65,11 @@ void testControlFlowOutsideContext() {
 
 } // namespace
 
-int main() {
+void runSemanticTests() {
     testValidProgram();
     testUndefinedVariable();
     testDuplicateDeclaration();
     testWrongArgumentCount();
     testControlFlowOutsideContext();
     std::cout << "सभी semantic टेस्ट सफल रहे।" << std::endl;
-    return 0;
 }

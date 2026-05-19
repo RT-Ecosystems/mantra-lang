@@ -1,24 +1,56 @@
-#include "mantra/vm/bytecode.h"
-#include "mantra/vm/vm.h"
+#include "core/interpreter.h"
+#include "core/lexer.h"
+#include "core/parser.h"
+#include "core/repl.h"
+#include "semantic/semantic_analyzer.h"
 
+#include <fstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
-int main() {
-    mantra::BytecodeProgram program;
-    const auto left = program.addConstant(mantra::Value::number(2));
-    const auto right = program.addConstant(mantra::Value::number(3));
+namespace {
 
-    program.emit(mantra::OpCode::PUSH_CONST, left);
-    program.emit(mantra::OpCode::PUSH_CONST, right);
-    program.emit(mantra::OpCode::ADD);
-    program.emit(mantra::OpCode::PRINT);
-    program.emit(mantra::OpCode::HALT);
+bool runSource(const std::string& source) {
+    mantra::Lexer lexer(source);
+    auto tokens = lexer.tokenize();
 
-    mantra::VM vm;
-    if (!vm.execute(program, std::cout)) {
-        std::cerr << vm.lastError() << std::endl;
-        return 1;
+    mantra::Parser parser(tokens);
+    auto program = parser.parseProgram();
+    if (parser.hasError() || !program) {
+        return false;
     }
 
+    mantra::SemanticAnalyzer semantic;
+    if (!semantic.analyze(*program)) {
+        return false;
+    }
+
+    mantra::Interpreter interpreter;
+    interpreter.interpret(*program);
+    return true;
+}
+
+bool runFile(const std::string& path) {
+    std::ifstream input(path);
+    if (!input) {
+        std::cerr << "Unable to open file: " << path << std::endl;
+        return false;
+    }
+
+    std::ostringstream buffer;
+    buffer << input.rdbuf();
+    return runSource(buffer.str());
+}
+
+} // namespace
+
+int main(int argc, char* argv[]) {
+    if (argc > 1) {
+        return runFile(argv[1]) ? 0 : 1;
+    }
+
+    mantra::Repl repl;
+    repl.run();
     return 0;
 }

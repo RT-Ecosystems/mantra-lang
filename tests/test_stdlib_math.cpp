@@ -44,28 +44,36 @@ std::string runProgram(const std::string& source) {
 }
 
 void test_math_aliases() {
-    const std::string output = runProgram(
-        "print jodo(1, 2, 3)\n"
-        "print ghato(10, 3, 2)\n"
-        "print guno(2, 3, 4)\n"
-        "print bhaago(100, 5, 2)\n"
-        "print baki(20, 6)\n"
-        "print varga(16)\n"
-        "print karan(16)\n"
-        "print mul(16)\n"
-        "print madhyaman([1, 2, 3, 4, 5])\n"
-        "print median([1, 2, 3, 4])\n"
-        "print mode([1, 1, 2, 3])\n"
-        "print range([1, 4, 9])\n"
-        "print pramaan([2, 4, 4, 4, 5, 5, 7, 9])\n"
-        "print sum([1, 2, 3, 4, 5])\n"
-        "print max([1, 9, 3])\n"
-        "print min([1, 9, 3])\n"
-        "print PI\n"
-        "print E\n");
+    struct Case {
+        const char* name;
+        const char* source;
+        const char* expected;
+    };
 
-    require(output == "6\n5\n24\n10\n2\n4\n4\n4\n3\n2.5\n1\n8\n2\n15\n9\n1\n3.14159265358979\n2.71828182845905\n",
-            "Unexpected math output");
+    const Case cases[] = {
+        {"add", "print jodo(1, 2, 3)\n", "6\n"},
+        {"subtract", "print ghato(10, 3, 2)\n", "5\n"},
+        {"multiply", "print guno(2, 3, 4)\n", "24\n"},
+        {"divide", "print bhaago(100, 5, 2)\n", "10\n"},
+        {"remainder", "print baki(20, 6)\n", "2\n"},
+        {"sqrt-varga", "print varga(16)\n", "4\n"},
+        {"sqrt-karan", "print karan(16)\n", "4\n"},
+        {"sqrt-mul", "print mul(16)\n", "4\n"},
+        {"mean", "print madhyaman([1, 2, 3, 4, 5])\n", "3\n"},
+        {"median", "print median([1, 2, 3, 4])\n", "2.5\n"},
+        {"mode", "print mode([1, 1, 2, 3])\n", "1\n"},
+        {"range", "print range([1, 4, 9])\n", "8\n"},
+        {"std-dev", "print pramaan([2, 4, 4, 4, 5, 5, 7, 9])\n", "2\n"},
+        {"sum", "print sum([1, 2, 3, 4, 5])\n", "15\n"},
+        {"max", "print max([1, 9, 3])\n", "9\n"},
+        {"min", "print min([1, 9, 3])\n", "1\n"},
+        {"pi-constant", "print PI\n", "3.14159265358979\n"},
+        {"e-constant", "print E\n", "2.71828182845905\n"},
+    };
+
+    for (const auto& test_case : cases) {
+        require(runProgram(test_case.source) == test_case.expected, test_case.name);
+    }
 }
 
 } // namespace

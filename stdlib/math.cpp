@@ -145,10 +145,6 @@ MantraValue builtinAdd(const std::vector<MantraValue>& args) {
 MantraValue builtinSubtract(const std::vector<MantraValue>& args) {
     ensureAtLeast(args, 2, "ghato");
     std::vector<double> values = collectNumbers(args, "ghato");
-    if (values.size() < 2) {
-        ErrorHandler::printError(ErrorType::RUNTIME_ERROR, "ghato requires at least 2 numbers", 0, 0);
-        throw std::runtime_error("ghato");
-    }
     double result = values[0];
     for (size_t i = 1; i < values.size(); ++i) {
         result -= values[i];
@@ -168,10 +164,6 @@ MantraValue builtinMultiply(const std::vector<MantraValue>& args) {
 MantraValue builtinDivide(const std::vector<MantraValue>& args) {
     ensureAtLeast(args, 2, "bhaago");
     std::vector<double> values = collectNumbers(args, "bhaago");
-    if (values.size() < 2) {
-        ErrorHandler::printError(ErrorType::RUNTIME_ERROR, "bhaago requires at least 2 numbers", 0, 0);
-        throw std::runtime_error("bhaago");
-    }
     double result = values[0];
     for (size_t i = 1; i < values.size(); ++i) {
         result /= values[i];
@@ -182,10 +174,6 @@ MantraValue builtinDivide(const std::vector<MantraValue>& args) {
 MantraValue builtinRemainder(const std::vector<MantraValue>& args) {
     ensureAtLeast(args, 2, "baki");
     std::vector<double> values = collectNumbers(args, "baki");
-    if (values.size() < 2) {
-        ErrorHandler::printError(ErrorType::RUNTIME_ERROR, "baki requires at least 2 numbers", 0, 0);
-        throw std::runtime_error("baki");
-    }
     double result = values[0];
     for (size_t i = 1; i < values.size(); ++i) {
         result = std::fmod(result, values[i]);

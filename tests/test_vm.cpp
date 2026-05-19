@@ -85,6 +85,7 @@ void runVmTests() {
 int main() {
     runLexerTests();
     runVmTests();
+    runMathTests();
     runSemanticTests();
     return 0;
 }

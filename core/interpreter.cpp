@@ -640,6 +640,17 @@ void Interpreter::registerStdlib() {
         globals->define(name, MantraValue::functionValue(func_value));
     };
 
+    auto addAliases = [&](const std::vector<std::string>& names,
+                          const std::function<MantraValue(const std::vector<MantraValue>&)>& fn) {
+        for (const auto& name : names) {
+            addNative(name, fn);
+        }
+    };
+
+    auto defineConstant = [&](const std::string& name, double value) {
+        globals->define(name, MantraValue::number(value));
+    };
+
     const std::vector<std::string> print_aliases = {
         "print",
         "println",
@@ -713,31 +724,33 @@ void Interpreter::registerStdlib() {
     addNative("repeat", stdlib::builtinRepeat);
     addNative("dohrao", stdlib::builtinRepeat);
 
-    addNative("sin", stdlib::builtinSin);
-    addNative("cos", stdlib::builtinCos);
-    addNative("tan", stdlib::builtinTan);
-    addNative("asin", stdlib::builtinAsin);
-    addNative("acos", stdlib::builtinAcos);
-    addNative("atan", stdlib::builtinAtan);
-    addNative("log", stdlib::builtinLog);
-    addNative("log10", stdlib::builtinLog10);
-    addNative("exp", stdlib::builtinExp);
-    addNative("pow", stdlib::builtinPow);
-    addNative("abs", stdlib::builtinAbs);
-    addNative("mutlak", stdlib::builtinAbs);
-    addNative("sqrt", stdlib::builtinSqrt);
-    addNative("varga", stdlib::builtinSqrt);
-    addNative("round", stdlib::builtinRound);
-    addNative("gol", stdlib::builtinRound);
-    addNative("ceil", stdlib::builtinCeil);
-    addNative("upar", stdlib::builtinCeil);
-    addNative("floor", stdlib::builtinFloor);
-    addNative("neeche", stdlib::builtinFloor);
+    addAliases({"jodo", "koodal", "joran", "jogao"}, stdlib::builtinAdd);
+    addAliases({"ghato", "kayal", "tafawut"}, stdlib::builtinSubtract);
+    addAliases({"guno", "guna", "perukku"}, stdlib::builtinMultiply);
+    addAliases({"bhaago", "vagat", "vani"}, stdlib::builtinDivide);
+    addAliases({"baki", "meechi", "seshamu"}, stdlib::builtinRemainder);
+
+    addAliases({"abs", "mutlak", "nirnayaka"}, stdlib::builtinAbs);
+    addAliases({"sqrt", "varga", "karan", "vargamul", "mul"}, stdlib::builtinSqrt);
+    addAliases({"pow", "shakti", "mattu", "potens"}, stdlib::builtinPow);
+    addAliases({"round", "gol", "suzhal"}, stdlib::builtinRound);
+    addAliases({"ceil", "upar", "melu"}, stdlib::builtinCeil);
+    addAliases({"floor", "neeche", "kizh"}, stdlib::builtinFloor);
+
+    addAliases({"madhyaman", "mean", "average"}, stdlib::builtinMean);
+    addAliases({"madhyika", "median"}, stdlib::builtinMedian);
+    addAliases({"bahulak", "mode"}, stdlib::builtinMode);
+    addAliases({"vistar", "range"}, stdlib::builtinRange);
+    addAliases({"pramaan", "std_deviation"}, stdlib::builtinStdDeviation);
+    addAliases({"yogfal", "sum"}, stdlib::builtinSum);
+    addAliases({"adhiktam", "maximum", "max"}, stdlib::builtinMaximum);
+    addAliases({"nyuntam", "minimum", "min"}, stdlib::builtinMinimum);
+
     addNative("random", stdlib::builtinRandom);
     addNative("pi", stdlib::builtinPi);
-    addNative("PI", stdlib::builtinPi);
     addNative("e", stdlib::builtinE);
-    addNative("E", stdlib::builtinE);
+    defineConstant("PI", 3.14159265358979);
+    defineConstant("E", 2.71828182845905);
     addNative("infinity", stdlib::builtinInfinity);
     addNative("nan", stdlib::builtinNaN);
     addNative("is_infinity", stdlib::builtinIsInfinity);

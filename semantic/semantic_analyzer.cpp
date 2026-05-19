@@ -63,7 +63,9 @@ bool SemanticAnalyzer::isDefined(const std::string& name) const {
             return true;
         }
     }
-    return functions.find(name) != functions.end() || builtins.find(name) != builtins.end();
+    return functions.find(name) != functions.end() ||
+           builtins.find(name) != builtins.end() ||
+           constants.find(name) != constants.end();
 }
 
 const SemanticAnalyzer::FunctionSignature* SemanticAnalyzer::lookupFunction(const std::string& name) const {
@@ -84,6 +86,10 @@ void SemanticAnalyzer::registerFunction(const std::string& name, size_t min_arit
 
 void SemanticAnalyzer::registerBuiltin(const std::string& name, size_t min_arity, size_t max_arity) {
     builtins[name] = FunctionSignature{min_arity, max_arity};
+}
+
+void SemanticAnalyzer::registerConstant(const std::string& name) {
+    constants.insert(name);
 }
 
 void SemanticAnalyzer::analyzeStatements(const std::vector<std::unique_ptr<MantraNode>>& statements) {
@@ -320,6 +326,7 @@ void SemanticAnalyzer::report(const MantraNode& node, const std::string& message
 
 void SemanticAnalyzer::seedBuiltins() {
     builtins.clear();
+    constants.clear();
     const size_t variadic = std::numeric_limits<size_t>::max();
     registerBuiltin("print", 0, variadic);
     registerBuiltin("println", 0, variadic);
@@ -372,24 +379,67 @@ void SemanticAnalyzer::seedBuiltins() {
     registerBuiltin("endsWith", 2, 2);
     registerBuiltin("repeat", 2, 2);
 
-    registerBuiltin("sin", 1, 1);
-    registerBuiltin("cos", 1, 1);
-    registerBuiltin("tan", 1, 1);
-    registerBuiltin("asin", 1, 1);
-    registerBuiltin("acos", 1, 1);
-    registerBuiltin("atan", 1, 1);
-    registerBuiltin("log", 1, 1);
-    registerBuiltin("log10", 1, 1);
-    registerBuiltin("exp", 1, 1);
-    registerBuiltin("pow", 2, 2);
+    registerBuiltin("jodo", 1, variadic);
+    registerBuiltin("koodal", 1, variadic);
+    registerBuiltin("joran", 1, variadic);
+    registerBuiltin("jogao", 1, variadic);
+    registerBuiltin("ghato", 2, variadic);
+    registerBuiltin("kayal", 2, variadic);
+    registerBuiltin("tafawut", 2, variadic);
+    registerBuiltin("guno", 1, variadic);
+    registerBuiltin("guna", 1, variadic);
+    registerBuiltin("perukku", 1, variadic);
+    registerBuiltin("bhaago", 2, variadic);
+    registerBuiltin("vagat", 2, variadic);
+    registerBuiltin("vani", 2, variadic);
+    registerBuiltin("baki", 2, variadic);
+    registerBuiltin("meechi", 2, variadic);
+    registerBuiltin("seshamu", 2, variadic);
     registerBuiltin("abs", 1, 1);
+    registerBuiltin("mutlak", 1, 1);
+    registerBuiltin("nirnayaka", 1, 1);
     registerBuiltin("sqrt", 1, 1);
+    registerBuiltin("varga", 1, 1);
+    registerBuiltin("karan", 1, 1);
+    registerBuiltin("vargamul", 1, 1);
+    registerBuiltin("mul", 1, 1);
+    registerBuiltin("pow", 2, 2);
+    registerBuiltin("shakti", 2, 2);
+    registerBuiltin("mattu", 2, 2);
+    registerBuiltin("potens", 2, 2);
     registerBuiltin("round", 1, 1);
+    registerBuiltin("gol", 1, 1);
+    registerBuiltin("suzhal", 1, 1);
     registerBuiltin("ceil", 1, 1);
+    registerBuiltin("upar", 1, 1);
+    registerBuiltin("melu", 1, 1);
     registerBuiltin("floor", 1, 1);
+    registerBuiltin("neeche", 1, 1);
+    registerBuiltin("kizh", 1, 1);
+    registerBuiltin("madhyaman", 1, variadic);
+    registerBuiltin("mean", 1, variadic);
+    registerBuiltin("average", 1, variadic);
+    registerBuiltin("madhyika", 1, variadic);
+    registerBuiltin("median", 1, variadic);
+    registerBuiltin("bahulak", 1, variadic);
+    registerBuiltin("mode", 1, variadic);
+    registerBuiltin("vistar", 1, variadic);
+    registerBuiltin("range", 1, variadic);
+    registerBuiltin("pramaan", 1, variadic);
+    registerBuiltin("std_deviation", 1, variadic);
+    registerBuiltin("yogfal", 1, variadic);
+    registerBuiltin("sum", 1, variadic);
+    registerBuiltin("adhiktam", 1, variadic);
+    registerBuiltin("maximum", 1, variadic);
+    registerBuiltin("max", 1, variadic);
+    registerBuiltin("nyuntam", 1, variadic);
+    registerBuiltin("minimum", 1, variadic);
+    registerBuiltin("min", 1, variadic);
     registerBuiltin("random", 0, variadic);
     registerBuiltin("pi", 0, variadic);
     registerBuiltin("e", 0, variadic);
+    registerConstant("PI");
+    registerConstant("E");
     registerBuiltin("infinity", 0, variadic);
     registerBuiltin("nan", 0, variadic);
     registerBuiltin("is_infinity", 1, 1);

@@ -4,6 +4,20 @@
 
 namespace mantra::stdlib {
 
+MantraValue builtinAdd(const std::vector<MantraValue>& args);
+MantraValue builtinSubtract(const std::vector<MantraValue>& args);
+MantraValue builtinMultiply(const std::vector<MantraValue>& args);
+MantraValue builtinDivide(const std::vector<MantraValue>& args);
+MantraValue builtinRemainder(const std::vector<MantraValue>& args);
+MantraValue builtinMean(const std::vector<MantraValue>& args);
+MantraValue builtinMedian(const std::vector<MantraValue>& args);
+MantraValue builtinMode(const std::vector<MantraValue>& args);
+MantraValue builtinRange(const std::vector<MantraValue>& args);
+MantraValue builtinStdDeviation(const std::vector<MantraValue>& args);
+MantraValue builtinSum(const std::vector<MantraValue>& args);
+MantraValue builtinMaximum(const std::vector<MantraValue>& args);
+MantraValue builtinMinimum(const std::vector<MantraValue>& args);
+
 MantraValue builtinSin(const std::vector<MantraValue>& args);
 MantraValue builtinCos(const std::vector<MantraValue>& args);
 MantraValue builtinTan(const std::vector<MantraValue>& args);

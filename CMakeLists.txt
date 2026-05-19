@@ -60,6 +60,7 @@ enable_testing()
 add_executable(mantra_tests
   tests/test_lexer.cpp
   tests/test_vm.cpp
+  tests/test_stdlib_math.cpp
   tests/test_semantic.cpp
 )
 target_link_libraries(mantra_tests 

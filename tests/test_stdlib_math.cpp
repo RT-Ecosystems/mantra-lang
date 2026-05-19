@@ -46,6 +46,10 @@ std::string runProgram(const std::string& source) {
 void test_math_aliases() {
     const std::string output = runProgram(
         "print jodo(1, 2, 3)\n"
+        "print ghato(10, 3, 2)\n"
+        "print guno(2, 3, 4)\n"
+        "print bhaago(100, 5, 2)\n"
+        "print baki(20, 6)\n"
         "print varga(16)\n"
         "print karan(16)\n"
         "print mul(16)\n"
@@ -53,13 +57,14 @@ void test_math_aliases() {
         "print median([1, 2, 3, 4])\n"
         "print mode([1, 1, 2, 3])\n"
         "print range([1, 4, 9])\n"
+        "print pramaan([2, 4, 4, 4, 5, 5, 7, 9])\n"
         "print sum([1, 2, 3, 4, 5])\n"
         "print max([1, 9, 3])\n"
         "print min([1, 9, 3])\n"
         "print PI\n"
         "print E\n");
 
-    require(output == "6\n4\n4\n4\n3\n2.5\n1\n8\n15\n9\n1\n3.14159265358979\n2.71828182845905\n",
+    require(output == "6\n5\n24\n10\n2\n4\n4\n4\n3\n2.5\n1\n8\n2\n15\n9\n1\n3.14159265358979\n2.71828182845905\n",
             "Unexpected math output");
 }
 

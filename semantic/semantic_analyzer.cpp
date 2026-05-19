@@ -420,6 +420,7 @@ void SemanticAnalyzer::seedBuiltins() {
     registerBuiltin("mean", 1, variadic);
     registerBuiltin("average", 1, variadic);
     registerBuiltin("madhyika", 1, variadic);
+    registerBuiltin("median", 1, variadic);
     registerBuiltin("bahulak", 1, variadic);
     registerBuiltin("mode", 1, variadic);
     registerBuiltin("vistar", 1, variadic);

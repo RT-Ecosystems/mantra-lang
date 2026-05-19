@@ -182,42 +182,42 @@ MantraValue builtinRemainder(const std::vector<MantraValue>& args) {
 }
 
 MantraValue builtinMean(const std::vector<MantraValue>& args) {
-    std::vector<double> values = requireSeries(args, "madhyaman");
+    std::vector<double> values = requireSeries(args, "mean");
     return MantraValue::number(meanOf(values));
 }
 
 MantraValue builtinMedian(const std::vector<MantraValue>& args) {
-    std::vector<double> values = requireSeries(args, "madhyika");
+    std::vector<double> values = requireSeries(args, "median");
     return MantraValue::number(medianOf(std::move(values)));
 }
 
 MantraValue builtinMode(const std::vector<MantraValue>& args) {
-    std::vector<double> values = requireSeries(args, "bahulak");
+    std::vector<double> values = requireSeries(args, "mode");
     return MantraValue::number(modeOf(values));
 }
 
 MantraValue builtinRange(const std::vector<MantraValue>& args) {
-    std::vector<double> values = requireSeries(args, "vistar");
+    std::vector<double> values = requireSeries(args, "range");
     return MantraValue::number(maxOf(values) - minOf(values));
 }
 
 MantraValue builtinStdDeviation(const std::vector<MantraValue>& args) {
-    std::vector<double> values = requireSeries(args, "pramaan");
+    std::vector<double> values = requireSeries(args, "std_deviation");
     return MantraValue::number(populationStdDev(values));
 }
 
 MantraValue builtinSum(const std::vector<MantraValue>& args) {
-    std::vector<double> values = collectNumbers(args, "yogfal");
+    std::vector<double> values = collectNumbers(args, "sum");
     return MantraValue::number(sumValues(values));
 }
 
 MantraValue builtinMaximum(const std::vector<MantraValue>& args) {
-    std::vector<double> values = requireSeries(args, "adhiktam");
+    std::vector<double> values = requireSeries(args, "max");
     return MantraValue::number(maxOf(values));
 }
 
 MantraValue builtinMinimum(const std::vector<MantraValue>& args) {
-    std::vector<double> values = requireSeries(args, "nyuntam");
+    std::vector<double> values = requireSeries(args, "min");
     return MantraValue::number(minOf(values));
 }
 

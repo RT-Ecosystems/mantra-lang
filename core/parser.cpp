@@ -382,6 +382,8 @@ std::unique_ptr<MantraNode> Parser::call() {
             expr = finishCall(std::move(expr));
         } else if (match(TokenType::LBRACKET)) {
             expr = finishIndex(std::move(expr));
+        } else if (match(TokenType::DOT)) {
+            expr = finishMember(std::move(expr));
         } else {
             break;
         }
@@ -404,6 +406,11 @@ std::unique_ptr<MantraNode> Parser::finishIndex(std::unique_ptr<MantraNode> targ
     auto idx = expression();
     Token close = consume(TokenType::RBRACKET, "Expected ']' after index");
     return std::make_unique<IndexExprNode>(std::move(target), std::move(idx), close.line, close.column);
+}
+
+std::unique_ptr<MantraNode> Parser::finishMember(std::unique_ptr<MantraNode> target) {
+    Token name = consume(TokenType::IDENTIFIER, "Expected property name after '.'");
+    return std::make_unique<MemberExprNode>(std::move(target), name.lexeme, name.line, name.column);
 }
 
 std::unique_ptr<MantraNode> Parser::primary() {

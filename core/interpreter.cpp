@@ -1,11 +1,14 @@
 #include "interpreter.h"
 #include "../error/error.h"
+#include "../stdlib/network.h"
 #include "../stdlib/io.h"
 #include "../stdlib/math.h"
 #include "../stdlib/string.h"
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -30,6 +33,92 @@ std::string numberToString(double value) {
         return "0";
     }
     return text;
+}
+
+std::string escapeString(const std::string& value) {
+    std::ostringstream out;
+    for (char ch : value) {
+        switch (ch) {
+            case '\\': out << "\\\\"; break;
+            case '"': out << "\\\""; break;
+            case '\b': out << "\\b"; break;
+            case '\f': out << "\\f"; break;
+            case '\n': out << "\\n"; break;
+            case '\r': out << "\\r"; break;
+            case '\t': out << "\\t"; break;
+            default:
+                if (static_cast<unsigned char>(ch) < 0x20u) {
+                    out << "\\u00";
+                    constexpr char hex[] = "0123456789abcdef";
+                    out << hex[(static_cast<unsigned char>(ch) >> 4) & 0x0Fu]
+                        << hex[static_cast<unsigned char>(ch) & 0x0Fu];
+                } else {
+                    out << ch;
+                }
+                break;
+        }
+    }
+    return out.str();
+}
+
+std::string objectToString(const std::unordered_map<std::string, MantraValue>& object);
+std::string valueToString(const MantraValue& value);
+
+std::string objectToString(const std::unordered_map<std::string, MantraValue>& object) {
+    std::vector<std::string> keys;
+    keys.reserve(object.size());
+    for (const auto& entry : object) {
+        keys.push_back(entry.first);
+    }
+    std::sort(keys.begin(), keys.end());
+
+    std::ostringstream out;
+    out << "{";
+    for (size_t i = 0; i < keys.size(); ++i) {
+        const auto& key = keys[i];
+        out << "\"" << escapeString(key) << "\": " << valueToString(object.at(key));
+        if (i + 1 < keys.size()) {
+            out << ", ";
+        }
+    }
+    out << "}";
+    return out.str();
+}
+
+std::string valueToString(const MantraValue& value) {
+    switch (value.type) {
+        case ValueType::Number:
+            return numberToString(value.number_value);
+        case ValueType::String:
+            return value.string_value;
+        case ValueType::Boolean:
+            return value.bool_value ? "true" : "false";
+        case ValueType::Null:
+            return "null";
+        case ValueType::Function:
+            if (value.function) {
+                if (!value.function->name.empty()) {
+                    return "<function " + value.function->name + ">";
+                }
+            }
+            return "<function>";
+        case ValueType::Array: {
+            std::ostringstream out;
+            out << "[";
+            for (size_t i = 0; i < value.array_value.size(); ++i) {
+                out << valueToString(value.array_value[i]);
+                if (i + 1 < value.array_value.size()) {
+                    out << ", ";
+                }
+            }
+            out << "]";
+            return out.str();
+        }
+        case ValueType::Object:
+            return objectToString(value.object_value);
+        default:
+            return "<unknown>";
+    }
 }
 
 } // namespace
@@ -75,6 +164,13 @@ MantraValue MantraValue::array(std::vector<MantraValue> elements) {
     return result;
 }
 
+MantraValue MantraValue::object(std::unordered_map<std::string, MantraValue> properties) {
+    MantraValue result;
+    result.type = ValueType::Object;
+    result.object_value = std::move(properties);
+    return result;
+}
+
 std::string MantraValue::typeName() const {
     switch (type) {
         case ValueType::Number:
@@ -89,43 +185,15 @@ std::string MantraValue::typeName() const {
             return "function";
         case ValueType::Array:
             return "array";
+        case ValueType::Object:
+            return "object";
         default:
             return "unknown";
     }
 }
 
 std::string MantraValue::toString() const {
-    switch (type) {
-        case ValueType::Number:
-            return numberToString(number_value);
-        case ValueType::String:
-            return string_value;
-        case ValueType::Boolean:
-            return bool_value ? "true" : "false";
-        case ValueType::Null:
-            return "null";
-        case ValueType::Function:
-            if (function) {
-                if (!function->name.empty()) {
-                    return "<function " + function->name + ">";
-                }
-            }
-            return "<function>";
-        case ValueType::Array: {
-            std::ostringstream out;
-            out << "[";
-            for (size_t i = 0; i < array_value.size(); ++i) {
-                out << array_value[i].toString();
-                if (i + 1 < array_value.size()) {
-                    out << ", ";
-                }
-            }
-            out << "]";
-            return out.str();
-        }
-        default:
-            return "<unknown>";
-    }
+    return valueToString(*this);
 }
 
 Environment::Environment(std::shared_ptr<Environment> parent_env)
@@ -221,6 +289,8 @@ MantraValue Interpreter::evaluate(const MantraNode& node) {
             return evaluateUnary(static_cast<const UnaryExprNode&>(node));
         case NodeType::CALL_EXPR:
             return evaluateCall(static_cast<const CallExprNode&>(node));
+        case NodeType::MEMBER_EXPR:
+            return evaluateMember(static_cast<const MemberExprNode&>(node));
         case NodeType::ASSIGN_STMT: {
             const auto& assign_node = static_cast<const AssignStmtNode&>(node);
             MantraValue value = evaluate(*assign_node.value);
@@ -362,6 +432,7 @@ void Interpreter::execute(const MantraNode& node) {
         case NodeType::BOOL_LIT:
         case NodeType::NULL_LIT:
         case NodeType::IDENTIFIER:
+        case NodeType::MEMBER_EXPR:
             evaluate(node);
             break;
         default:
@@ -580,6 +651,22 @@ MantraValue Interpreter::evaluateIndex(const IndexExprNode& node) {
     return MantraValue::nullValue();
 }
 
+MantraValue Interpreter::evaluateMember(const MemberExprNode& node) {
+    MantraValue target = evaluate(*node.object);
+    if (target.type != ValueType::Object) {
+        runtimeError("dot access केवल object पर चलेगा", node);
+        return MantraValue::nullValue();
+    }
+
+    auto it = target.object_value.find(node.property);
+    if (it == target.object_value.end()) {
+        runtimeError("Unknown property '" + node.property + "'", node);
+        return MantraValue::nullValue();
+    }
+
+    return it->second;
+}
+
 bool Interpreter::isTruthy(const MantraValue& value) const {
     switch (value.type) {
         case ValueType::Boolean:
@@ -594,6 +681,8 @@ bool Interpreter::isTruthy(const MantraValue& value) const {
             return true;
         case ValueType::Array:
             return !value.array_value.empty();
+        case ValueType::Object:
+            return true;
         default:
             return false;
     }
@@ -621,6 +710,17 @@ bool Interpreter::valuesEqual(const MantraValue& left, const MantraValue& right)
             }
             for (size_t i = 0; i < left.array_value.size(); ++i) {
                 if (!valuesEqual(left.array_value[i], right.array_value[i])) {
+                    return false;
+                }
+            }
+            return true;
+        case ValueType::Object:
+            if (left.object_value.size() != right.object_value.size()) {
+                return false;
+            }
+            for (const auto& entry : left.object_value) {
+                auto it = right.object_value.find(entry.first);
+                if (it == right.object_value.end() || !valuesEqual(entry.second, it->second)) {
                     return false;
                 }
             }
@@ -723,6 +823,11 @@ void Interpreter::registerStdlib() {
     addNative("ant", stdlib::builtinEndsWith);
     addNative("repeat", stdlib::builtinRepeat);
     addNative("dohrao", stdlib::builtinRepeat);
+
+    addAliases({"maango", "fetch", "get"}, stdlib::builtinFetch);
+    addAliases({"bhejo", "post"}, stdlib::builtinPost);
+    addAliases({"json_padho", "parse"}, stdlib::builtinJsonParse);
+    addAliases({"json_likho", "stringify"}, stdlib::builtinJsonStringify);
 
     addAliases({"jodo", "koodal", "joran", "jogao"}, stdlib::builtinAdd);
     addAliases({"ghato", "kayal", "tafawut"}, stdlib::builtinSubtract);

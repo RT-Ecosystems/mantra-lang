@@ -32,7 +32,8 @@ enum class NodeType {
     NULL_LIT,
     IDENTIFIER,
     ARRAY_LIT,
-    INDEX_EXPR
+    INDEX_EXPR,
+    MEMBER_EXPR
 };
 
 inline std::string indentString(int indent) {
@@ -528,6 +529,28 @@ struct IndexExprNode : public MantraNode {
         }
         if (index) {
             out << index->toStringIndented(indent + 1);
+        }
+        return out.str();
+    }
+};
+
+struct MemberExprNode : public MantraNode {
+    std::unique_ptr<MantraNode> object;
+    std::string property;
+
+    MemberExprNode(std::unique_ptr<MantraNode> target,
+                   std::string member_name,
+                   int node_line,
+                   int node_column)
+        : MantraNode(NodeType::MEMBER_EXPR, node_line, node_column),
+          object(std::move(target)),
+          property(std::move(member_name)) {}
+
+    std::string toStringIndented(int indent) const override {
+        std::ostringstream out;
+        out << indentString(indent) << "MemberExpr " << property << " " << locationString() << "\n";
+        if (object) {
+            out << object->toStringIndented(indent + 1);
         }
         return out.str();
     }

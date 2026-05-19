@@ -18,7 +18,8 @@ enum class ValueType {
     Boolean,
     Null,
     Function,
-    Array
+    Array,
+    Object
 };
 
 struct FunctionValue {
@@ -38,6 +39,7 @@ struct MantraValue {
     bool bool_value = false;
     std::shared_ptr<FunctionValue> function;
     std::vector<MantraValue> array_value;
+    std::unordered_map<std::string, MantraValue> object_value;
 
     static MantraValue number(double value);
     static MantraValue string(const std::string& value);
@@ -45,6 +47,7 @@ struct MantraValue {
     static MantraValue nullValue();
     static MantraValue functionValue(std::shared_ptr<FunctionValue> func);
     static MantraValue array(std::vector<MantraValue> elements);
+    static MantraValue object(std::unordered_map<std::string, MantraValue> properties);
 
     std::string typeName() const;
     std::string toString() const;

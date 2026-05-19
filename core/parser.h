@@ -63,6 +63,7 @@ private:
     std::unique_ptr<MantraNode> primary();
     std::unique_ptr<MantraNode> finishCall(std::unique_ptr<MantraNode> callee);
     std::unique_ptr<MantraNode> finishIndex(std::unique_ptr<MantraNode> target);
+    std::unique_ptr<MantraNode> finishMember(std::unique_ptr<MantraNode> target);
 
     bool isPrintKeyword(TokenType type) const;
     bool isIfKeyword(TokenType type) const;

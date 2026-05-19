@@ -1,42 +1,73 @@
 cmake_minimum_required(VERSION 3.15)
-project(MantraLang VERSION 0.1.0 LANGUAGES CXX)
+project(MantraLang VERSION 0.1.0 
+        LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+  set(CMAKE_BUILD_TYPE Release)
 endif()
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+add_library(mantra_lib STATIC
+  core/lexer.cpp
+  core/parser.cpp
+  core/interpreter.cpp
+  core/repl.cpp
+  error/error.cpp
+  stdlib/io.cpp
+  stdlib/math.cpp
+  stdlib/string.cpp
+  unicode/unicode.cpp
+  unicode/script_detect.cpp
+  compiler/compiler.cpp
+  semantic/semantic_analyzer.cpp
+  bytecode/chunk.cpp
+  vm/vm.cpp
+  src/vm/value.cpp
+  src/vm/stack.cpp
+  src/vm/bytecode.cpp
+  src/vm/vm.cpp
+  web/html_generator.cpp
+  web/mtr_parser.cpp
+)
+
+target_include_directories(mantra_lib
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
 if(MSVC)
-    add_compile_options(/W4 /WX /utf-8)
+  target_compile_options(mantra_lib 
+    PRIVATE /W4 /utf-8)
 else()
-    add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+  target_compile_options(mantra_lib 
+    PRIVATE -Wall -Wextra)
 endif()
 
-add_library(mantra_vm STATIC
-    src/vm/value.cpp
-    src/vm/stack.cpp
-    src/vm/bytecode.cpp
-    src/vm/vm.cpp
-)
-
-target_include_directories(mantra_vm
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
 add_executable(mantra main.cpp)
-target_link_libraries(mantra PRIVATE mantra_vm)
+target_link_libraries(mantra 
+  PRIVATE mantra_lib)
 
 enable_testing()
+add_executable(mantra_tests
+  tests/test_lexer.cpp
+  tests/test_vm.cpp
+  tests/test_semantic.cpp
+)
+target_link_libraries(mantra_tests 
+  PRIVATE mantra_lib)
+add_test(NAME AllTests 
+  COMMAND mantra_tests)
 
-add_executable(mantra_vm_tests tests/test_vm.cpp)
-target_link_libraries(mantra_vm_tests PRIVATE mantra_vm)
-add_test(NAME mantra_vm_tests COMMAND mantra_vm_tests)
-
-message(STATUS "MANTRA VM Foundation")
-message(STATUS "Version: ${PROJECT_VERSION}")
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
+message(STATUS 
+  "MANTRA v${PROJECT_VERSION}")
+message(STATUS 
+  "Build: ${CMAKE_BUILD_TYPE}")

@@ -1,5 +1,6 @@
 #include "mantra/vm/bytecode.h"
 #include "mantra/vm/vm.h"
+#include "test_runner.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -73,11 +74,17 @@ void test_invalid_constant_index() {
 
 } // namespace
 
-int main() {
+void runVmTests() {
     test_add_and_print();
     test_sub_and_halt();
     test_stack_underflow();
     test_invalid_constant_index();
     std::cout << "VM foundation test passed" << std::endl;
+}
+
+int main() {
+    runLexerTests();
+    runVmTests();
+    runSemanticTests();
     return 0;
 }

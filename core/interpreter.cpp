@@ -825,9 +825,7 @@ void Interpreter::registerStdlib() {
     addNative("repeat", stdlib::builtinRepeat);
     addNative("dohrao", stdlib::builtinRepeat);
 
-    addAliases({"maango", "fetch", "get"}, stdlib::builtinHttpGet);
-    addAliases({"bhejo", "post"}, stdlib::builtinHttpPost);
-        
+                
     addAliases({"jodo", "koodal", "joran", "jogao"}, stdlib::builtinAdd);
     addAliases({"ghato", "kayal", "tafawut"}, stdlib::builtinSubtract);
     addAliases({"guno", "guna", "perukku"}, stdlib::builtinMultiply);

@@ -651,7 +651,7 @@ MantraValue Interpreter::evaluateIndex(const IndexExprNode& node) {
     return MantraValue::nullValue();
 }
 
-MantraValue Interpreter::evaluateMember(const MemberExprNode& node) {
+MantraValue Interpreter::evaluateMember(const MantraNode& node) {
     MantraValue target = evaluate(*node.object);
     if (target.type != ValueType::Object) {
         runtimeError("dot access केवल object पर चलेगा", node);

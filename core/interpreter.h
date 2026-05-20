@@ -111,7 +111,7 @@ private:
 
     void registerStdlib();
     void runtimeError(const std::string& message, const MantraNode& node) const;
-    MantraValue evaluateMember(const MemberExprNode& node);
+    MantraValue evaluateMember(const MantraNode& node);
 };
 
 } // namespace mantra

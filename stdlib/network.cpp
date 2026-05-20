@@ -1,3 +1,4 @@
+#include "../core/interpreter.h"
 #include "network.h"
 #include <cstdio>
 #include <memory>

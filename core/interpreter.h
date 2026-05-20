@@ -29,7 +29,8 @@ struct FunctionValue {
     const BlockStmtNode* body = nullptr;
     std::shared_ptr<class Environment> closure;
     std::shared_ptr<BytecodeChunk> bytecode;
-    std::function<class MantraValue(const std::vector<class MantraValue>&)> native;
+    std::function<class MantraValue(
+        const std::vector<class MantraValue>&)> native;
 };
 
 struct MantraValue {
@@ -45,9 +46,13 @@ struct MantraValue {
     static MantraValue string(const std::string& value);
     static MantraValue boolean(bool value);
     static MantraValue nullValue();
-    static MantraValue functionValue(std::shared_ptr<FunctionValue> func);
-    static MantraValue array(std::vector<MantraValue> elements);
-    static MantraValue object(std::unordered_map<std::string, MantraValue> properties);
+    static MantraValue functionValue(
+        std::shared_ptr<FunctionValue> func);
+    static MantraValue array(
+        std::vector<MantraValue> elements);
+    static MantraValue object(
+        std::unordered_map<std::string,
+            MantraValue> properties);
 
     std::string typeName() const;
     std::string toString() const;
@@ -55,12 +60,13 @@ struct MantraValue {
 
 class Environment {
 public:
-    explicit Environment(std::shared_ptr<Environment> parent_env = nullptr);
-
-    void define(const std::string& name, const MantraValue& value);
-    bool set(const std::string& name, const MantraValue& value);
+    explicit Environment(
+        std::shared_ptr<Environment> parent_env = nullptr);
+    void define(const std::string& name,
+                const MantraValue& value);
+    bool set(const std::string& name,
+             const MantraValue& value);
     MantraValue get(const std::string& name) const;
-
 private:
     std::unordered_map<std::string, MantraValue> values;
     std::shared_ptr<Environment> parent;
@@ -70,7 +76,6 @@ class ReturnException : public std::exception {
 public:
     explicit ReturnException(MantraValue value);
     const MantraValue& value() const;
-
 private:
     MantraValue return_value;
 };
@@ -88,7 +93,6 @@ public:
 class Interpreter {
 public:
     Interpreter();
-
     void interpret(const ProgramNode& program);
     MantraValue evaluate(const MantraNode& node);
 
@@ -99,19 +103,27 @@ private:
     static constexpr size_t kMaxCallDepth = 1024;
 
     void execute(const MantraNode& node);
-    void executeBlock(const BlockStmtNode& block, std::shared_ptr<Environment> new_env);
+    void executeBlock(const BlockStmtNode& block,
+        std::shared_ptr<Environment> new_env);
 
-    MantraValue evaluateBinary(const BinaryExprNode& node);
-    MantraValue evaluateUnary(const UnaryExprNode& node);
-    MantraValue evaluateCall(const CallExprNode& node);
-    MantraValue evaluateIndex(const IndexExprNode& node);
-    MantraValue evaluateMember(const MemberExprNode& node);
+    MantraValue evaluateBinary(
+        const BinaryExprNode& node);
+    MantraValue evaluateUnary(
+        const UnaryExprNode& node);
+    MantraValue evaluateCall(
+        const CallExprNode& node);
+    MantraValue evaluateIndex(
+        const IndexExprNode& node);
+    MantraValue evaluateMember(
+        const MemberExprNode& node);
 
     bool isTruthy(const MantraValue& value) const;
-    bool valuesEqual(const MantraValue& left, const MantraValue& right) const;
+    bool valuesEqual(const MantraValue& left,
+        const MantraValue& right) const;
 
     void registerStdlib();
-    void runtimeError(const std::string& message, const MantraNode& node) const;
+    void runtimeError(const std::string& message,
+        const MantraNode& node) const;
 };
 
 } // namespace mantra

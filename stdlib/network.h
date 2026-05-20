@@ -1,8 +1,13 @@
 #pragma once
-#include "../core/interpreter.h"
+#include <string>
+#include <vector>
+#include <functional>
 #include <string>
 
 namespace mantra {
+
+struct MantraValue;
+
 namespace stdlib {
 
 // HTTP response structure

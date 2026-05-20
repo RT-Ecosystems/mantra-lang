@@ -105,6 +105,7 @@ private:
     MantraValue evaluateUnary(const UnaryExprNode& node);
     MantraValue evaluateCall(const CallExprNode& node);
     MantraValue evaluateIndex(const IndexExprNode& node);
+    MantraValue evaluateMember(const MemberExprNode& node);
 
     bool isTruthy(const MantraValue& value) const;
     bool valuesEqual(const MantraValue& left, const MantraValue& right) const;

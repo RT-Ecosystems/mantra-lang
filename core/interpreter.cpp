@@ -651,7 +651,7 @@ MantraValue Interpreter::evaluateIndex(const IndexExprNode& node) {
     return MantraValue::nullValue();
 }
 
-static MantraValue evaluateMemberHelper(const MantraNode& node, Interpreter* interp) {
+MantraValue Interpreter::evaluateMember(const MemberExprNode& node) {
     const auto& memberNode = static_cast<const MemberExprNode&>(node);
     MantraValue target = evaluate(*memberNode.object);
     if (target.type != ValueType::Object) {

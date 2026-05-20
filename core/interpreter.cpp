@@ -824,8 +824,8 @@ void Interpreter::registerStdlib() {
     addNative("repeat", stdlib::builtinRepeat);
     addNative("dohrao", stdlib::builtinRepeat);
 
-    addAliases({"maango", "fetch", "get"}, stdlib::builtinFetch);
-    addAliases({"bhejo", "post"}, stdlib::builtinPost);
+    addAliases({"maango", "fetch", "get"}, stdlib::builtinHttpGet);
+    addAliases({"bhejo", "post"}, stdlib::builtinHttpPost);
     addAliases({"json_padho", "parse"}, stdlib::builtinJsonParse);
     addAliases({"json_likho", "stringify"}, stdlib::builtinJsonStringify);
 

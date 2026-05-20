@@ -827,9 +827,7 @@ void Interpreter::registerStdlib() {
 
     addAliases({"maango", "fetch", "get"}, stdlib::builtinHttpGet);
     addAliases({"bhejo", "post"}, stdlib::builtinHttpPost);
-    addAliases({"json_padho", "parse"}, stdlib::builtinJsonParse);
-    addAliases({"json_likho", "stringify"}, stdlib::builtinJsonStringify);
-
+        
     addAliases({"jodo", "koodal", "joran", "jogao"}, stdlib::builtinAdd);
     addAliases({"ghato", "kayal", "tafawut"}, stdlib::builtinSubtract);
     addAliases({"guno", "guna", "perukku"}, stdlib::builtinMultiply);

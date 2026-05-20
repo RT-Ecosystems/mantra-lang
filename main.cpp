@@ -1,3 +1,5 @@
+#include "web/mtr_parser.h"
+#include "web/html_generator.h"
 #include "core/interpreter.h"
 #include "core/lexer.h"
 #include "core/parser.h"

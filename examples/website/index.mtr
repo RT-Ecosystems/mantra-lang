@@ -1,0 +1,23 @@
+[dhanche]
+  sheershak = "Namaste India!"
+  para = "MANTRA se bani website — India ki pehli programming language"
+  button = "MANTRA ke baare mein jaano"
+  para = "22 Indian languages mein code likho"
+  button = "Shuru Karo"
+
+[roop]
+  sheershak
+    rang = "#FF6B00"
+    pitha = "40px"
+  para
+    pitha = "18px"
+  button
+    prishtha_rang = "#FF6B00"
+    rang = "safed"
+    haashiya = "14px 32px"
+    gol_kono = "8px"
+    seema = "none"
+
+[kaam]
+  button.click_pe
+    dikhao = "MANTRA Zindabad! India ki programming language!"

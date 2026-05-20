@@ -652,15 +652,16 @@ MantraValue Interpreter::evaluateIndex(const IndexExprNode& node) {
 }
 
 MantraValue Interpreter::evaluateMember(const MantraNode& node) {
-    MantraValue target = evaluate(*node.object);
+    const auto& memberNode = static_cast<const MemberExprNode&>(node);
+    MantraValue target = evaluate(*memberNode.object);
     if (target.type != ValueType::Object) {
         runtimeError("dot access केवल object पर चलेगा", node);
         return MantraValue::nullValue();
     }
 
-    auto it = target.object_value.find(node.property);
+    auto it = target.object_value.find(memberNode.property);
     if (it == target.object_value.end()) {
-        runtimeError("Unknown property '" + node.property + "'", node);
+        runtimeError("Unknown property '" + memberNode.property + "'", node);
         return MantraValue::nullValue();
     }
 

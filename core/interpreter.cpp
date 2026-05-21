@@ -175,7 +175,7 @@ bool Environment::set(const std::string& name, const MantraValue& value) {
 MantraValue Environment::get(const std::string& name) const {
     auto it = values.find(name);
     if (it != values.end()) {
-        return it->second;
+    // object return disabled
     }
 
     if (parent) {
@@ -1015,4 +1015,3 @@ void Interpreter::runtimeError(const std::string& message, const MantraNode& nod
 
 
 
-} // namespace mantra

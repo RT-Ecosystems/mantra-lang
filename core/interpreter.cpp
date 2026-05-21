@@ -811,7 +811,7 @@ void Interpreter::registerStdlib() {
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {
-    ErrorHandler::printError(ErrorType::RUNTIME_ERROR, message, node.line, node.column);
+    std::cerr << "[MANTRA Error] Line " << node.line << ": " << message << std::endl;
     throw std::runtime_error(message);
 }
 
@@ -1015,3 +1015,5 @@ void Interpreter::runtimeError(const std::string& message, const MantraNode& nod
 
 
 
+
+} // namespace mantra

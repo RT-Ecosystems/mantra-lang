@@ -1,4 +1,5 @@
 #include "interpreter.h"
+#pragma GCC diagnostic ignored "-Wunused-function"
 #include "../error/error.h"
 #include "../stdlib/network.h"
 #include "../stdlib/io.h"
@@ -35,31 +36,7 @@ std::string numberToString(double value) {
     return text;
 }
 
-std::string escapeString(const std::string& value) {
-    std::ostringstream out;
-    for (char ch : value) {
-        switch (ch) {
-            case '\\': out << "\\\\"; break;
-            case '"': out << "\\\""; break;
-            case '\b': out << "\\b"; break;
-            case '\f': out << "\\f"; break;
-            case '\n': out << "\\n"; break;
-            case '\r': out << "\\r"; break;
-            case '\t': out << "\\t"; break;
-            default:
-                if (static_cast<unsigned char>(ch) < 0x20u) {
-                    out << "\\u00";
-                    constexpr char hex[] = "0123456789abcdef";
-                    out << hex[(static_cast<unsigned char>(ch) >> 4) & 0x0Fu]
-                        << hex[static_cast<unsigned char>(ch) & 0x0Fu];
-                } else {
-                    out << ch;
-                }
-                break;
-        }
-    }
-    return out.str();
-}
+
 
 
 

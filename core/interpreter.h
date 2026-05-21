@@ -40,7 +40,7 @@ struct MantraValue {
     bool bool_value = false;
     std::shared_ptr<FunctionValue> function;
     std::vector<MantraValue> array_value;
-    std::unordered_map<std::string, MantraValue> object_value;
+    std::vector<std::pair<std::string, std::shared_ptr<void>>> object_entries;
 
     static MantraValue number(double value);
     static MantraValue string(const std::string& value);

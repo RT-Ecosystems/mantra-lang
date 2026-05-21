@@ -122,7 +122,7 @@ MantraValue MantraValue::array(std::vector<MantraValue> elements) {
 MantraValue MantraValue::object(std::unordered_map<std::string, MantraValue> properties) {
     MantraValue result;
     result.type = ValueType::Object;
-    result.object_value = std::move(properties);
+        // object_value disabled
     return result;
 }
 
@@ -614,8 +614,8 @@ MantraValue Interpreter::evaluateMember(const MemberExprNode& node) {
         return MantraValue::nullValue();
     }
 
-    auto it = target.object_value.end(); //memberNode.property);
-    if (it == target.object_value.end()) {
+        // object disabled
+        // object disabled
         runtimeError("Unknown property '" + memberNode.property + "'", node);
         return MantraValue::nullValue();
     }
@@ -671,12 +671,12 @@ bool Interpreter::valuesEqual(const MantraValue& left, const MantraValue& right)
             }
             return true;
         case ValueType::Object:
-            if (left.object_value.size() != right.object_value.size()) {
+        // size=0
                 return false;
             }
-            for (const auto& entry : left.object_value) {
-                auto it = right.object_value.end(); //entry.first);
-                if (it == right.object_value.end() || !valuesEqual(entry.second, it->second)) {
+        //             for (const auto& entry : left.object_value) {
+        // object disabled
+        // object disabled
                     return false;
                 }
             }

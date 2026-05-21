@@ -10,7 +10,6 @@
 
 namespace mantra {
 
-struct MantraValue;
 class BytecodeChunk;
 
 enum class ValueType {
@@ -30,8 +29,8 @@ struct FunctionValue {
     const BlockStmtNode* body = nullptr;
     std::shared_ptr<class Environment> closure;
     std::shared_ptr<BytecodeChunk> bytecode;
-    std::function<MantraValue(
-        const std::vector<MantraValue>&)> native;
+    std::function<class MantraValue(
+        const std::vector<class MantraValue>&)> native;
 };
 
 struct MantraValue {

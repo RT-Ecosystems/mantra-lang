@@ -618,9 +618,7 @@ MantraValue Interpreter::evaluateMember(const MemberExprNode& node) {
         // object disabled
         runtimeError("Unknown property '" + memberNode.property + "'", node);
         return MantraValue::nullValue();
-
 }
-
 bool Interpreter::isTruthy(const MantraValue& value) const {
     switch (value.type) {
         case ValueType::Boolean:

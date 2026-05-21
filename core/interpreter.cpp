@@ -678,8 +678,6 @@ bool Interpreter::valuesEqual(const MantraValue& left, const MantraValue& right)
         // object disabled
         // object disabled
                     return false;
-                }
-            }
             return true;
         default:
             return false;

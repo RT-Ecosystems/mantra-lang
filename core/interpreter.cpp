@@ -61,29 +61,7 @@ std::string escapeString(const std::string& value) {
     return out.str();
 }
 
-std::string objectToString(const std::unordered_map<std::string, MantraValue>& object);
-std::string valueToString(const MantraValue& value);
 
-std::string objectToString(const std::unordered_map<std::string, MantraValue>& object) {
-    std::vector<std::string> keys;
-    keys.reserve(object.size());
-    for (const auto& entry : object) {
-        keys.push_back(entry.first);
-    }
-    std::sort(keys.begin(), keys.end());
-
-    std::ostringstream out;
-    out << "{";
-    for (size_t i = 0; i < keys.size(); ++i) {
-        const auto& key = keys[i];
-        out << "\"" << escapeString(key) << "\": " << valueToString(object.at(key));
-        if (i + 1 < keys.size()) {
-            out << ", ";
-        }
-    }
-    out << "}";
-    return out.str();
-}
 
 std::string valueToString(const MantraValue& value) {
     switch (value.type) {

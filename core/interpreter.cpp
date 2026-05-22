@@ -667,10 +667,8 @@ bool Interpreter::valuesEqual(const MantraValue& left, const MantraValue& right)
         case ValueType::Object:
         // size=0
                 return false;
-            }
         //             for (const auto& entry : left.object_value) {
         // object disabled
-                    return false;
             return true;
         default:
             return false;

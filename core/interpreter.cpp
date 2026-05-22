@@ -620,30 +620,19 @@ MantraValue Interpreter::evaluateMember(const MemberExprNode& node) {
         return MantraValue::nullValue();
 }
 bool Interpreter::isTruthy(const MantraValue& value) const {
-        case ValueType::Boolean:
-            return value.bool_value;
-        case ValueType::Null:
-            return false;
-        case ValueType::Number:
-            return std::abs(value.number_value) > 1e-12;
-        case ValueType::String:
-            return !value.string_value.empty();
-        case ValueType::Function:
-            return true;
-        case ValueType::Array:
-            return !value.array_value.empty();
-        case ValueType::Object:
-            return true;
-        default:
-            return false;
+    switch (value.type) {
+        case ValueType::Boolean: return value.bool_value;
+        case ValueType::Null: return false;
+        case ValueType::Number: return value.number_value != 0.0;
+        case ValueType::String: return !value.string_value.empty();
+        case ValueType::Array: return !value.array_value.empty();
+        case ValueType::Object: return true;
+        default: return false;
     }
 }
 
 bool Interpreter::valuesEqual(const MantraValue& left, const MantraValue& right) const {
-    if (left.type != right.type) {
-        return false;
-    }
-
+    if (left.type != right.type) return false;
     switch (left.type) {
         case ValueType::Number:
             return std::abs(left.number_value - right.number_value) < 1e-12;
@@ -653,24 +642,14 @@ bool Interpreter::valuesEqual(const MantraValue& left, const MantraValue& right)
             return left.bool_value == right.bool_value;
         case ValueType::Null:
             return true;
-        case ValueType::Function:
-            return left.function == right.function;
         case ValueType::Array:
-            if (left.array_value.size() != right.array_value.size()) {
-                return false;
-            }
-            for (size_t i = 0; i < left.array_value.size(); ++i) {
-                if (!valuesEqual(left.array_value[i], right.array_value[i])) {
-                    return false;
-                }
+            if (left.array_value.size() != right.array_value.size()) return false;
+            for (size_t i = 0; i < left.array_value.size(); i++) {
+                if (!valuesEqual(left.array_value[i], right.array_value[i])) return false;
             }
             return true;
         case ValueType::Object:
-        // size=0
-                return false;
-        //             for (const auto& entry : left.object_value) {
-        // object disabled
-            return true;
+            return false;
         default:
             return false;
     }

@@ -670,7 +670,6 @@ bool Interpreter::valuesEqual(const MantraValue& left, const MantraValue& right)
             }
         //             for (const auto& entry : left.object_value) {
         // object disabled
-        // object disabled
                     return false;
             return true;
         default:

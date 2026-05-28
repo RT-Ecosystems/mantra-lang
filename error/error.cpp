@@ -26,58 +26,58 @@ std::string toLowerCopy(const std::string& value) {
 
 const std::unordered_map<std::string, UserLanguage>& keywordLanguageMap() {
     static const std::unordered_map<std::string, UserLanguage> map = {
-        {"dikhao", UserLanguage::HINGLISH}, {"agar", UserLanguage::HINGLISH},
-        {"kaado", UserLanguage::TANGLISH}, {"endral", UserLanguage::TANGLISH},
-        {"dakho", UserLanguage::PUNGLISH}, {"jekr", UserLanguage::PUNGLISH},
-        {"dekhao", UserLanguage::BENGLISH}, {"jodi", UserLanguage::BENGLISH},
-        {"batavo", UserLanguage::GUJLISH}, {"jor", UserLanguage::GUJLISH},
-        {"dakhav", UserLanguage::MARATHLISH}, {"jar", UserLanguage::MARATHLISH},
-        {"chupinchu", UserLanguage::TELGLISH}, {"ante", UserLanguage::TELGLISH},
-        {"toro", UserLanguage::KANGLISH}, {"agre", UserLanguage::KANGLISH},
-        {"kaaniku", UserLanguage::MANGLISH}, {"engil", UserLanguage::MANGLISH},
-        {"jadi", UserLanguage::ODLISH}, {"jabat", UserLanguage::ODLISH},
-        {"nohole", UserLanguage::ASSLISH}, {"jabotloi", UserLanguage::ASSLISH},
-        {"dekhaow", UserLanguage::MAITHLISH}, {"je", UserLanguage::MAITHLISH},
-        {"dakhoi", UserLanguage::KONKLISH}, {"zor", UserLanguage::KONKLISH},
-        {"dekhau", UserLanguage::NEPLISH}, {"yedi", UserLanguage::NEPLISH},
-        {"darshaya", UserLanguage::SANGLISH}, {"yadi", UserLanguage::SANGLISH},
-        {"waatav", UserLanguage::KASHLISH}, {"galaw", UserLanguage::KASHLISH},
-        {"dikhay", UserLanguage::SINDLISH}, {"khoota", UserLanguage::SINDLISH},
-        {"wekho", UserLanguage::DOGLISH}, {"ger", UserLanguage::DOGLISH},
-        {"nungsi", UserLanguage::MANLISH}, {"amare", UserLanguage::MANLISH},
-        {"nangi", UserLanguage::BODLISH}, {"bodo", UserLanguage::BODLISH},
-        {"dado", UserLanguage::SANTLISH}, {"ama", UserLanguage::SANTLISH},
-        {"print", UserLanguage::ENGLISH}, {"if", UserLanguage::ENGLISH},
-        {"function", UserLanguage::ENGLISH}, {"return", UserLanguage::ENGLISH}
+        {"dikhao", UserLanguage::Hinglish}, {"agar", UserLanguage::Hinglish},
+        {"kaado", UserLanguage::Tanglish}, {"endral", UserLanguage::Tanglish},
+        {"dakho", UserLanguage::Punglish}, {"jekr", UserLanguage::Punglish},
+        {"dekhao", UserLanguage::Benglish}, {"jodi", UserLanguage::Benglish},
+        {"batavo", UserLanguage::Gujlish}, {"jor", UserLanguage::Gujlish},
+        {"dakhav", UserLanguage::Marathlish}, {"jar", UserLanguage::Marathlish},
+        {"chupinchu", UserLanguage::Telglish}, {"ante", UserLanguage::Telglish},
+        {"toro", UserLanguage::Kanglish}, {"agre", UserLanguage::Kanglish},
+        {"kaaniku", UserLanguage::Manglish}, {"engil", UserLanguage::Manglish},
+        {"jadi", UserLanguage::Odlish}, {"jabat", UserLanguage::Odlish},
+        {"nohole", UserLanguage::Asslish}, {"jabotloi", UserLanguage::Asslish},
+        {"dekhaow", UserLanguage::Maithlish}, {"je", UserLanguage::Maithlish},
+        {"dakhoi", UserLanguage::Konklish}, {"zor", UserLanguage::Konklish},
+        {"dekhau", UserLanguage::Neplish}, {"yedi", UserLanguage::Neplish},
+        {"darshaya", UserLanguage::Sanglish}, {"yadi", UserLanguage::Sanglish},
+        {"waatav", UserLanguage::Kashlish}, {"galaw", UserLanguage::Kashlish},
+        {"dikhay", UserLanguage::Sindlish}, {"khoota", UserLanguage::Sindlish},
+        {"wekho", UserLanguage::Doglish}, {"ger", UserLanguage::Doglish},
+        {"nungsi", UserLanguage::Manlish}, {"amare", UserLanguage::Manlish},
+        {"nangi", UserLanguage::Bodlish}, {"bodo", UserLanguage::Bodlish},
+        {"dado", UserLanguage::Santlish}, {"ama", UserLanguage::Santlish},
+        {"print", UserLanguage::English}, {"if", UserLanguage::English},
+        {"function", UserLanguage::English}, {"return", UserLanguage::English}
     };
     return map;
 }
 
 std::string localizedPrefix(UserLanguage language, const std::string& english) {
     switch (language) {
-        case UserLanguage::HINGLISH: return "त्रुटि: " + english;
-        case UserLanguage::TANGLISH: return "Pizhai: " + english;
-        case UserLanguage::PUNGLISH: return "Galti: " + english;
-        case UserLanguage::BENGLISH: return "Bhool: " + english;
-        case UserLanguage::GUJLISH: return "Bhool: " + english;
-        case UserLanguage::MARATHLISH: return "Chook: " + english;
-        case UserLanguage::TELGLISH: return "Tappu: " + english;
-        case UserLanguage::KANGLISH: return "Tappa: " + english;
-        case UserLanguage::MANGLISH: return "Thett: " + english;
-        case UserLanguage::ODLISH: return "Bhul: " + english;
-        case UserLanguage::URLISH: return "Ghalat: " + english;
-        case UserLanguage::ASSLISH: return "Bhool: " + english;
-        case UserLanguage::MAITHLISH: return "Bhul: " + english;
-        case UserLanguage::KONKLISH: return "Chuk: " + english;
-        case UserLanguage::NEPLISH: return "Galti: " + english;
-        case UserLanguage::SANGLISH: return "त्रुटिः: " + english;
-        case UserLanguage::KASHLISH: return "Khata: " + english;
-        case UserLanguage::SINDLISH: return "Galti: " + english;
-        case UserLanguage::DOGLISH: return "Ghalti: " + english;
-        case UserLanguage::MANLISH: return "Thabuk: " + english;
-        case UserLanguage::BODLISH: return "Khontai: " + english;
-        case UserLanguage::SANTLISH: return "Gomke: " + english;
-        case UserLanguage::ENGLISH: return english;
+        case UserLanguage::Hinglish: return "त्रुटि: " + english;
+        case UserLanguage::Tanglish: return "Pizhai: " + english;
+        case UserLanguage::Punglish: return "Galti: " + english;
+        case UserLanguage::Benglish: return "Bhool: " + english;
+        case UserLanguage::Gujlish: return "Bhool: " + english;
+        case UserLanguage::Marathlish: return "Chook: " + english;
+        case UserLanguage::Telglish: return "Tappu: " + english;
+        case UserLanguage::Kanglish: return "Tappa: " + english;
+        case UserLanguage::Manglish: return "Thett: " + english;
+        case UserLanguage::Odlish: return "Bhul: " + english;
+        case UserLanguage::Urlish: return "Ghalat: " + english;
+        case UserLanguage::Asslish: return "Bhool: " + english;
+        case UserLanguage::Maithlish: return "Bhul: " + english;
+        case UserLanguage::Konklish: return "Chuk: " + english;
+        case UserLanguage::Neplish: return "Galti: " + english;
+        case UserLanguage::Sanglish: return "त्रुटिः: " + english;
+        case UserLanguage::Kashlish: return "Khata: " + english;
+        case UserLanguage::Sindlish: return "Galti: " + english;
+        case UserLanguage::Doglish: return "Ghalti: " + english;
+        case UserLanguage::Manlish: return "Thabuk: " + english;
+        case UserLanguage::Bodlish: return "Khontai: " + english;
+        case UserLanguage::Santlish: return "Gomke: " + english;
+        case UserLanguage::English: return english;
         default: return english;
     }
 }
@@ -112,12 +112,12 @@ std::string errorMessageForCode(ErrorCode code) {
 std::unordered_map<UserLanguage, std::string> buildMessages(const std::string& detail) {
     std::unordered_map<UserLanguage, std::string> out;
     for (UserLanguage lang : {
-             UserLanguage::HINGLISH, UserLanguage::TANGLISH, UserLanguage::PUNGLISH, UserLanguage::BENGLISH,
-             UserLanguage::GUJLISH, UserLanguage::MARATHLISH, UserLanguage::TELGLISH, UserLanguage::KANGLISH,
-             UserLanguage::MANGLISH, UserLanguage::ODLISH, UserLanguage::URLISH, UserLanguage::ASSLISH,
-             UserLanguage::MAITHLISH, UserLanguage::KONKLISH, UserLanguage::NEPLISH, UserLanguage::SANGLISH,
-             UserLanguage::KASHLISH, UserLanguage::SINDLISH, UserLanguage::DOGLISH, UserLanguage::MANLISH,
-             UserLanguage::BODLISH, UserLanguage::SANTLISH, UserLanguage::ENGLISH}) {
+             UserLanguage::Hinglish, UserLanguage::Tanglish, UserLanguage::Punglish, UserLanguage::Benglish,
+             UserLanguage::Gujlish, UserLanguage::Marathlish, UserLanguage::Telglish, UserLanguage::Kanglish,
+             UserLanguage::Manglish, UserLanguage::Odlish, UserLanguage::Urlish, UserLanguage::Asslish,
+             UserLanguage::Maithlish, UserLanguage::Konklish, UserLanguage::Neplish, UserLanguage::Sanglish,
+             UserLanguage::Kashlish, UserLanguage::Sindlish, UserLanguage::Doglish, UserLanguage::Manlish,
+             UserLanguage::Bodlish, UserLanguage::Santlish, UserLanguage::English}) {
         out.emplace(lang, localizedPrefix(lang, detail));
     }
     return out;
@@ -139,7 +139,7 @@ void printMantraError(const MantraError& err, const std::string& title) {
         out << "Location: line " << err.line << ", col " << err.column << "\n";
     }
 
-    auto it_en = err.messages.find(UserLanguage::ENGLISH);
+    auto it_en = err.messages.find(UserLanguage::English);
     if (it_en != err.messages.end()) {
         std::istringstream lines(it_en->second);
         std::string line;
@@ -154,7 +154,7 @@ void printMantraError(const MantraError& err, const std::string& title) {
         }
     }
 
-    auto it_hi = err.messages.find(UserLanguage::HINGLISH);
+    auto it_hi = err.messages.find(UserLanguage::Hinglish);
     if (verbosity_level > 1 && it_hi != err.messages.end()) {
         out << it_hi->second << "\n";
     }
@@ -185,7 +185,7 @@ UserLanguage detectUserLanguage(const std::vector<std::string>& lexemes) {
         }
     }
 
-    UserLanguage best = UserLanguage::UNKNOWN;
+    UserLanguage best = UserLanguage::Unknown;
     int best_count = 0;
     for (const auto& pair : counts) {
         if (pair.second > best_count) {
@@ -193,7 +193,7 @@ UserLanguage detectUserLanguage(const std::vector<std::string>& lexemes) {
             best_count = pair.second;
         }
     }
-    return best_count == 0 ? UserLanguage::UNKNOWN : best;
+    return best_count == 0 ? UserLanguage::Unknown : best;
 }
 
 void reportError(ErrorCode code, UserLanguage language, int line) {

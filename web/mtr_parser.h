@@ -3,36 +3,12 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <mantra/core/types.h>
 
 namespace mantra {
 
-// All 22 Indian language mixes + English
-enum class UserLanguage {
-    Unknown,
-    Hinglish,    // Hindi+English
-    Tanglish,    // Tamil+English
-    Punglish,    // Punjabi+English
-    Benglish,    // Bengali+English
-    Gujlish,     // Gujarati+English
-    Marathlish,  // Marathi+English
-    Telglish,    // Telugu+English
-    Kanglish,    // Kannada+English
-    Manglish,    // Malayalam+English
-    Odlish,      // Odia+English
-    Urlish,      // Urdu+English
-    Asslish,     // Assamese+English
-    Maithlish,   // Maithili+English
-    Konklish,    // Konkani+English
-    Neplish,     // Nepali+English
-    Sanglish,    // Sanskrit+English
-    Kashlish,    // Kashmiri+English
-    Sindlish,    // Sindhi+English
-    Doglish,     // Dogri+English
-    Manlish,     // Manipuri+English
-    Bodlish,     // Bodo+English
-    Santlish,    // Santali+English
-    English      // Pure English
-};
+// UserLanguage is now defined in mantra/core/types.h
+using UserLanguage = mantra::UserLanguage;
 
 struct MtrElement {
     std::string type;       // HTML tag: h1, p, button, a, img, ul, div

@@ -34,7 +34,7 @@ bool containsTokenType(std::initializer_list<T> types, T value) {
 } // namespace
 
 Parser::Parser(const std::vector<Token>& toks)
-    : tokens(toks), current(0), had_error(false), language(UserLanguage::UNKNOWN) {
+    : tokens(toks), current(0), had_error(false), language(UserLanguage::Unknown) {
     std::vector<std::string> lexemes;
     lexemes.reserve(tokens.size());
     for (const auto& token : tokens) {

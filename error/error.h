@@ -4,51 +4,17 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <mantra/core/types.h>
 
 namespace mantra {
 
 struct Token;
 
-enum class UserLanguage {
-    HINGLISH, TANGLISH, PUNGLISH, BENGLISH,
-    GUJLISH, MARATHLISH, TELGLISH, KANGLISH,
-    MANGLISH, ODLISH, URLISH, ASSLISH,
-    MAITHLISH, KONKLISH, NEPLISH, SANGLISH,
-    KASHLISH, SINDLISH, DOGLISH, MANLISH,
-    BODLISH, SANTLISH, ENGLISH, UNKNOWN
-};
-
-enum class ErrorCode {
-    MISSING_THEN,
-    VAR_UNDEFINED,
-    TYPE_MISMATCH,
-    SYNTAX_ERROR,
-    LET_MISSING_ID,
-    INVALID_ASSIGN,
-    MISSING_RPAREN,
-    MISSING_RBRACE,
-    UNDEFINED_FUNCTION,
-    WRONG_ARG_COUNT,
-    UNKNOWN_IDENTIFIER,
-    INVALID_OPERATION,
-    FILE_NOT_FOUND,
-    IO_ERROR
-};
-
-enum class ErrorType {
-    LEXICAL_ERROR,
-    SYNTAX_ERROR,
-    SEMANTIC_ERROR,
-    RUNTIME_ERROR,
-    TYPE_ERROR,
-    UNKNOWN_IDENTIFIER,
-    INVALID_OPERATION,
-    FILE_NOT_FOUND,
-    IO_ERROR,
-    WARNING,
-    INFO,
-    UNKNOWN_ERROR
-};
+// Type definitions are now in mantra/core/types.h
+// These using declarations provide compatibility:
+using UserLanguage = mantra::UserLanguage;
+using ErrorCode = mantra::ErrorCode;
+using ErrorType = mantra::ErrorType;
 
 struct MantraError {
     ErrorType type = ErrorType::UNKNOWN_ERROR;

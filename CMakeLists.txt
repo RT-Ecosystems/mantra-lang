@@ -21,6 +21,7 @@ add_library(mantra_lib STATIC
   core/interpreter.cpp
   core/repl.cpp
   core/keyword_normalizer.cpp
+  core/typesystem.cpp
   error/error.cpp
   stdlib/io.cpp
   stdlib/math.cpp

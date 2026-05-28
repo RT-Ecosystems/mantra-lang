@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ast.h"
+#include "token_class.h"
 #include "../error/error.h"
 #include "token.h"
 
@@ -83,6 +84,9 @@ private:
     bool isFromKeyword(TokenType type) const;
     bool isToKeyword(TokenType type) const;
     bool isThenKeyword(TokenType type) const;
+    
+    // NEW: Get TokenClass from current token for new grammar system
+    bool checkClass(TokenClass klass) const;
 
     void synchronize();
     void errorAtCurrent(const std::string& message);

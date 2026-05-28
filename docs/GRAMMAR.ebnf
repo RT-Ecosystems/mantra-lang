@@ -1,0 +1,284 @@
+(* MANTRA Language - Formal EBNF Grammar Specification *)
+(* Stabilized version with unambiguous rules and deterministic parsing *)
+
+(* ==== LEXICAL ELEMENTS ==== *)
+
+(* Literals *)
+number_lit = digit+ ( "." digit+ )?
+           | "0x" hex_digit+
+           ;
+string_lit = '"' string_char* '"'
+           | "'" string_char* "'"
+           | '"""' string_char* '"""'
+           | "'''" string_char* "'''"
+           ;
+identifier = ( letter | underscore ) ( letter | digit | underscore )*
+           ;
+
+(* Keywords - organized by semantic class *)
+print_keyword = "dikhao" | "kaado" | "dakho" | "dekhao" | "batavo" | "dakhav"
+              | "chupinchu" | "toro" | "kaaniku" | "dekhaow" | "dakhoi" | "dekhau"
+              | "darshaya" | "waatav" | "dikhay" | "wekho" | "nungsi" | "nangi"
+              | "dado" | "print"
+              ;
+
+if_keyword = "agar" | "endral" | "jekr" | "jodi" | "jor" | "jar" | "ante"
+           | "agre" | "engil" | "jadi" | "nohole" | "je" | "zor" | "yedi"
+           | "yadi" | "galaw" | "ger" | "amare" | "bodo" | "ama" | "if"
+           ;
+
+else_keyword = "warna" | "illena" | "mudmudke" | "nahole" | "nahi_to" | "nahitar"
+             | "lekapote" | "illandre" | "allenkil" | "bae" | "nahi_ta" | "naitar"
+             | "nabhaye" | "anyatha" | "nahin_ta" | "natte" | "nangou" | "else"
+             ;
+
+while_keyword = "marumurai" | "murhke" | "jabotokkhon" | "jabtak" | "parat"
+              | "andaka" | "jotagje" | "varethum" | "jabat" | "jabotloi" | "jabsamma"
+              | "yavat" | "waatav" | "jabsim" | "chatlaba" | "while"
+              ;
+
+for_keyword = "baarbaar" | "for" ;
+
+function_keyword = "kaam" | "seyal" | "te" | "kaj" | "pachhu" | "kharay" | "pani"
+                 | "kelu" | "cheyu" | "phera" | "ghurai" | "karya" | "phirave"
+                 | "tikin" | "function"
+                 ;
+
+return_keyword = "wapas" | "thirumbu" | "ja" | "phrao" | "tirigi" | "hogi"
+               | "matti" | "phera" | "ghurai" | "pharka" | "pratyaga" | "sato"
+               | "chingba" | "return"
+               ;
+
+break_keyword = "break" ;
+continue_keyword = "continue" ;
+
+true_keyword = "sach" | "unmai" | "satya" | "sachu" | "khota" | "nijam" | "nijha"
+             | "sathyam" | "thambal" | "beo" | "bae_hon" | "sano" | "true"
+             ;
+
+false_keyword = "jhooth" | "poi" | "mittha" | "juthu" | "abaddham" | "sullu"
+              | "asathyam" | "makhal" | "noa" | "khoota" | "mitha" | "jhuto"
+              | "false"
+              ;
+
+and_keyword = "aur" | "and" | "mattrum" | "ebong" | "ane" | "ani" | "mariyu"
+            | "mattu" | "um" | "ebam" | "aru" | "ra" | "cha" | "ain"
+            | "amasung" | "ar"
+            ;
+
+or_keyword = "ya" | "or" | "ke" | "kiva" | "allathu" | "leda" | "athava"
+           | "wa" | "yanaba" | "abua"
+           ;
+
+not_keyword = "nahi" | "not" | "!" ;
+
+let_keyword = "rakho" | "let" ;
+
+from_keyword = "se" | "from" ;
+to_keyword = "tak" | "to" ;
+then_keyword = "tab" | "then" ;
+
+(* ==== SYNTAX RULES ==== *)
+
+(* Program structure *)
+program = ( statement )* EOF
+        ;
+
+statement = declaration
+          | expression_stmt
+          ;
+
+declaration = print_stmt
+            | if_stmt
+            | while_stmt
+            | for_stmt
+            | function_def
+            | return_stmt
+            | break_stmt
+            | continue_stmt
+            | assignment_stmt
+            | let_stmt
+            ;
+
+(* Print statement - CANONICAL FORM *)
+(* NOTE: Assignment-free syntax. Print takes expression directly without '=' *)
+(* Old form (DEPRECATED): dikhao = "text" *)
+(* New form (CANONICAL):  dikhao "text" *)
+print_stmt = print_keyword expression newline?
+           ;
+
+(* Assignment without let binding *)
+assignment_stmt = identifier "=" expression newline?
+                ;
+
+(* Let binding with declaration *)
+let_stmt = let_keyword identifier "=" expression newline?
+         ;
+
+(* Conditional *)
+if_stmt = if_keyword expression then_keyword? suite
+          ( else_keyword suite )?
+        ;
+
+(* Loop - while *)
+while_stmt = while_keyword expression suite
+           ;
+
+(* Loop - for (inclusive range) *)
+(* Form: baarbaar variable = start from/se end to/tak *)
+for_stmt = for_keyword identifier "=" expression
+           ( from_keyword | "se" ) expression
+           ( to_keyword | "tak" ) suite
+         ;
+
+(* Function definition *)
+function_def = function_keyword identifier "(" param_list ")" suite
+             ;
+
+param_list = ( identifier ( "," identifier )* )?
+           ;
+
+(* Return statement *)
+return_stmt = return_keyword expression? newline?
+            ;
+
+(* Break statement *)
+break_stmt = break_keyword newline?
+           ;
+
+(* Continue statement *)
+continue_stmt = continue_keyword newline?
+              ;
+
+(* Expression statement *)
+expression_stmt = expression newline?
+                ;
+
+(* Suite: block of statements *)
+suite = "{" statement* "}"
+      | newline statement
+      ;
+
+(* ==== EXPRESSION GRAMMAR ==== *)
+(* Operator precedence (from lowest to highest) *)
+
+(* Level 1: Logical OR (lowest precedence) *)
+expression = logical_or
+           ;
+
+logical_or = logical_and ( or_keyword logical_and )*
+           ;
+
+(* Level 2: Logical AND *)
+logical_and = equality ( and_keyword equality )*
+            ;
+
+(* Level 3: Equality *)
+equality = comparison ( ( "==" | "!=" ) comparison )*
+         ;
+
+(* Level 4: Comparison *)
+comparison = term ( ( "<" | "<=" | ">" | ">=" ) term )*
+           ;
+
+(* Level 5: Additive (term +, -) *)
+term = factor ( ( "+" | "-" ) factor )*
+     ;
+
+(* Level 6: Multiplicative (factor *, /, %) *)
+factor = unary ( ( "*" | "/" | "%" ) unary )*
+       ;
+
+(* Level 7: Unary *)
+unary = ( not_keyword | "-" | "+" ) unary
+      | postfix
+      ;
+
+(* Level 8: Postfix operations (call, index, member) *)
+postfix = primary ( postfix_op )*
+        ;
+
+postfix_op = call_op
+           | index_op
+           | member_op
+           ;
+
+call_op = "(" arg_list ")"
+        ;
+
+index_op = "[" expression "]"
+         ;
+
+member_op = "." identifier
+          ;
+
+arg_list = ( expression ( "," expression )* )?
+         ;
+
+(* Level 9: Primary (highest precedence) *)
+primary = number_lit
+        | string_lit
+        | true_keyword
+        | false_keyword
+        | "null"
+        | identifier
+        | array_literal
+        | "(" expression ")"
+        ;
+
+array_literal = "[" ( expression ( "," expression )* )? "]"
+              ;
+
+(* ==== LEXICAL TOKENS ==== *)
+
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+hex_digit = digit | "a" | "b" | "c" | "d" | "e" | "f" | "A" | "B" | "C" | "D" | "E" | "F" ;
+letter = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
+       | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+       | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
+       | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
+       ;
+underscore = "_" ;
+string_char = ? any character except the quote used for the string ? ;
+
+newline = "\n" | "\r\n" ;
+EOF = ? end of file ? ;
+
+(* ==== NOTES ==== *)
+
+(* 1. OPERATOR PRECEDENCE (from lowest to highest binding):
+   - Level 1: OR (||, ya, kiva, leda, athava, wa, yanaba, abua)
+   - Level 2: AND (&&, aur, and, mattrum, ebong, ane, ani, mariyu, mattu, um, ebam, aru, ra, cha, ain, amasung, ar)
+   - Level 3: Equality (==, !=)
+   - Level 4: Comparison (<, >, <=, >=)
+   - Level 5: Additive (+, -)
+   - Level 6: Multiplicative (*, /, %)
+   - Level 7: Unary (!, -, +) - RIGHT associative
+   - Level 8: Postfix (call, index, member) - LEFT associative
+
+   2. ASSOCIATIVITY:
+   - Most binary operators are LEFT associative: a + b + c = (a + b) + c
+   - Unary operators are RIGHT associative: !-a = !(−a)
+   - Assignment is NOT an expression (cannot chain: a = b = c is NOT allowed)
+
+   3. CANONICAL PRINT FORM:
+   - NEW: dikhao "text" (no '=' operator)
+   - OLD: dikhao = "text" (deprecated, parser rejects this form)
+   - RATIONALE: Removes ambiguity between assignment and print
+
+   4. LANGUAGE MIXING:
+   - Keywords from different languages MAY be mixed in a program
+   - However, mixing within the same expression is DISCOURAGED
+   - First keyword detected determines language context for error messages
+
+   5. NEWLINE HANDLING:
+   - Statements are terminated by newline or semicolon (optional)
+   - Newlines are NOT statement terminators within parentheses: (a + b\n + c) is valid
+   - Newlines are NOT statement terminators before certain keywords
+
+   6. AMBIGUITY RULES (ELIMINATED):
+   - "=" used for both print and assignment has been eliminated
+   - Print requires keyword + expression (no =)
+   - Assignment requires identifier = expression (keyword not needed)
+   - Let binding uses explicit let keyword
+*)

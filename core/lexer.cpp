@@ -230,6 +230,9 @@ const std::unordered_map<std::string, TokenType> Lexer::keyword_map = {
     {"continue", TokenType::KW_CONTINUE},
 };
 
+// Initialize the static KeywordNormalizer instance
+KeywordNormalizer Lexer::keyword_normalizer;
+
 Lexer::Lexer(const std::string& src) 
     : source(src), position(0), line(1), column(1), line_start(0) {}
 
@@ -448,6 +451,15 @@ Token Lexer::readIdentifierOrKeyword() {
     auto it = keyword_map.find(lower_value);
     if (it != keyword_map.end()) {
         return Token(it->second, value, start_line, start_col);
+    }
+    
+    // Try fuzzy matching for typo tolerance
+    auto fuzzy_match = keyword_normalizer.fuzzyMatch(lower_value);
+    if (fuzzy_match.has_value()) {
+        // Found a fuzzy match - suggest it but don't auto-correct
+        auto suggestion = keyword_normalizer.getSuggestion(lower_value);
+        std::cerr << "Warning: Unknown keyword '" << lower_value << "' at line " << start_line 
+                  << ", column " << start_col << ". " << suggestion << std::endl;
     }
     
     return Token(TokenType::IDENTIFIER, value, start_line, start_col);

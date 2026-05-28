@@ -588,6 +588,62 @@ bool Parser::isThenKeyword(TokenType type) const {
     return type == TokenType::KW_THEN || type == TokenType::KW_TAB;
 }
 
+// NEW: Convert TokenType to TokenClass for deterministic parsing
+bool Parser::checkClass(TokenClass klass) const {
+    TokenType type = peek().type;
+    
+    // Use existing helper functions to check TokenClass membership
+    switch (klass) {
+        case TokenClass::PRINT: return isPrintKeyword(type);
+        case TokenClass::IF: return isIfKeyword(type);
+        case TokenClass::ELSE: return isElseKeyword(type);
+        case TokenClass::WHILE: return isWhileKeyword(type);
+        case TokenClass::FOR: return isForKeyword(type);
+        case TokenClass::FUNCTION: return isFunctionKeyword(type);
+        case TokenClass::RETURN: return isReturnKeyword(type);
+        case TokenClass::BREAK: return isBreakKeyword(peek());
+        case TokenClass::CONTINUE: return isContinueKeyword(peek());
+        case TokenClass::TRUE: return isTrueKeyword(type);
+        case TokenClass::FALSE: return isFalseKeyword(type);
+        case TokenClass::NOT: return isNotKeyword(type);
+        case TokenClass::AND: return isAndKeyword(type);
+        case TokenClass::OR: return isOrKeyword(type);
+        case TokenClass::FROM: return isFromKeyword(type);
+        case TokenClass::TO: return isToKeyword(type);
+        case TokenClass::THEN: return isThenKeyword(type);
+        case TokenClass::LET: return type == TokenType::KW_LET || type == TokenType::KW_RAKHO;
+        case TokenClass::NULL_LIT: return isNullKeyword(peek());
+        case TokenClass::ASSIGN: return type == TokenType::OP_ASSIGN;
+        case TokenClass::LPAREN: return type == TokenType::LPAREN;
+        case TokenClass::RPAREN: return type == TokenType::RPAREN;
+        case TokenClass::LBRACE: return type == TokenType::LBRACE;
+        case TokenClass::RBRACE: return type == TokenType::RBRACE;
+        case TokenClass::LBRACKET: return type == TokenType::LBRACKET;
+        case TokenClass::RBRACKET: return type == TokenType::RBRACKET;
+        case TokenClass::SEMICOLON: return type == TokenType::SEMICOLON;
+        case TokenClass::COMMA: return type == TokenType::COMMA;
+        case TokenClass::DOT: return type == TokenType::DOT;
+        case TokenClass::COLON: return type == TokenType::COLON;
+        case TokenClass::PLUS: return type == TokenType::OP_PLUS;
+        case TokenClass::MINUS: return type == TokenType::OP_MINUS;
+        case TokenClass::MULTIPLY: return type == TokenType::OP_MULTIPLY;
+        case TokenClass::DIVIDE: return type == TokenType::OP_DIVIDE;
+        case TokenClass::MODULO: return type == TokenType::OP_MODULO;
+        case TokenClass::EQUAL: return type == TokenType::OP_EQUAL;
+        case TokenClass::NOT_EQUAL: return type == TokenType::OP_NOT_EQUAL;
+        case TokenClass::LESS: return type == TokenType::OP_LESS;
+        case TokenClass::LESS_EQUAL: return type == TokenType::OP_LESS_EQUAL;
+        case TokenClass::GREATER: return type == TokenType::OP_GREATER;
+        case TokenClass::GREATER_EQUAL: return type == TokenType::OP_GREATER_EQUAL;
+        case TokenClass::NEWLINE: return type == TokenType::NEWLINE;
+        case TokenClass::EOF_TOKEN: return type == TokenType::EOF_TOKEN;
+        case TokenClass::IDENTIFIER: return type == TokenType::IDENTIFIER;
+        case TokenClass::NUMBER: return type == TokenType::NUMBER_INT || type == TokenType::NUMBER_FLOAT || type == TokenType::NUMBER_HEX;
+        case TokenClass::STRING: return type == TokenType::STRING;
+        default: return false;
+    }
+}
+
 void Parser::synchronize() {
     while (!isAtEnd()) {
         if (previous().type == TokenType::NEWLINE) {

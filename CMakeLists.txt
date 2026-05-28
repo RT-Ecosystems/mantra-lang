@@ -29,12 +29,12 @@ add_library(mantra_lib STATIC
   compiler/compiler.cpp
   semantic/semantic_analyzer.cpp
   bytecode/chunk.cpp
-  vm/vm.cpp
   src/vm/value.cpp
   src/vm/stack.cpp
   src/vm/bytecode.cpp
   src/vm/vm.cpp
   src/runtime/types.cpp
+  src/runtime/runtime.cpp
   web/html_generator.cpp
   web/mtr_parser.cpp
 )

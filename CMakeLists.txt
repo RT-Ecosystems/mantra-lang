@@ -34,6 +34,7 @@ add_library(mantra_lib STATIC
   src/vm/stack.cpp
   src/vm/bytecode.cpp
   src/vm/vm.cpp
+  src/runtime/types.cpp
   web/html_generator.cpp
   web/mtr_parser.cpp
 )

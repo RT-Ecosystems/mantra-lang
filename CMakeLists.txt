@@ -70,6 +70,15 @@ target_link_libraries(mantra_tests
 add_test(NAME AllTests 
   COMMAND mantra_tests)
 
+# Separate test executable for KeywordNormalizer and TokenClass
+add_executable(test_keyword_normalizer
+  tests/test_keyword_normalizer.cpp
+)
+target_link_libraries(test_keyword_normalizer 
+  PRIVATE mantra_lib)
+add_test(NAME KeywordNormalizerTests 
+  COMMAND test_keyword_normalizer)
+
 message(STATUS 
   "MANTRA v${PROJECT_VERSION}")
 message(STATUS 

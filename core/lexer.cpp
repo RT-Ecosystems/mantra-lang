@@ -459,7 +459,7 @@ Token Lexer::readIdentifierOrKeyword() {
         // Found a fuzzy match - suggest it but don't auto-correct
         auto suggestion = keyword_normalizer.getSuggestion(lower_value);
         std::cerr << "Warning: Unknown keyword '" << lower_value << "' at line " << start_line 
-                  << ", column " << start_col << ". Did you mean '" << suggestion << "'?" << std::endl;
+                  << ", column " << start_col << ". " << suggestion << std::endl;
     }
     
     return Token(TokenType::IDENTIFIER, value, start_line, start_col);

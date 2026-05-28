@@ -2,6 +2,8 @@
 #define MANTRA_LEXER_H
 
 #include "token.h"
+#include "token_class.h"
+#include "keyword_normalizer.h"
 #include <vector>
 #include <unordered_map>
 #include <string>
@@ -45,6 +47,9 @@ private:
     int line;
     int column;
     size_t line_start;
+    
+    // Keyword normalization system
+    static KeywordNormalizer keyword_normalizer;
     
     // Keyword map for all 22 Indian language mixes
     static const std::unordered_map<std::string, TokenType> keyword_map;

@@ -330,96 +330,96 @@ std::string KeywordNormalizer::getSuggestion(const std::string& misspelled) cons
 UserLanguage KeywordNormalizer::detectLanguage(const std::string& keyword) const {
     // Detect language from keyword characteristics
     if (keyword == "dikhao" || keyword == "agar" || keyword == "aur" || keyword == "tab" || keyword == "wapas") {
-        return UserLanguage::HINGLISH;
+        return UserLanguage::Hinglish;
     }
     if (keyword == "kaado" || keyword == "endral" || keyword == "mattrum" || keyword == "thirumbu") {
-        return UserLanguage::TANGLISH;
+        return UserLanguage::Tanglish;
     }
     if (keyword == "dakho" || keyword == "jekr" || keyword == "te" || keyword == "ja") {
-        return UserLanguage::PUNGLISH;
+        return UserLanguage::Punglish;
     }
     if (keyword == "dekhao" || keyword == "jodi" || keyword == "ebong" || keyword == "phrao") {
-        return UserLanguage::BENGLISH;
+        return UserLanguage::Benglish;
     }
     if (keyword == "batavo" || keyword == "jor" || keyword == "ane" || keyword == "nahi_to") {
-        return UserLanguage::GUJLISH;
+        return UserLanguage::Gujlish;
     }
     if (keyword == "dakhav" || keyword == "jar" || keyword == "ani" || keyword == "kharay") {
-        return UserLanguage::MARATHLISH;
+        return UserLanguage::Marathlish;
     }
     if (keyword == "chupinchu" || keyword == "ante" || keyword == "mariyu" || keyword == "tirigi") {
-        return UserLanguage::TELGLISH;
+        return UserLanguage::Telglish;
     }
     if (keyword == "toro" || keyword == "agre" || keyword == "mattu" || keyword == "hogi") {
-        return UserLanguage::KANGLISH;
+        return UserLanguage::Kanglish;
     }
     if (keyword == "kaaniku" || keyword == "engil" || keyword == "um" || keyword == "matti") {
-        return UserLanguage::MANGLISH;
+        return UserLanguage::Manglish;
     }
     if (keyword == "jadi" || keyword == "ebam") {
-        return UserLanguage::ODLISH;
+        return UserLanguage::Odlish;
     }
     if (keyword == "nohole" || keyword == "aru") {
-        return UserLanguage::ASSLISH;
+        return UserLanguage::Asslish;
     }
     if (keyword == "dekhaow" || keyword == "je") {
-        return UserLanguage::MAITHLISH;
+        return UserLanguage::Maithlish;
     }
     if (keyword == "dakhoi" || keyword == "zor" || keyword == "va") {
-        return UserLanguage::KONKLISH;
+        return UserLanguage::Konklish;
     }
     if (keyword == "dekhau" || keyword == "yedi" || keyword == "ra" || keyword == "wa") {
-        return UserLanguage::NEPLISH;
+        return UserLanguage::Neplish;
     }
     if (keyword == "darshaya" || keyword == "yadi" || keyword == "cha") {
-        return UserLanguage::SANGLISH;
+        return UserLanguage::Sanglish;
     }
     if (keyword == "waatav" || keyword == "galaw") {
-        return UserLanguage::KASHLISH;
+        return UserLanguage::Kashlish;
     }
     if (keyword == "dikhay" || keyword == "khoota" || keyword == "ain") {
-        return UserLanguage::SINDLISH;
+        return UserLanguage::Sindlish;
     }
     if (keyword == "wekho" || keyword == "ger") {
-        return UserLanguage::DOGLISH;
+        return UserLanguage::Doglish;
     }
     if (keyword == "nungsi" || keyword == "amare" || keyword == "amasung") {
-        return UserLanguage::MANLISH;
+        return UserLanguage::Manlish;
     }
     if (keyword == "nangi" || keyword == "bodo" || keyword == "ar") {
-        return UserLanguage::BODLISH;
+        return UserLanguage::Bodlish;
     }
     if (keyword == "dado" || keyword == "ama" || keyword == "bae") {
-        return UserLanguage::SANTLISH;
+        return UserLanguage::Santlish;
     }
     
-    return UserLanguage::ENGLISH;
+    return UserLanguage::English;
 }
 
 std::string KeywordNormalizer::getLanguageName(UserLanguage lang) {
     switch (lang) {
-        case UserLanguage::HINGLISH: return "Hinglish (Hindi + English)";
-        case UserLanguage::TANGLISH: return "Tanglish (Tamil + English)";
-        case UserLanguage::PUNGLISH: return "Punglish (Punjabi + English)";
-        case UserLanguage::BENGLISH: return "Benglish (Bengali + English)";
-        case UserLanguage::GUJLISH: return "Gujlish (Gujarati + English)";
-        case UserLanguage::MARATHLISH: return "Marathlish (Marathi + English)";
-        case UserLanguage::TELGLISH: return "Telglish (Telugu + English)";
-        case UserLanguage::KANGLISH: return "Kanglish (Kannada + English)";
-        case UserLanguage::MANGLISH: return "Manglish (Malayalam + English)";
-        case UserLanguage::ODLISH: return "Odlish (Oriya + English)";
-        case UserLanguage::ASSLISH: return "Asslish (Assamese + English)";
-        case UserLanguage::MAITHLISH: return "Maithlish (Maithili + English)";
-        case UserLanguage::KONKLISH: return "Konklish (Konkani + English)";
-        case UserLanguage::NEPLISH: return "Neplish (Nepali + English)";
-        case UserLanguage::SANGLISH: return "Sanglish (Sanskrit + English)";
-        case UserLanguage::KASHLISH: return "Kashlish (Kashmiri + English)";
-        case UserLanguage::SINDLISH: return "Sindlish (Sindhi + English)";
-        case UserLanguage::DOGLISH: return "Doglish (Dogri + English)";
-        case UserLanguage::MANLISH: return "Manlish (Manipuri + English)";
-        case UserLanguage::BODLISH: return "Bodlish (Bodo + English)";
-        case UserLanguage::SANTLISH: return "Santlish (Santhali + English)";
-        case UserLanguage::ENGLISH: return "English";
+        case UserLanguage::Hinglish: return "Hinglish (Hindi + English)";
+        case UserLanguage::Tanglish: return "Tanglish (Tamil + English)";
+        case UserLanguage::Punglish: return "Punglish (Punjabi + English)";
+        case UserLanguage::Benglish: return "Benglish (Bengali + English)";
+        case UserLanguage::Gujlish: return "Gujlish (Gujarati + English)";
+        case UserLanguage::Marathlish: return "Marathlish (Marathi + English)";
+        case UserLanguage::Telglish: return "Telglish (Telugu + English)";
+        case UserLanguage::Kanglish: return "Kanglish (Kannada + English)";
+        case UserLanguage::Manglish: return "Manglish (Malayalam + English)";
+        case UserLanguage::Odlish: return "Odlish (Oriya + English)";
+        case UserLanguage::Asslish: return "Asslish (Assamese + English)";
+        case UserLanguage::Maithlish: return "Maithlish (Maithili + English)";
+        case UserLanguage::Konklish: return "Konklish (Konkani + English)";
+        case UserLanguage::Neplish: return "Neplish (Nepali + English)";
+        case UserLanguage::Sanglish: return "Sanglish (Sanskrit + English)";
+        case UserLanguage::Kashlish: return "Kashlish (Kashmiri + English)";
+        case UserLanguage::Sindlish: return "Sindlish (Sindhi + English)";
+        case UserLanguage::Doglish: return "Doglish (Dogri + English)";
+        case UserLanguage::Manlish: return "Manlish (Manipuri + English)";
+        case UserLanguage::Bodlish: return "Bodlish (Bodo + English)";
+        case UserLanguage::Santlish: return "Santlish (Santhali + English)";
+        case UserLanguage::English: return "English";
         default: return "Unknown";
     }
 }

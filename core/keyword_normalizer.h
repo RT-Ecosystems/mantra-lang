@@ -2,6 +2,7 @@
 #define MANTRA_KEYWORD_NORMALIZER_H
 
 #include "token_class.h"
+#include "../include/mantra/core/types.h"
 #include <string>
 #include <vector>
 #include <optional>
@@ -27,33 +28,6 @@ namespace mantra {
  *   normalizer.normalize("agar")    → TokenClass::IF
  *   normalizer.fuzzyMatch("dikho")  → TokenClass::PRINT (with suggestion)
  */
-
-// User language enumeration (22 language mixes + English + Unknown)
-enum class UserLanguage {
-    UNKNOWN,        // No language detected
-    HINGLISH,       // Hindi + English (dikhao, agar, aur, ...)
-    TANGLISH,       // Tamil + English (kaado, endral, mattrum, ...)
-    PUNGLISH,       // Punjabi + English (dakho, jekr, te, ...)
-    BENGLISH,       // Bengali + English (dekhao, jodi, ebong, ...)
-    GUJLISH,        // Gujarati + English (batavo, jor, ane, ...)
-    MARATHLISH,     // Marathi + English (dakhav, jar, ani, ...)
-    TELGLISH,       // Telugu + English (chupinchu, ante, mariyu, ...)
-    KANGLISH,       // Kannada + English (toro, agre, mattu, ...)
-    MANGLISH,       // Malayalam + English (kaaniku, engil, um, ...)
-    ODLISH,         // Oriya + English (jadi, ebam, ...)
-    ASSLISH,        // Assamese + English (nohole, aru, ...)
-    MAITHLISH,      // Maithili + English (dekhaow, je, ...)
-    KONKLISH,       // Konkani + English (dakhoi, zor, va, ...)
-    NEPLISH,        // Nepali + English (dekhau, yedi, ra, wa, ...)
-    SANGLISH,       // Sanskrit + English (darshaya, yadi, cha, ...)
-    KASHLISH,       // Kashmiri + English (waatav, galaw)
-    SINDLISH,       // Sindhi + English (dikhay, khoota, ain, ...)
-    DOGLISH,        // Dogri + English (wekho, ger, ...)
-    MANLISH,        // Manipuri + English (nungsi, amare, amasung, ...)
-    BODLISH,        // Bodo + English (nangi, bodo, ar, ...)
-    SANTLISH,       // Santhali + English (dado, ama, ...)
-    ENGLISH         // Pure English (print, if, and, ...)
-};
 
 class KeywordNormalizer {
 public:

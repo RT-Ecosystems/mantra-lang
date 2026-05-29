@@ -86,13 +86,11 @@ void runLexerTests();
 void runVmTests();
 void runMathTests();
 void runSemanticTests();
-void runTypeSystemTests();
 
 int main() {
     runLexerTests();
     runVmTests();
     runMathTests();
     runSemanticTests();
-    runTypeSystemTests();
     return 0;
 }

@@ -22,7 +22,10 @@ void assert_test(bool condition, const std::string& test_name) {
 
 }
 
-int main() {
+void runTypeSystemTests() {
+    test_count = 0;
+    pass_count = 0;
+    
     std::cout << "=== MANTRA Type System Tests ===" << std::endl;
     
     // Test 1: Type creation
@@ -236,6 +239,7 @@ int main() {
     {
         TypeChecker checker;
         auto int_type = types::makeInt();
+        auto float_type = types::makeFloat();
         auto bool_type = types::makeBool();
         auto string_type = types::makeString();
         
@@ -299,8 +303,6 @@ int main() {
         assert_test(obj_type->fields().size() == 2, "Object has correct field count");
     }
     
-    std::cout << "\n=== Results ===" << std::endl;
+    std::cout << "\n=== Type System Results ===" << std::endl;
     std::cout << "Passed: " << pass_count << "/" << test_count << std::endl;
-    
-    return pass_count == test_count ? 0 : 1;
 }

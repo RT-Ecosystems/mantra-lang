@@ -65,6 +65,7 @@ add_executable(mantra_tests
   tests/test_vm.cpp
   tests/test_stdlib_math.cpp
   tests/test_semantic.cpp
+  tests/test_typesystem.cpp
 )
 target_link_libraries(mantra_tests 
   PRIVATE mantra_lib)

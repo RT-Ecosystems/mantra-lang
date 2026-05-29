@@ -82,6 +82,11 @@ void runVmTests() {
     std::cout << "VM foundation test passed" << std::endl;
 }
 
+void runLexerTests();
+void runVmTests();
+void runMathTests();
+void runSemanticTests();
+
 int main() {
     runLexerTests();
     runVmTests();

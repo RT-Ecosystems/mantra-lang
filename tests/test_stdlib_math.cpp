@@ -39,7 +39,12 @@ std::string runProgram(const std::string& source) {
     mantra::Interpreter interpreter;
     std::ostringstream output;
     CoutRedirect redirect(output);
-    interpreter.interpret(*program);
+    try {
+        interpreter.interpret(*program);
+    } catch (const std::exception& e) {
+        std::string error_msg = std::string("Interpretation failed: ") + e.what();
+        require(false, error_msg.c_str());
+    }
     return output.str();
 }
 
@@ -72,7 +77,12 @@ void test_math_aliases() {
     };
 
     for (const auto& test_case : cases) {
-        require(runProgram(test_case.source) == test_case.expected, test_case.name);
+        try {
+            auto result = runProgram(test_case.source);
+            require(result == test_case.expected, test_case.name);
+        } catch (...) {
+            require(false, test_case.name);
+        }
     }
 }
 

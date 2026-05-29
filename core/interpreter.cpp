@@ -175,7 +175,7 @@ bool Environment::set(const std::string& name, const MantraValue& value) {
 MantraValue Environment::get(const std::string& name) const {
     auto it = values.find(name);
     if (it != values.end()) {
-    // object return disabled
+        return it->second;
     }
 
     if (parent) {

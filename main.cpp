@@ -5,6 +5,8 @@
 #include "core/parser.h"
 #include "core/repl.h"
 #include "semantic/semantic_analyzer.h"
+#include "compiler/compiler.h"
+#include "mantra/vm/vm.h"
 
 #include <fstream>
 #include <iostream>
@@ -13,7 +15,7 @@
 
 namespace {
 
-bool runSource(const std::string& source) {
+bool runSource(const std::string& source, bool use_vm = false) {
     mantra::Lexer lexer(source);
     auto tokens = lexer.tokenize();
 
@@ -28,12 +30,24 @@ bool runSource(const std::string& source) {
         return false;
     }
 
-    mantra::Interpreter interpreter;
-    interpreter.interpret(*program);
+    if (use_vm) {
+        mantra::BytecodeCompiler compiler;
+        auto bytecode = compiler.compile(*program);
+        
+        mantra::VM vm;
+        if (!vm.execute(*bytecode, std::cout)) {
+            std::cerr << "VM Error: " << vm.lastError() << std::endl;
+            return false;
+        }
+    } else {
+        mantra::Interpreter interpreter;
+        interpreter.interpret(*program);
+    }
+    
     return true;
 }
 
-bool runFile(const std::string& path) {
+bool runFile(const std::string& path, bool use_vm = false) {
     std::ifstream input(path);
     if (!input) {
         std::cerr << "Unable to open file: " << path << std::endl;
@@ -42,13 +56,16 @@ bool runFile(const std::string& path) {
 
     std::ostringstream buffer;
     buffer << input.rdbuf();
-    return runSource(buffer.str());
+    return runSource(buffer.str(), use_vm);
 }
 
 } // namespace
 
 int main(int argc, char* argv[]) {
     if (argc > 1) {
+        if (argc > 2 && std::string(argv[1]) == "--vm") {
+            return runFile(argv[2], true) ? 0 : 1;
+        }
         return runFile(argv[1]) ? 0 : 1;
     }
 

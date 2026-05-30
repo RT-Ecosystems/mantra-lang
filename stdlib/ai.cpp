@@ -9,6 +9,8 @@
 #include <cstdint>
 #include <algorithm>
 #include <unordered_map>
+#include <memory>
+#include <iostream>
 
 // ==================== SHA-256 (public domain) ====================
 namespace {
@@ -69,7 +71,6 @@ namespace {
         for (size_t i = 0; i < hash.size() && i < dim; ++i) {
             vec[i] = (static_cast<double>(hash[i]) / 255.0) * 2.0 - 1.0;
         }
-        // normalize
         double norm = 0.0;
         for (double v : vec) norm += v*v;
         norm = std::sqrt(norm);
@@ -107,7 +108,7 @@ struct Vidyarthi {
 void Vidyarthi::learn(const std::string& sentence) {
     Vector vec = textToVector(sentence, gyan->dim);
     for (const auto& entry : gyan->entries) {
-        if (cosineSimilarity(vec, entry.second) > 0.95) return;
+        if (cosineSimilarity(vec, entry.second) > 0.95) return;  // duplicate
     }
     gyan->entries.push_back({sentence, vec});
 }
@@ -164,6 +165,16 @@ bool loadModel(Vidyarthi& vid, const std::string& path) {
     return in.good();
 }
 
+// ==================== Global Vidyarthi instance for built-in functions ====================
+static std::shared_ptr<Vidyarthi> globalVidyarthi = nullptr;
+
+std::shared_ptr<Vidyarthi> getOrCreateGlobalVidyarthi() {
+    if (!globalVidyarthi) {
+        globalVidyarthi = std::make_shared<Vidyarthi>();
+    }
+    return globalVidyarthi;
+}
+
 // ==================== Built-in wrappers ====================
 namespace mantra::stdlib {
 
@@ -171,32 +182,36 @@ namespace mantra::stdlib {
         int dim = 1024;
         if (!args.empty() && args[0].type == ValueType::Number)
             dim = static_cast<int>(args[0].number_value);
-        auto vid = std::make_shared<Vidyarthi>();
-        vid->gyan->dim = dim;
-        return MantraValue::string("beej");   // TODO: proper object handle
+        globalVidyarthi = std::make_shared<Vidyarthi>();
+        globalVidyarthi->gyan->dim = dim;
+        return MantraValue::string("beej_ready");
     }
 
     MantraValue builtinGyanCreate(const std::vector<MantraValue>& args) {
         auto g = std::make_shared<Gyan>();
         if (!args.empty() && args[0].type == ValueType::Number)
             g->dim = static_cast<int>(args[0].number_value);
-        return MantraValue::string("gyan");
+        globalVidyarthi = std::make_shared<Vidyarthi>();
+        globalVidyarthi->gyan = g;
+        return MantraValue::string("gyan_ready");
     }
 
     MantraValue builtinVidyarthiCreate(const std::vector<MantraValue>& args) {
-        auto v = std::make_shared<Vidyarthi>();
-        return MantraValue::string("vidyarthi");
+        globalVidyarthi = std::make_shared<Vidyarthi>();
+        return MantraValue::string("vidyarthi_ready");
     }
 
     MantraValue builtinSikho(const std::vector<MantraValue>& args) {
-        // Later will use proper object references
-        if (args.size() < 2) return MantraValue::boolean(false);
+        if (args.size() < 1) return MantraValue::boolean(false);
+        auto vid = getOrCreateGlobalVidyarthi();
+        vid->learn(args[0].string_value);
         return MantraValue::boolean(true);
     }
 
     MantraValue builtinPuchho(const std::vector<MantraValue>& args) {
-        if (args.size() < 2) return MantraValue::string("");
-        return MantraValue::string("[उत्तर बाद में जोड़ें]");
+        if (args.size() < 1) return MantraValue::string("");
+        auto vid = getOrCreateGlobalVidyarthi();
+        return MantraValue::string(vid->ask(args[0].string_value));
     }
 
     MantraValue builtinHash(const std::vector<MantraValue>& args) {
@@ -212,11 +227,17 @@ namespace mantra::stdlib {
     }
 
     MantraValue builtinSaveModel(const std::vector<MantraValue>& args) {
-        return MantraValue::boolean(false);
+        if (args.size() < 1) return MantraValue::boolean(false);
+        auto vid = getOrCreateGlobalVidyarthi();
+        bool ok = saveModel(*vid, args[0].string_value);
+        return MantraValue::boolean(ok);
     }
 
     MantraValue builtinLoadModel(const std::vector<MantraValue>& args) {
-        return MantraValue::boolean(false);
+        if (args.size() < 1) return MantraValue::boolean(false);
+        auto vid = getOrCreateGlobalVidyarthi();
+        bool ok = loadModel(*vid, args[0].string_value);
+        return MantraValue::boolean(ok);
     }
 
 } // namespace mantra::stdlib

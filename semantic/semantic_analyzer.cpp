@@ -527,6 +527,41 @@ void SemanticAnalyzer::seedBuiltins() {
     // INI functions
     registerBuiltin("iniRead", 1, 1);
     registerBuiltin("iniWrite", 2, 2);
+
+    // Process functions
+    registerBuiltin("processRun", 1, 2);
+    registerBuiltin("processOutput", 1, 1);
+    registerBuiltin("processWait", 1, 1);
+    registerBuiltin("processKill", 1, 1);
+
+    // Socket functions
+    registerBuiltin("tcpConnect", 2, 2);
+    registerBuiltin("tcpSend", 2, 2);
+    registerBuiltin("tcpRecv", 1, 1);
+    registerBuiltin("tcpClose", 1, 1);
+    registerBuiltin("tcpListen", 2, 2);
+
+    // Crypto functions
+    registerBuiltin("aesEncrypt", 2, 2);
+    registerBuiltin("aesDecrypt", 2, 2);
+    registerBuiltin("sha256", 1, 1);
+    registerBuiltin("md5", 1, 1);
+
+    // Image functions
+    registerBuiltin("imgLoad", 1, 1);
+    registerBuiltin("imgResize", 3, 3);
+    registerBuiltin("imgSave", 2, 2);
+    registerBuiltin("imgInfo", 1, 1);
+
+    // Audio functions
+    registerBuiltin("audioLoad", 1, 1);
+    registerBuiltin("audioPlay", 1, 1);
+    registerBuiltin("audioInfo", 1, 1);
+
+    // Hash functions
+    registerBuiltin("sha1", 1, 1);
+    registerBuiltin("sha512", 1, 1);
+    registerBuiltin("crc32", 1, 1);
 }
 
 } // namespace mantra

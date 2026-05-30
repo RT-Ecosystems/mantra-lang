@@ -23,6 +23,12 @@
 #include "../stdlib/xml.h"
 #include "../stdlib/yaml.h"
 #include "../stdlib/ini.h"
+#include "../stdlib/process.h"
+#include "../stdlib/socket.h"
+#include "../stdlib/crypto.h"
+#include "../stdlib/image.h"
+#include "../stdlib/audio.h"
+#include "../stdlib/hash.h"
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -882,6 +888,41 @@ void Interpreter::registerStdlib() {
     // INI builtins
     addNative("iniRead", stdlib::builtinIniRead);
     addNative("iniWrite", stdlib::builtinIniWrite);
+
+    // Process builtins
+    addNative("processRun", stdlib::builtinProcessRun);
+    addNative("processOutput", stdlib::builtinProcessOutput);
+    addNative("processWait", stdlib::builtinProcessWait);
+    addNative("processKill", stdlib::builtinProcessKill);
+
+    // Socket builtins
+    addNative("tcpConnect", stdlib::builtinTcpConnect);
+    addNative("tcpSend", stdlib::builtinTcpSend);
+    addNative("tcpRecv", stdlib::builtinTcpRecv);
+    addNative("tcpClose", stdlib::builtinTcpClose);
+    addNative("tcpListen", stdlib::builtinTcpListen);
+
+    // Crypto builtins
+    addNative("aesEncrypt", stdlib::builtinAesEncrypt);
+    addNative("aesDecrypt", stdlib::builtinAesDecrypt);
+    addNative("sha256", stdlib::builtinSha256);
+    addNative("md5", stdlib::builtinMd5);
+
+    // Image builtins
+    addNative("imgLoad", stdlib::builtinImgLoad);
+    addNative("imgResize", stdlib::builtinImgResize);
+    addNative("imgSave", stdlib::builtinImgSave);
+    addNative("imgInfo", stdlib::builtinImgInfo);
+
+    // Audio builtins
+    addNative("audioLoad", stdlib::builtinAudioLoad);
+    addNative("audioPlay", stdlib::builtinAudioPlay);
+    addNative("audioInfo", stdlib::builtinAudioInfo);
+
+    // Hash builtins
+    addNative("sha1", stdlib::builtinSha1);
+    addNative("sha512", stdlib::builtinSha512);
+    addNative("crc32", stdlib::builtinCrc32);
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {

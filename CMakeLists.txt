@@ -38,6 +38,12 @@ add_library(mantra_lib STATIC
     stdlib/regex.cpp
     stdlib/uuid.cpp
     stdlib/tempfile.cpp
+    stdlib/sqlite.cpp
+    stdlib/zip.cpp
+    stdlib/compress.cpp
+    stdlib/xml.cpp
+    stdlib/yaml.cpp
+    stdlib/ini.cpp
   unicode/unicode.cpp
   unicode/script_detect.cpp
   compiler/compiler.cpp

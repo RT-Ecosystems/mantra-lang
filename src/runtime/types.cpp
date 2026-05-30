@@ -46,7 +46,7 @@ Value Value::array(const std::vector<Value>& elements) {
 
 Value Value::object(const std::unordered_map<std::string, Value>& properties) {
     Value v(ValueType::Object);
-    v.object_value_ = properties;
+    v.object_value_ = std::make_shared<std::unordered_map<std::string, Value>>(properties);
     return v;
 }
 
@@ -123,7 +123,7 @@ const std::unordered_map<std::string, Value>& Value::asObject() const {
     if (!isObject()) {
         throw RuntimeException("Value is not an object");
     }
-    return object_value_;
+    return *object_value_;
 }
 
 std::string Value::toString() const {
@@ -194,7 +194,7 @@ bool Value::equals(const Value& other) const {
         case ValueType::Array:
             return array_value_ == other.array_value_;
         case ValueType::Object:
-            return object_value_ == other.object_value_;
+            return *object_value_ == *other.object_value_;
         default:
             return false;
     }

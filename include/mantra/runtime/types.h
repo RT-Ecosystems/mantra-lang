@@ -85,7 +85,7 @@ private:
     std::string string_value_;
     bool bool_value_ = false;
     std::vector<Value> array_value_;
-    std::unordered_map<std::string, Value> object_value_;
+    std::shared_ptr<std::unordered_map<std::string, Value>> object_value_;
     std::shared_ptr<Function> function_value_;
 
     explicit Value(ValueType type);

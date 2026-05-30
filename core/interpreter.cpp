@@ -120,10 +120,10 @@ MantraValue MantraValue::array(std::vector<MantraValue> elements) {
     return result;
 }
 
-MantraValue MantraValue::object(std::unordered_map<std::string, MantraValue> properties) {
+MantraValue MantraValue::object(std::unordered_map<std::string, MantraValue>) {
     MantraValue result;
     result.type = ValueType::Object;
-        // object_value disabled
+        // TODO: object_value disabled - parameter not yet implemented
     return result;
 }
 

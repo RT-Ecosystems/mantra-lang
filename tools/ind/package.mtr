@@ -1,0 +1,7 @@
+// package.mtr — MANTRA package manifest
+rakho package_name = "my-package"
+rakho version = "1.0.0"
+rakho author = "Your Name"
+rakho description = "A short description of your package"
+rakho dependencies = ["mantra-ai >= 1.0.0"]  // optional
+rakho entry_point = "main.mtr"               // optional, default = package_name.mtr

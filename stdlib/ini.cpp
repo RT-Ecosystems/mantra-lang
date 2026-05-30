@@ -20,8 +20,7 @@ MantraValue builtinIniWrite(const std::vector<MantraValue>& a){
     if(a.size() < 3) return MantraValue::boolean(false);
     std::ofstream out(a[0].string_value);
     if(!out) return MantraValue::boolean(false);
-    out << a[1].string_value << "=" << a[2].string_value << "
-";
+    out << a[1].string_value << "=" << a[2].string_value << "\n";
     return MantraValue::boolean(true);
 }
 }

@@ -69,7 +69,7 @@ namespace {
     Vector textToVector(const std::string& text, int dim = 1024) {
         Vector vec(dim, 0.0);
         std::string hash = sha256(text);
-        for (size_t i = 0; i < hash.size() && i < dim; ++i) {
+        for (size_t i = 0; i < hash.size() && i < static_cast<size_t>(dim); ++i) {
             vec[i] = (static_cast<double>(hash[i]) / 255.0) * 2.0 - 1.0;
         }
         double norm = 0.0;
@@ -197,7 +197,7 @@ namespace mantra::stdlib {
         return MantraValue::string("gyan_ready");
     }
 
-    MantraValue builtinVidyarthiCreate(const std::vector<MantraValue>& args) {
+    MantraValue builtinVidyarthiCreate(const std::vector<MantraValue>&) {
         globalVidyarthi = std::make_shared<Vidyarthi>();
         return MantraValue::string("vidyarthi_ready");
     }

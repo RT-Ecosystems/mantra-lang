@@ -306,7 +306,7 @@ std::string MtrParser::TranslateCssProperty(const std::string& prop) const {
 }
 
 std::string MtrParser::TranslateCssValue(
-    const std::string& prop, const std::string& val) const
+    const std::string&, const std::string& val) const
 {
     std::string lower = val;
     std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);

@@ -258,7 +258,7 @@ const std::unordered_map<std::string, Symbol>& TypeEnvironment::currentScope() c
 // TypeChecker implementation
 TypeChecker::TypeChecker() : has_error_(false) {}
 
-std::shared_ptr<Type> TypeChecker::inferType(const MantraNode& node) {
+std::shared_ptr<Type> TypeChecker::inferType(const MantraNode&) {
     // Placeholder for type inference - will be implemented with AST integration
     return types::makeAny();
 }
@@ -319,8 +319,8 @@ bool TypeChecker::isValidBinaryOp(
     const Type& leftType,
     const Type& rightType,
     const std::string& opName,
-    int line,
-    int col) {
+    int,
+    int) {
     
     // Arithmetic operators
     if (opName == "+" || opName == "-" || opName == "*" || opName == "/" || opName == "%") {
@@ -352,8 +352,8 @@ bool TypeChecker::isValidBinaryOp(
 bool TypeChecker::isValidUnaryOp(
     const Type& operandType,
     const std::string& opName,
-    int line,
-    int col) {
+    int,
+    int) {
     
     if (opName == "-" || opName == "+") {
         return operandType.kind() == TypeKind::Int || operandType.kind() == TypeKind::Float;
@@ -368,8 +368,8 @@ bool TypeChecker::isValidUnaryOp(
 
 void TypeChecker::reportError(
     const std::string& message,
-    int line,
-    int col) {
+    int,
+    int) {
     last_error_ = message;
     has_error_ = true;
 }

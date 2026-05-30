@@ -9,7 +9,7 @@ Runtime::Runtime() : globals_(std::make_shared<Environment>()) {}
 
 Runtime::~Runtime() = default;
 
-bool Runtime::executeProgram(const ProgramNode& program, std::ostream& output) {
+bool Runtime::executeProgram(const ProgramNode& program, std::ostream&) {
     try {
         // Use the existing interpreter for AST execution
         mantra::Interpreter interpreter;
@@ -21,7 +21,7 @@ bool Runtime::executeProgram(const ProgramNode& program, std::ostream& output) {
     }
 }
 
-bool Runtime::executeBytecode(const std::string& bytecode, std::ostream& output) {
+bool Runtime::executeBytecode(const std::string&, std::ostream&) {
     // TODO: Implement bytecode execution
     setError("Bytecode execution not yet implemented");
     return false;

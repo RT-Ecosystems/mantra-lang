@@ -30,8 +30,7 @@ MantraValue builtinConfigSave(const std::vector<MantraValue>& a){
     if(a.empty()) return MantraValue::boolean(false);
     std::ofstream out(a[0].string_value);
     if(!out) return MantraValue::boolean(false);
-    for(auto& p : g_config) out << p.first << "=" << p.second << "
-";
+    for(auto& p : g_config) out << p.first << "=" << p.second << "\n";
     return MantraValue::boolean(true);
 }
 }

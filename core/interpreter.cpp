@@ -29,6 +29,13 @@
 #include "../stdlib/image.h"
 #include "../stdlib/audio.h"
 #include "../stdlib/hash.h"
+#include "../stdlib/gui.h"
+#include "../stdlib/chart.h"
+#include "../stdlib/pdf.h"
+#include "../stdlib/email.h"
+#include "../stdlib/logging.h"
+#include "../stdlib/serial.h"
+#include "../stdlib/config.h"
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -923,6 +930,46 @@ void Interpreter::registerStdlib() {
     addNative("sha1", stdlib::builtinSha1);
     addNative("sha512", stdlib::builtinSha512);
     addNative("crc32", stdlib::builtinCrc32);
+
+    // GUI builtins
+    addNative("guiWindow", stdlib::builtinGuiWindow);
+    addNative("guiButton", stdlib::builtinGuiButton);
+    addNative("guiLabel", stdlib::builtinGuiLabel);
+    addNative("guiRun", stdlib::builtinGuiRun);
+
+    // Chart builtins
+    addNative("chartBar", stdlib::builtinChartBar);
+    addNative("chartLine", stdlib::builtinChartLine);
+    addNative("chartPie", stdlib::builtinChartPie);
+    addNative("chartSave", stdlib::builtinChartSave);
+
+    // PDF builtins
+    addNative("pdfCreate", stdlib::builtinPdfCreate);
+    addNative("pdfText", stdlib::builtinPdfText);
+    addNative("pdfImage", stdlib::builtinPdfImage);
+    addNative("pdfSave", stdlib::builtinPdfSave);
+
+    // Email builtins
+    addNative("emailSend", stdlib::builtinEmailSend);
+    addNative("emailSetServer", stdlib::builtinEmailSetServer);
+
+    // Logging builtins
+    addNative("logInfo", stdlib::builtinLogInfo);
+    addNative("logError", stdlib::builtinLogError);
+    addNative("logWarn", stdlib::builtinLogWarn);
+    addNative("logSetFile", stdlib::builtinLogSetFile);
+
+    // Serial builtins
+    addNative("serialOpen", stdlib::builtinSerialOpen);
+    addNative("serialRead", stdlib::builtinSerialRead);
+    addNative("serialWrite", stdlib::builtinSerialWrite);
+    addNative("serialClose", stdlib::builtinSerialClose);
+
+    // Config builtins
+    addNative("configLoad", stdlib::builtinConfigLoad);
+    addNative("configGet", stdlib::builtinConfigGet);
+    addNative("configSet", stdlib::builtinConfigSet);
+    addNative("configSave", stdlib::builtinConfigSave);
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {

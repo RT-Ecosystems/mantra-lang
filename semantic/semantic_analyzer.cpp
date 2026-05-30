@@ -498,6 +498,35 @@ void SemanticAnalyzer::seedBuiltins() {
 
     // TempFile functions
     registerBuiltin("tempFile", 0, 0);
+
+    // SQLite functions
+    registerBuiltin("sqlOpen", 1, 1);
+    registerBuiltin("sqlExec", 1, 1);
+    registerBuiltin("sqlClose", 0, 0);
+
+    // Zip functions
+    registerBuiltin("zipCreate", 2, 2);
+    registerBuiltin("zipExtract", 2, 2);
+    registerBuiltin("zipList", 1, 1);
+
+    // Compress functions
+    registerBuiltin("gzip", 1, 1);
+    registerBuiltin("gunzip", 1, 1);
+    registerBuiltin("bzip2", 1, 1);
+    registerBuiltin("bunzip2", 1, 1);
+
+    // XML functions
+    registerBuiltin("xmlParse", 1, 1);
+    registerBuiltin("xmlGetNode", 2, 2);
+    registerBuiltin("xmlSetNode", 3, 3);
+
+    // YAML functions
+    registerBuiltin("yamlLoad", 1, 1);
+    registerBuiltin("yamlDump", 1, 1);
+
+    // INI functions
+    registerBuiltin("iniRead", 1, 1);
+    registerBuiltin("iniWrite", 2, 2);
 }
 
 } // namespace mantra

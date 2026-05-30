@@ -15,6 +15,12 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+# Find SQLite3
+find_package(SQLite3)
+if(NOT SQLite3_FOUND)
+  message(FATAL_ERROR "SQLite3 not found. Please install libsqlite3-dev")
+endif()
+
 add_library(mantra_lib STATIC
   core/lexer.cpp
   core/parser.cpp
@@ -63,7 +69,12 @@ target_include_directories(mantra_lib
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${SQLite3_INCLUDE_DIRS}
 )
+
+# Link SQLite3
+target_link_libraries(mantra_lib 
+  PUBLIC ${SQLite3_LIBRARIES})
 
 if(MSVC)
   target_compile_options(mantra_lib 
@@ -103,3 +114,5 @@ message(STATUS
   "MANTRA v${PROJECT_VERSION}")
 message(STATUS 
   "Build: ${CMAKE_BUILD_TYPE}")
+
+

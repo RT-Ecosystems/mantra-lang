@@ -17,6 +17,12 @@
 #include "../stdlib/regex.h"
 #include "../stdlib/uuid.h"
 #include "../stdlib/tempfile.h"
+#include "../stdlib/sqlite.h"
+#include "../stdlib/zip.h"
+#include "../stdlib/compress.h"
+#include "../stdlib/xml.h"
+#include "../stdlib/yaml.h"
+#include "../stdlib/ini.h"
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -847,6 +853,35 @@ void Interpreter::registerStdlib() {
 
     // TempFile builtins
     addNative("tempFile", stdlib::builtinTempFile);
+
+    // SQLite builtins
+    addNative("sqlOpen", stdlib::builtinSqlOpen);
+    addNative("sqlExec", stdlib::builtinSqlExec);
+    addNative("sqlClose", stdlib::builtinSqlClose);
+
+    // Zip builtins
+    addNative("zipCreate", stdlib::builtinZipCreate);
+    addNative("zipExtract", stdlib::builtinZipExtract);
+    addNative("zipList", stdlib::builtinZipList);
+
+    // Compress builtins
+    addNative("gzip", stdlib::builtinGzip);
+    addNative("gunzip", stdlib::builtinGunzip);
+    addNative("bzip2", stdlib::builtinBzip2);
+    addNative("bunzip2", stdlib::builtinBunzip2);
+
+    // XML builtins
+    addNative("xmlParse", stdlib::builtinXmlParse);
+    addNative("xmlGetNode", stdlib::builtinXmlGetNode);
+    addNative("xmlSetNode", stdlib::builtinXmlSetNode);
+
+    // YAML builtins
+    addNative("yamlLoad", stdlib::builtinYamlLoad);
+    addNative("yamlDump", stdlib::builtinYamlDump);
+
+    // INI builtins
+    addNative("iniRead", stdlib::builtinIniRead);
+    addNative("iniWrite", stdlib::builtinIniWrite);
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {

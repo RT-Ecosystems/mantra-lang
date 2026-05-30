@@ -46,11 +46,15 @@ Value Value::array(const std::vector<Value>& elements) {
 
 Value Value::object(const std::unordered_map<std::string, Value>& properties) {
     Value v(ValueType::Object);
-    v.object_value_ = properties;
+    v.object_value_ = std::make_shared<std::unordered_map<std::string, Value>>(properties);
     return v;
 }
 
-Value::Value(ValueType type) : type_(type) {}
+Value::Value(ValueType type) : type_(type) {
+    if (type == ValueType::Object) {
+        object_value_ = std::make_shared<std::unordered_map<std::string, Value>>();
+    }
+}
 
 ValueType Value::type() const {
     return type_;
@@ -123,7 +127,10 @@ const std::unordered_map<std::string, Value>& Value::asObject() const {
     if (!isObject()) {
         throw RuntimeException("Value is not an object");
     }
-    return object_value_;
+    if (!object_value_) {
+        throw RuntimeException("Object value not properly initialized");
+    }
+    return *object_value_;
 }
 
 std::string Value::toString() const {
@@ -193,8 +200,12 @@ bool Value::equals(const Value& other) const {
             return function_value_.get() == other.function_value_.get();
         case ValueType::Array:
             return array_value_ == other.array_value_;
-        case ValueType::Object:
-            return object_value_ == other.object_value_;
+        case ValueType::Object: {
+            if (!object_value_ || !other.object_value_) {
+                return object_value_.get() == other.object_value_.get();
+            }
+            return *object_value_ == *other.object_value_;
+        }
         default:
             return false;
     }

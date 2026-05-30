@@ -6,6 +6,11 @@
 #include "../stdlib/math.h"
 #include "../stdlib/string.h"
 #include "../stdlib/ai.h"
+#include "../stdlib/http.h"
+#include "../stdlib/datetime.h"
+#include "../stdlib/csv.h"
+#include "../stdlib/json.h"
+#include "../stdlib/file.h"
 #include <algorithm>
 #include <cmath>
 #include <iomanip>

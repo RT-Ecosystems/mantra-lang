@@ -170,7 +170,7 @@ bool loadModel(Vidyarthi& vid, const std::string& path) {
 static std::shared_ptr<Vidyarthi> globalVidyarthi = nullptr;
 
 std::shared_ptr<Vidyarthi> getOrCreateGlobalVidyarthi() {
-    if (!globalVidyarthi) {
+    if (!globalVidyarthi || globalVidyarthi->gyan->entries.empty()) {
         globalVidyarthi = std::make_shared<Vidyarthi>();
     }
     return globalVidyarthi;

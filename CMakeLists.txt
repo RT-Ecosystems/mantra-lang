@@ -26,6 +26,7 @@ add_library(mantra_lib STATIC
   stdlib/io.cpp
   stdlib/math.cpp
   stdlib/string.cpp
+    stdlib/ai.cpp
   unicode/unicode.cpp
   unicode/script_detect.cpp
   compiler/compiler.cpp

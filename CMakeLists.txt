@@ -32,6 +32,12 @@ add_library(mantra_lib STATIC
     stdlib/csv.cpp
     stdlib/datetime.cpp
     stdlib/http.cpp
+    stdlib/random.cpp
+    stdlib/os.cpp
+    stdlib/base64.cpp
+    stdlib/regex.cpp
+    stdlib/uuid.cpp
+    stdlib/tempfile.cpp
   unicode/unicode.cpp
   unicode/script_detect.cpp
   compiler/compiler.cpp

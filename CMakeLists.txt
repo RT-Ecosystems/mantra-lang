@@ -16,6 +16,7 @@ include_directories(
 )
 
 # Find SQLite3
+find_package(OpenSSL REQUIRED)
 find_package(SQLite3)
 if(NOT SQLite3_FOUND)
   message(FATAL_ERROR "SQLite3 not found. Please install libsqlite3-dev")
@@ -50,6 +51,12 @@ add_library(mantra_lib STATIC
     stdlib/xml.cpp
     stdlib/yaml.cpp
     stdlib/ini.cpp
+    stdlib/process.cpp
+    stdlib/socket.cpp
+    stdlib/crypto.cpp
+    stdlib/image.cpp
+    stdlib/audio.cpp
+    stdlib/hash.cpp
   unicode/unicode.cpp
   unicode/script_detect.cpp
   compiler/compiler.cpp

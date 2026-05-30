@@ -444,6 +444,38 @@ void SemanticAnalyzer::seedBuiltins() {
     registerBuiltin("nan", 0, variadic);
     registerBuiltin("is_infinity", 1, 1);
     registerBuiltin("is_nan", 1, 1);
+
+    // AI/NeuroBrain functions
+    registerBuiltin("hash", 1, 1);
+    registerBuiltin("similar", 2, 2);
+    registerBuiltin("sikho", 1, 1);
+    registerBuiltin("puchho", 1, 1);
+    registerBuiltin("beej", 0, 1);
+    registerBuiltin("gyan", 0, 1);
+    registerBuiltin("vidyarthi", 0, 0);
+    registerBuiltin("saveModel", 1, 1);
+    registerBuiltin("loadModel", 1, 1);
+
+    // File functions
+    registerBuiltin("readFile", 1, 1);
+    registerBuiltin("writeFile", 2, 2);
+    registerBuiltin("fileExists", 1, 1);
+
+    // DateTime functions
+    registerBuiltin("now", 0, 0);
+    registerBuiltin("today", 0, 0);
+
+    // JSON functions
+    registerBuiltin("jsonParse", 1, 1);
+    registerBuiltin("jsonStringify", 1, 1);
+
+    // CSV functions
+    registerBuiltin("csvRead", 1, 1);
+    registerBuiltin("csvWrite", 2, 2);
+
+    // HTTP functions
+    registerBuiltin("httpGet", 1, 1);
+    registerBuiltin("httpPost", 2, 2);
 }
 
 } // namespace mantra

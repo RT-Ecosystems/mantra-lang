@@ -798,6 +798,27 @@ void Interpreter::registerStdlib() {
     addNative("vidyarthi", stdlib::builtinVidyarthiCreate);
     addNative("saveModel", stdlib::builtinSaveModel);
     addNative("loadModel", stdlib::builtinLoadModel);
+
+    // File builtins
+    addNative("readFile", stdlib::builtinReadFile);
+    addNative("writeFile", stdlib::builtinWriteFile);
+    addNative("fileExists", stdlib::builtinFileExists);
+
+    // DateTime builtins
+    addNative("now", stdlib::builtinNow);
+    addNative("today", stdlib::builtinToday);
+
+    // JSON builtins
+    addNative("jsonParse", stdlib::builtinJsonParse);
+    addNative("jsonStringify", stdlib::builtinJsonStringify);
+
+    // CSV builtins
+    addNative("csvRead", stdlib::builtinCsvRead);
+    addNative("csvWrite", stdlib::builtinCsvWrite);
+
+    // HTTP builtins
+    addNative("httpGet", stdlib::builtinHttpGet);
+    addNative("httpPost", stdlib::builtinHttpPost);
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {

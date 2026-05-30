@@ -12,6 +12,7 @@ Runtime::~Runtime() = default;
 bool Runtime::executeProgram(const ProgramNode& program, std::ostream&) {
     try {
         // Use the existing interpreter for AST execution
+        // TODO: output stream parameter is for future use when runtime needs to produce output
         mantra::Interpreter interpreter;
         interpreter.interpret(program);
         return true;

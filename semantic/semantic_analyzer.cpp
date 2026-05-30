@@ -562,6 +562,46 @@ void SemanticAnalyzer::seedBuiltins() {
     registerBuiltin("sha1", 1, 1);
     registerBuiltin("sha512", 1, 1);
     registerBuiltin("crc32", 1, 1);
+
+    // GUI functions
+    registerBuiltin("guiWindow", 1, 1);
+    registerBuiltin("guiButton", 2, 2);
+    registerBuiltin("guiLabel", 1, 1);
+    registerBuiltin("guiRun", 0, 0);
+
+    // Chart functions
+    registerBuiltin("chartBar", 2, 2);
+    registerBuiltin("chartLine", 2, 2);
+    registerBuiltin("chartPie", 1, 1);
+    registerBuiltin("chartSave", 1, 1);
+
+    // PDF functions
+    registerBuiltin("pdfCreate", 1, 1);
+    registerBuiltin("pdfText", 2, 2);
+    registerBuiltin("pdfImage", 1, 1);
+    registerBuiltin("pdfSave", 1, 1);
+
+    // Email functions
+    registerBuiltin("emailSend", 3, 3);
+    registerBuiltin("emailSetServer", 3, 3);
+
+    // Logging functions
+    registerBuiltin("logInfo", 1, 1);
+    registerBuiltin("logError", 1, 1);
+    registerBuiltin("logWarn", 1, 1);
+    registerBuiltin("logSetFile", 1, 1);
+
+    // Serial functions
+    registerBuiltin("serialOpen", 2, 2);
+    registerBuiltin("serialRead", 1, 1);
+    registerBuiltin("serialWrite", 2, 2);
+    registerBuiltin("serialClose", 1, 1);
+
+    // Config functions
+    registerBuiltin("configLoad", 1, 1);
+    registerBuiltin("configGet", 2, 2);
+    registerBuiltin("configSet", 3, 3);
+    registerBuiltin("configSave", 0, 0);
 }
 
 } // namespace mantra

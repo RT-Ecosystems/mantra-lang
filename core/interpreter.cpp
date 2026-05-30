@@ -5,6 +5,7 @@
 #include "../stdlib/io.h"
 #include "../stdlib/math.h"
 #include "../stdlib/string.h"
+#include "../stdlib/ai.h"
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -25,7 +26,18 @@ std::string numberToString(double value) {
     if (text.find('.') != std::string::npos) {
         while (!text.empty() && text.back() == '0') {
             text.pop_back();
-        }
+        
+    // AI / NeuroBrain builtins
+    registerBuiltin("hash", stdlib::builtinHash);
+    registerBuiltin("similar", stdlib::builtinSimilar);
+    registerBuiltin("sikho", stdlib::builtinSikho);
+    registerBuiltin("puchho", stdlib::builtinPuchho);
+    registerBuiltin("beej", stdlib::builtinBeejCreate);
+    registerBuiltin("gyan", stdlib::builtinGyanCreate);
+    registerBuiltin("vidyarthi", stdlib::builtinVidyarthiCreate);
+    registerBuiltin("saveModel", stdlib::builtinSaveModel);
+    registerBuiltin("loadModel", stdlib::builtinLoadModel);
+}
         if (!text.empty() && text.back() == '.') {
             text.pop_back();
         }

@@ -4,7 +4,7 @@
 
 namespace mantra::stdlib {
 
-// AI/ML built-in functions
+// AI / NeuroBrain built-in functions
 MantraValue builtinBeejCreate(const std::vector<MantraValue>& args);
 MantraValue builtinGyanCreate(const std::vector<MantraValue>& args);
 MantraValue builtinVidyarthiCreate(const std::vector<MantraValue>& args);

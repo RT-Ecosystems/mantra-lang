@@ -127,6 +127,9 @@ const std::unordered_map<std::string, Value>& Value::asObject() const {
     if (!isObject()) {
         throw RuntimeException("Value is not an object");
     }
+    if (!object_value_) {
+        throw RuntimeException("Object value not properly initialized");
+    }
     return *object_value_;
 }
 
@@ -197,8 +200,12 @@ bool Value::equals(const Value& other) const {
             return function_value_.get() == other.function_value_.get();
         case ValueType::Array:
             return array_value_ == other.array_value_;
-        case ValueType::Object:
+        case ValueType::Object: {
+            if (!object_value_ || !other.object_value_) {
+                return object_value_.get() == other.object_value_.get();
+            }
             return *object_value_ == *other.object_value_;
+        }
         default:
             return false;
     }

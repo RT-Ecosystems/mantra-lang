@@ -26,18 +26,7 @@ std::string numberToString(double value) {
     if (text.find('.') != std::string::npos) {
         while (!text.empty() && text.back() == '0') {
             text.pop_back();
-        
-    // AI / NeuroBrain builtins
-    registerBuiltin("hash", stdlib::builtinHash);
-    registerBuiltin("similar", stdlib::builtinSimilar);
-    registerBuiltin("sikho", stdlib::builtinSikho);
-    registerBuiltin("puchho", stdlib::builtinPuchho);
-    registerBuiltin("beej", stdlib::builtinBeejCreate);
-    registerBuiltin("gyan", stdlib::builtinGyanCreate);
-    registerBuiltin("vidyarthi", stdlib::builtinVidyarthiCreate);
-    registerBuiltin("saveModel", stdlib::builtinSaveModel);
-    registerBuiltin("loadModel", stdlib::builtinLoadModel);
-}
+        }
         if (!text.empty() && text.back() == '.') {
             text.pop_back();
         }
@@ -793,6 +782,17 @@ void Interpreter::registerStdlib() {
     addNative("nan", stdlib::builtinNaN);
     addNative("is_infinity", stdlib::builtinIsInfinity);
     addNative("is_nan", stdlib::builtinIsNaN);
+
+    // AI / NeuroBrain builtins
+    addNative("hash", stdlib::builtinHash);
+    addNative("similar", stdlib::builtinSimilar);
+    addNative("sikho", stdlib::builtinSikho);
+    addNative("puchho", stdlib::builtinPuchho);
+    addNative("beej", stdlib::builtinBeejCreate);
+    addNative("gyan", stdlib::builtinGyanCreate);
+    addNative("vidyarthi", stdlib::builtinVidyarthiCreate);
+    addNative("saveModel", stdlib::builtinSaveModel);
+    addNative("loadModel", stdlib::builtinLoadModel);
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {

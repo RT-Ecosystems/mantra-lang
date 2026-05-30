@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <memory>
 #include <iostream>
+#include <iomanip>
 
 // ==================== SHA-256 (public domain) ====================
 namespace {

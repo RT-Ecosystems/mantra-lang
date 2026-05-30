@@ -50,7 +50,11 @@ Value Value::object(const std::unordered_map<std::string, Value>& properties) {
     return v;
 }
 
-Value::Value(ValueType type) : type_(type) {}
+Value::Value(ValueType type) : type_(type) {
+    if (type == ValueType::Object) {
+        object_value_ = std::make_shared<std::unordered_map<std::string, Value>>();
+    }
+}
 
 ValueType Value::type() const {
     return type_;

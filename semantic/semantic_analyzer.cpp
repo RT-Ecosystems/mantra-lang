@@ -476,6 +476,28 @@ void SemanticAnalyzer::seedBuiltins() {
     // HTTP functions
     registerBuiltin("httpGet", 1, 1);
     registerBuiltin("httpPost", 2, 2);
+
+    // Random functions
+    registerBuiltin("randomInt", 2, 2);
+    registerBuiltin("choice", 1, 1);
+
+    // OS functions
+    registerBuiltin("getEnv", 1, 1);
+    registerBuiltin("system", 1, 1);
+
+    // Base64 functions
+    registerBuiltin("base64Encode", 1, 1);
+    registerBuiltin("base64Decode", 1, 1);
+
+    // Regex functions
+    registerBuiltin("regexMatch", 2, 2);
+    registerBuiltin("regexReplace", 3, 3);
+
+    // UUID functions
+    registerBuiltin("uuid", 0, 0);
+
+    // TempFile functions
+    registerBuiltin("tempFile", 0, 0);
 }
 
 } // namespace mantra

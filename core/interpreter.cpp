@@ -11,6 +11,12 @@
 #include "../stdlib/csv.h"
 #include "../stdlib/json.h"
 #include "../stdlib/file.h"
+#include "../stdlib/random.h"
+#include "../stdlib/os.h"
+#include "../stdlib/base64.h"
+#include "../stdlib/regex.h"
+#include "../stdlib/uuid.h"
+#include "../stdlib/tempfile.h"
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -819,6 +825,28 @@ void Interpreter::registerStdlib() {
     // HTTP builtins
     addNative("httpGet", stdlib::builtinHttpGet);
     addNative("httpPost", stdlib::builtinHttpPost);
+
+    // Random builtins
+    addNative("randomInt", stdlib::builtinRandomInt);
+    addNative("choice", stdlib::builtinChoice);
+
+    // OS builtins
+    addNative("getEnv", stdlib::builtinGetEnv);
+    addNative("system", stdlib::builtinSystem);
+
+    // Base64 builtins
+    addNative("base64Encode", stdlib::builtinBase64Encode);
+    addNative("base64Decode", stdlib::builtinBase64Decode);
+
+    // Regex builtins
+    addNative("regexMatch", stdlib::builtinRegexMatch);
+    addNative("regexReplace", stdlib::builtinRegexReplace);
+
+    // UUID builtins
+    addNative("uuid", stdlib::builtinUUID);
+
+    // TempFile builtins
+    addNative("tempFile", stdlib::builtinTempFile);
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {

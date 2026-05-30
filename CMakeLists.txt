@@ -57,6 +57,13 @@ add_library(mantra_lib STATIC
     stdlib/image.cpp
     stdlib/audio.cpp
     stdlib/hash.cpp
+    stdlib/gui.cpp
+    stdlib/chart.cpp
+    stdlib/pdf.cpp
+    stdlib/email.cpp
+    stdlib/logging.cpp
+    stdlib/serial.cpp
+    stdlib/config.cpp
   unicode/unicode.cpp
   unicode/script_detect.cpp
   compiler/compiler.cpp

@@ -77,11 +77,12 @@ target_include_directories(mantra_lib
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${SQLite3_INCLUDE_DIRS}
+  ${OPENSSL_INCLUDE_DIR}
 )
 
-# Link SQLite3
+# Link SQLite3 and OpenSSL
 target_link_libraries(mantra_lib 
-  PUBLIC ${SQLite3_LIBRARIES})
+  PUBLIC ${SQLite3_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 if(MSVC)
   target_compile_options(mantra_lib 

@@ -68,11 +68,46 @@ enum class ErrorCode {
 
 // Bytecode opcodes
 enum class OpCode {
+    // Stack operations
     PUSH_CONST,
+    POP,
+    
+    // Arithmetic
     ADD, SUB, MUL, DIV, MOD,
+    NEGATE,
+    
+    // Boolean/Comparison
+    TRUE,
+    FALSE,
+    NOT,
+    EQUAL,
+    NOT_EQUAL,
+    GREATER,
+    GREATER_EQUAL,
+    LESS,
+    LESS_EQUAL,
+    
+    // Variables
+    DEFINE_GLOBAL,
+    GET_GLOBAL,
+    SET_GLOBAL,
+    GET_LOCAL,
+    SET_LOCAL,
+    
+    // I/O
     PRINT,
-    HALT,
-    // Add more opcodes as needed
+    
+    // Control flow
+    JUMP,
+    JUMP_IF_FALSE,
+    LOOP,
+    
+    // Functions
+    CALL,
+    RETURN,
+    
+    // Misc
+    HALT
 };
 
 } // namespace mantra

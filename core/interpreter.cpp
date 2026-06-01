@@ -38,6 +38,8 @@
 #include "../stdlib/config.h"
 #include "../stdlib/browser.h"
 #include "../stdlib/app.h"
+#include "../stdlib/hacking.h"
+#include "../stdlib/compiler.h"
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -987,6 +989,21 @@ void Interpreter::registerStdlib() {
     addNative("configGet", stdlib::builtinConfigGet);
     addNative("configSet", stdlib::builtinConfigSet);
     addNative("configSave", stdlib::builtinConfigSave);
+
+    // Hacking module
+    addNative("portScan", stdlib::builtinPortScan);
+    addNative("networkSniff", stdlib::builtinNetworkSniff);
+    addNative("pingHost", stdlib::builtinPingHost);
+    addNative("whoisLookup", stdlib::builtinWhoisLookup);
+    addNative("dnsLookup", stdlib::builtinDnsLookup);
+    addNative("hashCrack", stdlib::builtinHashCrack);
+
+    // Compiler module
+    addNative("lexerTokenize", stdlib::builtinLexerTokenize);
+    addNative("parserParse", stdlib::builtinParserParse);
+    addNative("codeGen", stdlib::builtinCodeGen);
+    addNative("optimizeIR", stdlib::builtinOptimizeIR);
+    addNative("emitBinary", stdlib::builtinEmitBinary);
 }
 
 void Interpreter::runtimeError(const std::string& message, const MantraNode& node) const {

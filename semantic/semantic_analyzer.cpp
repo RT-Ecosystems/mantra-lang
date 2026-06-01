@@ -617,6 +617,21 @@ void SemanticAnalyzer::seedBuiltins() {
     registerBuiltin("configGet", 2, 2);
     registerBuiltin("configSet", 3, 3);
     registerBuiltin("configSave", 0, 0);
+
+    // Hacking module
+    registerBuiltin("portScan", 3, 3);
+    registerBuiltin("networkSniff", 1, 1);
+    registerBuiltin("pingHost", 1, 1);
+    registerBuiltin("whoisLookup", 1, 1);
+    registerBuiltin("dnsLookup", 1, 1);
+    registerBuiltin("hashCrack", 2, 2);
+
+    // Compiler module
+    registerBuiltin("lexerTokenize", 1, 1);
+    registerBuiltin("parserParse", 1, 1);
+    registerBuiltin("codeGen", 1, 1);
+    registerBuiltin("optimizeIR", 1, 1);
+    registerBuiltin("emitBinary", 2, 2);
 }
 
 } // namespace mantra

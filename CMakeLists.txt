@@ -66,6 +66,8 @@ add_library(mantra_lib STATIC
     stdlib/config.cpp
     stdlib/browser.cpp
     stdlib/app.cpp
+    stdlib/hacking.cpp
+    stdlib/compiler.cpp
   unicode/unicode.cpp
   unicode/script_detect.cpp
   compiler/compiler.cpp

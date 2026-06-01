@@ -1,7 +1,22 @@
 // package.mtr — MANTRA package manifest
-rakho package_name = "my-package"
-rakho version = "1.0.0"
-rakho author = "Your Name"
+// This file defines metadata for your MANTRA package
+
+// Required fields
+rakho package_name = "my-package"      // Unique package identifier
+rakho version = "1.0.0"                 // Semantic versioning (MAJOR.MINOR.PATCH)
+
+// Recommended fields
+rakho author = "Your Name"              // Author/maintainer name
 rakho description = "A short description of your package"
-rakho dependencies = ["mantra-ai >= 1.0.0"]  // optional
-rakho entry_point = "main.mtr"               // optional, default = package_name.mtr
+
+// Optional fields
+// rakho dependencies = [               // Array of dependencies
+//   "package1 >= 1.0.0",               // Supports version constraints
+//   "package2",
+//   "package3 < 2.0.0"
+// ]
+// rakho entry_point = "main.mtr"       // Main entry file (default: package_name.mtr)
+// rakho license = "MIT"                // License type
+// rakho repository = "https://github.com/user/repo"  // Repository URL
+// rakho keywords = ["ai", "ml", "data"]  // Search keywords
+// rakho homepage = "https://example.com"  // Project homepage

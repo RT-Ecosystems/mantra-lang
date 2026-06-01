@@ -36,6 +36,8 @@
 #include "../stdlib/logging.h"
 #include "../stdlib/serial.h"
 #include "../stdlib/config.h"
+#include "../stdlib/browser.h"
+#include "../stdlib/app.h"
 #include <algorithm>
 #include <cmath>
 #include <iomanip>
@@ -936,6 +938,21 @@ void Interpreter::registerStdlib() {
     addNative("guiButton", stdlib::builtinGuiButton);
     addNative("guiLabel", stdlib::builtinGuiLabel);
     addNative("guiRun", stdlib::builtinGuiRun);
+
+    // Browser builtins
+    addNative("browserOpen", stdlib::builtinBrowserOpen);
+    addNative("browserClick", stdlib::builtinBrowserClick);
+    addNative("browserType", stdlib::builtinBrowserType);
+    addNative("browserGetText", stdlib::builtinBrowserGetText);
+    addNative("browserScreenshot", stdlib::builtinBrowserScreenshot);
+    addNative("browserClose", stdlib::builtinBrowserClose);
+
+    // App builtins
+    addNative("appWindow", stdlib::builtinAppWindow);
+    addNative("appButton", stdlib::builtinAppButton);
+    addNative("appLabel", stdlib::builtinAppLabel);
+    addNative("appInput", stdlib::builtinAppInput);
+    addNative("appRun", stdlib::builtinAppRun);
 
     // Chart builtins
     addNative("chartBar", stdlib::builtinChartBar);

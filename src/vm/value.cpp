@@ -26,17 +26,17 @@ Value Value::null() {
     return Value(Storage{std::monostate{}});
 }
 
-ValueType Value::type() const {
+VMValueType Value::type() const {
     if (isNumber()) {
-        return ValueType::Number;
+        return VMValueType::Number;
     }
     if (isString()) {
-        return ValueType::String;
+        return VMValueType::String;
     }
     if (isBoolean()) {
-        return ValueType::Boolean;
+        return VMValueType::Boolean;
     }
-    return ValueType::Null;
+    return VMValueType::Null;
 }
 
 bool Value::isNumber() const {
@@ -97,13 +97,13 @@ bool operator==(const Value& left, const Value& right) {
     }
 
     switch (left.type()) {
-        case ValueType::Number:
+        case VMValueType::Number:
             return left.asNumber() == right.asNumber();
-        case ValueType::String:
+        case VMValueType::String:
             return left.asString() == right.asString();
-        case ValueType::Boolean:
+        case VMValueType::Boolean:
             return left.asBoolean() == right.asBoolean();
-        case ValueType::Null:
+        case VMValueType::Null:
             return true;
     }
 

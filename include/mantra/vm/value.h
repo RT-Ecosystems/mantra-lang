@@ -6,7 +6,7 @@
 
 namespace mantra {
 
-enum class ValueType {
+enum class VMValueType {
     Number,
     String,
     Boolean,
@@ -20,7 +20,7 @@ public:
     static Value boolean(bool value);
     static Value null();
 
-    ValueType type() const;
+    VMValueType type() const;
     bool isNumber() const;
     bool isString() const;
     bool isBoolean() const;

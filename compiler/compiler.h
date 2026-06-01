@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../bytecode/chunk.h"
 #include "../core/ast.h"
 #include "mantra/vm/bytecode.h"
 
@@ -10,8 +9,6 @@
 #include <vector>
 
 namespace mantra {
-
-using BytecodeChunk = bytecode::Chunk;
 
 class BytecodeCompiler {
 public:

@@ -261,35 +261,35 @@ void BytecodeCompiler::compileBinaryExpr(const BinaryExprNode& node) {
     compileExpression(*node.right);
     
     // Emit operation
-    switch (node.op.type) {
-        case TokenType::PLUS:
+    switch (node.op) {
+        case TokenType::OP_PLUS:
             program_->emit(OpCode::ADD);
             break;
-        case TokenType::MINUS:
+        case TokenType::OP_MINUS:
             program_->emit(OpCode::SUB);
             break;
-        case TokenType::STAR:
+        case TokenType::OP_MULTIPLY:
             program_->emit(OpCode::MUL);
             break;
-        case TokenType::SLASH:
+        case TokenType::OP_DIVIDE:
             program_->emit(OpCode::DIV);
             break;
-        case TokenType::EQUAL_EQUAL:
+        case TokenType::OP_EQUAL:
             program_->emit(OpCode::EQUAL);
             break;
-        case TokenType::BANG_EQUAL:
+        case TokenType::OP_NOT_EQUAL:
             program_->emit(OpCode::NOT_EQUAL);
             break;
-        case TokenType::GREATER:
+        case TokenType::OP_GREATER:
             program_->emit(OpCode::GREATER);
             break;
-        case TokenType::GREATER_EQUAL:
+        case TokenType::OP_GREATER_EQUAL:
             program_->emit(OpCode::GREATER_EQUAL);
             break;
-        case TokenType::LESS:
+        case TokenType::OP_LESS:
             program_->emit(OpCode::LESS);
             break;
-        case TokenType::LESS_EQUAL:
+        case TokenType::OP_LESS_EQUAL:
             program_->emit(OpCode::LESS_EQUAL);
             break;
         default:
@@ -304,9 +304,9 @@ void BytecodeCompiler::compileUnaryExpr(const UnaryExprNode& node) {
     
     compileExpression(*node.operand);
     
-    if (node.op.type == TokenType::BANG) {
+    if (node.op == TokenType::OP_NOT) {
         program_->emit(OpCode::NOT);
-    } else if (node.op.type == TokenType::MINUS) {
+    } else if (node.op == TokenType::OP_MINUS) {
         program_->emit(OpCode::NEGATE);
     }
 }

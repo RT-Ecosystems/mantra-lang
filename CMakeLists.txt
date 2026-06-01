@@ -64,6 +64,8 @@ add_library(mantra_lib STATIC
     stdlib/logging.cpp
     stdlib/serial.cpp
     stdlib/config.cpp
+    stdlib/browser.cpp
+    stdlib/app.cpp
   unicode/unicode.cpp
   unicode/script_detect.cpp
   compiler/compiler.cpp

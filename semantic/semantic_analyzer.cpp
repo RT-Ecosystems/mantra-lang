@@ -569,6 +569,21 @@ void SemanticAnalyzer::seedBuiltins() {
     registerBuiltin("guiLabel", 1, 1);
     registerBuiltin("guiRun", 0, 0);
 
+    // Browser functions
+    registerBuiltin("browserOpen", 1, 1);
+    registerBuiltin("browserClick", 1, 1);
+    registerBuiltin("browserType", 2, 2);
+    registerBuiltin("browserGetText", 1, 1);
+    registerBuiltin("browserScreenshot", 1, 1);
+    registerBuiltin("browserClose", 0, 0);
+
+    // App functions
+    registerBuiltin("appWindow", 3, 3);
+    registerBuiltin("appButton", 5, 5);
+    registerBuiltin("appLabel", 3, 3);
+    registerBuiltin("appInput", 4, 4);
+    registerBuiltin("appRun", 0, 0);
+
     // Chart functions
     registerBuiltin("chartBar", 2, 2);
     registerBuiltin("chartLine", 2, 2);

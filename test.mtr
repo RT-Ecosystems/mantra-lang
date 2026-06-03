@@ -1,0 +1,9 @@
+dhanche:
+    h1 "मंत्र"
+    p "टेस्ट"
+
+roop:
+    body:
+        family = "Arial"
+    h1:
+        color = "#58a6ff"

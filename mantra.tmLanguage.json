@@ -1,0 +1,72 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "MANTRA",
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#numbers"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.mantra",
+          "match": "\\b(if|agar|endral|jodi|jekr|else|warna|illena|nahole|horna|while|baarbaar|marumurai|ghureghure|return|wapas|thirumbu|ferat|break|continue)\\b"
+        },
+        {
+          "name": "keyword.declaration.mantra",
+          "match": "\\b(function|kaam|seyal|kaj|rochona|let|rakho|banao)\\b"
+        },
+        {
+          "name": "support.function.mantra",
+          "match": "\\b(print|dikhao|batavo|kaado|talaipu|dekhao|dakho|dakhav|chupinchu|toro)\\b"
+        },
+        {
+          "name": "constant.language.mantra",
+          "match": "\\b(true|sach|unmai|shotti|sathyam|false|jhooth|poy|mithye|asathyam|null)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.mantra",
+          "match": "\\b(and|aur|mattrum|or|ya|allathu|nahi)\\b"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.mantra",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.mantra",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.mantra",
+          "match": "#.*$"
+        },
+        {
+          "name": "comment.line.double-slash.mantra",
+          "match": "//.*$"
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.mantra",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    }
+  },
+  "scopeName": "source.mantra"
+}

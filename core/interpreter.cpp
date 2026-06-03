@@ -7,6 +7,7 @@
 #include "../stdlib/string.h"
 #include "../stdlib/ai.h"
 #include "../stdlib/http.h"
+#include "../stdlib/server.h"
 #include "../stdlib/datetime.h"
 #include "../stdlib/csv.h"
 #include "../stdlib/json.h"
@@ -848,6 +849,11 @@ void Interpreter::registerStdlib() {
     // HTTP builtins
     addNative("httpGet", stdlib::builtinHttpGet);
     addNative("httpPost", stdlib::builtinHttpPost);
+    addNative("httpServer", stdlib::builtinHttpServer);
+    addNative("httpRoute", stdlib::builtinHttpRoute);
+    addNative("httpListen", stdlib::builtinHttpListen);
+    addNative("httpResponse", stdlib::builtinHttpResponse);
+
 
     // Random builtins
     addNative("randomInt", stdlib::builtinRandomInt);

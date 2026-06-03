@@ -1,0 +1,6 @@
+
+dikhao "Starting Mantra web server..."
+httpRoute "/" "<h1>नमस्ते दुनिया! मंत्र भाषा वेब सर्वर</h1><p>यह मंत्र भाषा में बना HTTP सर्वर है।</p>"
+httpRoute "/about" "<h1>मंत्र भाषा के बारे में</h1><p>मंत्र भारत की अपनी प्रोग्रामिंग लैंग्वेज है।</p>"
+httpServer 8080
+dikhao "Server running on http://localhost:8080"

@@ -39,6 +39,7 @@ add_library(mantra_lib STATIC
     stdlib/csv.cpp
     stdlib/datetime.cpp
     stdlib/http.cpp
+    stdlib/server.cpp
     stdlib/random.cpp
     stdlib/os.cpp
     stdlib/base64.cpp

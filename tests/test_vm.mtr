@@ -1,0 +1,86 @@
+# VM Test - Phase 1
+# Test basic arithmetic, variables, functions
+
+# Test 1: Basic Arithmetic
+test "basic_arithmetic" kaam() {
+    assert_equal 2 + 2 4 "Addition"
+    assert_equal 10 - 3 7 "Subtraction"
+    assert_equal 4 * 5 20 "Multiplication"
+    assert_equal 10 / 2 5 "Division"
+    assert_equal 10 % 3 1 "Modulo"
+    assert_equal 2 ^ 3 8 "Power"
+}
+
+# Test 2: Variables
+test "variables" kaam() {
+    rakho x = 10
+    rakho y = "Hello"
+    rakho z = sach
+
+    assert_equal x 10 "Number variable"
+    assert_equal y "Hello" "String variable"
+    assert_equal z sach "Boolean variable"
+}
+
+# Test 3: Functions
+test "functions" kaam() {
+    kaam add(a, b) {
+        wapas a + b
+    }
+
+    assert_equal add(5, 3) 8 "Function with parameters"
+
+    kaam greet() {
+        wapas "Namaste"
+    }
+
+    assert_equal greet() "Namaste" "Function without parameters"
+}
+
+# Test 4: Control Flow
+test "control_flow" kaam() {
+    rakho x = 10
+
+    agar x > 5
+        assert_true sach "If condition true"
+    warna
+        assert_false sach "If condition false - should not reach"
+
+    rakho count = 0
+    baarbaar count < 3
+        count = count + 1
+
+    assert_equal count 3 "While loop"
+}
+
+# Test 5: String Operations
+test "string_operations" kaam() {
+    rakho name = "Ashutosh"
+    assert_equal length(name) 8 "String length"
+    assert_equal concat("Hello", " World") "Hello World" "String concat"
+    assert_equal upper("hello") "HELLO" "Upper case"
+    assert_equal lower("HELLO") "hello" "Lower case"
+}
+
+# Test 6: Arrays
+test "arrays" kaam() {
+    rakho arr = [1, 2, 3, 4, 5]
+    assert_equal length(arr) 5 "Array length"
+    assert_equal arr[0] 1 "Array index 0"
+    assert_equal arr[4] 5 "Array index 4"
+}
+
+# Run all tests
+rakho results = test_results()
+dikhao "=== VM TEST RESULTS ==="
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+dikhao "Total: " + results["total"]
+
+agar results["failed"] > 0
+    dikhao "FAILURES:"
+    dikhao results["failures"]
+    wapas 1
+warna
+    dikhao "ALL VM TESTS PASSED!"
+    wapas 0

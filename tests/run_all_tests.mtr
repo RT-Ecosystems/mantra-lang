@@ -1,0 +1,45 @@
+# Master Test Runner - Run all tests
+# Phase 1 + Phase 2 Complete Test Suite
+
+dikhao "========================================"
+dikhao "MANTRA LANGUAGE - COMPLETE TEST SUITE"
+dikhao "========================================"
+dikhao ""
+
+# Phase 1 Tests
+dikhao "--- PHASE 1: FOUNDATION ---"
+dikhao "Running VM tests..."
+run "tests/test_vm.mtr"
+
+dikhao "Running HTTP tests..."
+run "tests/test_http.mtr"
+
+dikhao "Running JSON tests..."
+run "tests/test_json.mtr"
+
+dikhao "Running Server tests..."
+run "tests/test_server.mtr"
+
+dikhao ""
+
+# Phase 2 Tests
+dikhao "--- PHASE 2: ECOSYSTEM ---"
+dikhao "Running Module tests..."
+run "tests/test_module.mtr"
+
+dikhao "Running IND tests..."
+run "tests/test_ind.mtr"
+
+dikhao "Running Async tests..."
+run "tests/test_async.mtr"
+
+dikhao "Running Web tests..."
+run "tests/test_web.mtr"
+
+dikhao "Running Testing Suite tests..."
+run "tests/test_testing.mtr"
+
+dikhao ""
+dikhao "========================================"
+dikhao "ALL TESTS COMPLETE!"
+dikhao "========================================"

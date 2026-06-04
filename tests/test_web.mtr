@@ -1,0 +1,43 @@
+# Web Framework Test - Phase 2 Part 2
+# Test web routing and responses
+
+# Test 1: Route Creation
+test "web_route" kaam() {
+    web_get "/" kaam(req) {
+        wapas html_response("<h1>Test</h1>")
+    }
+
+    assert_true sach "Route should be created"
+}
+
+# Test 2: JSON Response
+test "json_response" kaam() {
+    rakho resp = json_response({"status": "ok"})
+    assert_equal resp["status"] 200 "Should have status 200"
+    assert_true resp["body"] != "" "Should have body"
+}
+
+# Test 3: HTML Response
+test "html_response" kaam() {
+    rakho resp = html_response("<h1>Hello</h1>")
+    assert_equal resp["status"] 200 "Should have status 200"
+    assert_true resp["body"].find("Hello") != -1 "Should contain Hello"
+}
+
+# Test 4: Static Files
+test "static_files" kaam() {
+    web_static "/static" "./public"
+    assert_true sach "Static files should be configured"
+}
+
+rakho results = test_results()
+dikhao "=== WEB TEST RESULTS ==="
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+
+agar results["failed"] > 0
+    dikhao "Some Web tests failed"
+    wapas 1
+warna
+    dikhao "ALL WEB TESTS PASSED!"
+    wapas 0

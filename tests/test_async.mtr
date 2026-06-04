@@ -1,0 +1,57 @@
+# Async/Await Test - Phase 2 Part 2
+# Test async functionality
+
+# Test 1: Async Task Creation
+test "async_creation" kaam() {
+    rakho task = async kaam() {
+        sleep(100)
+        wapas "done"
+    }
+
+    assert_true task != "" "Task should be created"
+    assert_true task.find("task_") != -1 "Should have task ID"
+}
+
+# Test 2: Await Task
+test "await_task" kaam() {
+    rakho task = async kaam() {
+        sleep(100)
+        wapas "completed"
+    }
+
+    rakho result = await task
+    assert_equal result "completed" "Should await result"
+}
+
+# Test 3: Sleep
+test "sleep" kaam() {
+    rakho start = time_now()
+    sleep(500)
+    rakho end = time_now()
+
+    assert_true (end - start) >= 500 "Should sleep for at least 500ms"
+}
+
+# Test 4: Is Complete
+test "is_complete" kaam() {
+    rakho task = async kaam() {
+        sleep(1000)
+        wapas "done"
+    }
+
+    assert_false is_complete(task) "Should not be complete immediately"
+    sleep(1200)
+    assert_true is_complete(task) "Should be complete after sleep"
+}
+
+rakho results = test_results()
+dikhao "=== ASYNC TEST RESULTS ==="
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+
+agar results["failed"] > 0
+    dikhao "Some Async tests failed"
+    wapas 1
+warna
+    dikhao "ALL ASYNC TESTS PASSED!"
+    wapas 0

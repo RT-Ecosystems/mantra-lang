@@ -1,0 +1,51 @@
+# Testing Suite Test - Phase 2 Part 2
+# Test the testing framework itself
+
+# Test 1: Assert
+test "assert_test" kaam() {
+    assert sach "True should pass"
+    assert 5 > 3 "Comparison should pass"
+    assert "hello" != "" "String not empty should pass"
+}
+
+# Test 2: Assert Equal
+test "assert_equal_test" kaam() {
+    assert_equal 2 + 2 4 "Addition"
+    assert_equal "hello" "hello" "String equality"
+    assert_equal sach sach "Boolean equality"
+}
+
+# Test 3: Assert True/False
+test "assert_true_false" kaam() {
+    assert_true sach "True"
+    assert_false jhooth "False"
+    assert_true 5 > 3 "True comparison"
+    assert_false 5 < 3 "False comparison"
+}
+
+# Test 4: Assert Approx
+test "assert_approx_test" kaam() {
+    assert_approx 3.14159 3.14 0.01 "Pi approximation"
+    assert_approx 1.0 / 3.0 0.333 0.001 "Division approximation"
+    assert_approx 0.1 + 0.2 0.3 0.0001 "Float arithmetic"
+}
+
+# Test 5: Test Results
+test "test_results_test" kaam() {
+    rakho results = test_results()
+    assert_true results["passed"] > 0 "Should have passed tests"
+    assert_true results["total"] > 0 "Should have total tests"
+}
+
+rakho results = test_results()
+dikhao "=== TESTING SUITE RESULTS ==="
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+dikhao "Total: " + results["total"]
+
+agar results["failed"] > 0
+    dikhao "Some Testing Suite tests failed"
+    wapas 1
+warna
+    dikhao "ALL TESTING SUITE TESTS PASSED!"
+    wapas 0

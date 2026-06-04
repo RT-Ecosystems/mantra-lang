@@ -1,0 +1,35 @@
+# HTTP Test - Phase 1
+# Test HTTP client functionality
+
+# Test 1: HTTP GET
+test "http_get" kaam() {
+    rakho response = http_get("https://api.github.com")
+    assert_true response != "" "HTTP GET should return data"
+    assert_true length(response) > 0 "Response should not be empty"
+}
+
+# Test 2: HTTP POST (with mock data)
+test "http_post" kaam() {
+    rakho data = json_stringify({"name": "Ashutosh", "language": "MANTRA"})
+    rakho response = http_post("https://httpbin.org/post", data)
+    assert_true response != "" "HTTP POST should return data"
+}
+
+# Test 3: HTTP Error Handling
+test "http_error" kaam() {
+    rakho response = http_get("https://invalid-url-12345.com")
+    # Should handle error gracefully
+    assert_true response != "" "Error should return message"
+}
+
+rakho results = test_results()
+dikhao "=== HTTP TEST RESULTS ==="
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+
+agar results["failed"] > 0
+    dikhao "Some HTTP tests failed"
+    wapas 1
+warna
+    dikhao "ALL HTTP TESTS PASSED!"
+    wapas 0

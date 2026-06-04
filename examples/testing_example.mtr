@@ -1,0 +1,37 @@
+# Testing Example - MANTRA Language
+test_reset()
+
+test "math_operations" kaam() {
+    assert_equal 2 + 2 4 "Addition should work"
+    assert_equal 10 - 3 7 "Subtraction should work"
+    assert_equal 4 * 5 20 "Multiplication should work"
+    assert_equal 10 / 2 5 "Division should work"
+}
+
+test "string_operations" kaam() {
+    rakho name = "Ashutosh"
+    assert_equal length(name) 8 "Length should be correct"
+    assert_true name != "" "Name should not be empty"
+}
+
+test "boolean_logic" kaam() {
+    assert_true sach "True should be true"
+    assert_false jhooth "False should be false"
+    assert 5 > 3 "5 should be greater than 3"
+}
+
+test "approximate_values" kaam() {
+    assert_approx 3.14159 3.14 0.01 "Pi approximation"
+    assert_approx 1.0 / 3.0 0.333 0.001 "Division approximation"
+}
+
+rakho results = test_results()
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+dikhao "Total: " + results["total"]
+
+agar results["failed"] > 0
+    dikhao "Some tests failed!"
+    dikhao results["failures"]
+warna
+    dikhao "All tests passed!"

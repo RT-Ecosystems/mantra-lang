@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANTRA Web IDE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: #16213e;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #0f3460;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e94560;
+        }
+
+        .logo span {
+            color: #fff;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-run {
+            background: #e94560;
+            color: white;
+        }
+
+        .btn-run:hover {
+            background: #ff6b6b;
+        }
+
+        .btn-clear {
+            background: #0f3460;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #1a4a7a;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .editor-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 2px solid #0f3460;
+        }
+
+        .panel-header {
+            background: #16213e;
+            padding: 10px 15px;
+            font-size: 14px;
+            color: #aaa;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .code-editor {
+            flex: 1;
+            background: #0f0f23;
+            color: #eee;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            border: none;
+            resize: none;
+            outline: none;
+        }
+
+        .output-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .output {
+            flex: 1;
+            background: #0f0f23;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .output .success {
+            color: #4ecca3;
+        }
+
+        .output .error {
+            color: #e94560;
+        }
+
+        .output .info {
+            color: #74b9ff;
+        }
+
+        .language-selector {
+            padding: 10px 15px;
+            background: #16213e;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        select {
+            padding: 5px 15px;
+            background: #0f3460;
+            color: #eee;
+            border: 1px solid #1a4a7a;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        .examples {
+            padding: 10px 15px;
+            background: #16213e;
+            border-top: 1px solid #0f3460;
+        }
+
+        .example-btn {
+            padding: 5px 10px;
+            margin: 2px;
+            background: #0f3460;
+            color: #eee;
+            border: 1px solid #1a4a7a;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .example-btn:hover {
+            background: #1a4a7a;
+        }
+
+        .status-bar {
+            background: #16213e;
+            padding: 5px 15px;
+            font-size: 12px;
+            color: #aaa;
+            border-top: 1px solid #0f3460;
+        }
+
+        .status-bar .ready {
+            color: #4ecca3;
+        }
+
+        .status-bar .loading {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">MANTRA <span>Web IDE</span></div>
+        <div class="controls">
+            <button class="btn-clear" onclick="clearCode()">Clear</button>
+            <button class="btn-run" onclick="runCode()">▶ Run</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="editor-panel">
+            <div class="panel-header">
+                Code Editor
+                <div class="language-selector" style="display: inline-block; margin-left: 20px;">
+                    <select id="language" onchange="changeLanguage()">
+                        <option value="hinglish">Hinglish (Hindi)</option>
+                        <option value="tanglish">Tanglish (Tamil)</option>
+                        <option value="punglish">Punglish (Punjabi)</option>
+                        <option value="benglish">Benglish (Bengali)</option>
+                        <option value="gujlish">Gujlish (Gujarati)</option>
+                        <option value="english">English</option>
+                    </select>
+                </div>
+            </div>
+            <textarea class="code-editor" id="code" placeholder="// Write your MANTRA code here...
+// Example:
+dikhao "Hello World!"
+
+// Try changing language from dropdown above!">dikhao "Namaste from MANTRA!"
+rakho naam = "Ashutosh"
+dikhao "Hello, " + naam
+
+kaam greet(name) {
+    wapas "Namaste, " + name
+}
+
+dikhao greet("Duniya")</textarea>
+            <div class="examples">
+                <button class="example-btn" onclick="loadExample('hello')">Hello World</button>
+                <button class="example-btn" onclick="loadExample('variables')">Variables</button>
+                <button class="example-btn" onclick="loadExample('functions')">Functions</button>
+                <button class="example-btn" onclick="loadExample('control')">Control Flow</button>
+                <button class="example-btn" onclick="loadExample('http')">HTTP</button>
+                <button class="example-btn" onclick="loadExample('async')">Async</button>
+            </div>
+        </div>
+
+        <div class="output-panel">
+            <div class="panel-header">Output</div>
+            <div class="output" id="output"></div>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <span id="status" class="loading">⏳ Loading MANTRA WASM...</span>
+        <span style="float: right;">Press Ctrl+Enter to run</span>
+    </div>
+
+    <script src="mantra_wasm.js"></script>
+    <script>
+        let mantra = null;
+
+        // Initialize WASM
+        async function init() {
+            try {
+                mantra = await MantraWASM.init('mantra.wasm');
+                document.getElementById('status').className = 'ready';
+                document.getElementById('status').textContent = '✅ MANTRA WASM Ready';
+
+                // Set output callback
+                mantra.onOutput((msg) => {
+                    appendOutput(msg, 'info');
+                });
+
+                mantra.onError((msg) => {
+                    appendOutput(msg, 'error');
+                });
+            } catch (error) {
+                document.getElementById('status').className = 'error';
+                document.getElementById('status').textContent = '❌ Failed to load WASM';
+                appendOutput('Error: ' + error.message, 'error');
+            }
+        }
+
+        // Run code
+        async function runCode() {
+            const code = document.getElementById('code').value;
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+
+            appendOutput('🚀 Running MANTRA code...\n', 'info');
+
+            try {
+                const result = await mantra.run(code);
+                appendOutput('✅ Execution complete!', 'success');
+                appendOutput('\nResult: ' + result, 'info');
+            } catch (error) {
+                appendOutput('❌ Error: ' + error.message, 'error');
+            }
+        }
+
+        // Clear code
+        function clearCode() {
+            document.getElementById('code').value = '';
+            document.getElementById('output').innerHTML = '';
+        }
+
+        // Append output
+        function appendOutput(text, type) {
+            const output = document.getElementById('output');
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = text;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        // Change language
+        function changeLanguage() {
+            const lang = document.getElementById('language').value;
+            appendOutput(`🌐 Language changed to: ${lang}`, 'info');
+        }
+
+        // Load examples
+        const examples = {
+            hello: `dikhao "Hello World!"
+dikhao "Namaste Duniya!"`,
+
+            variables: `rakho naam = "Ashutosh"
+rakho age = 25
+rakho active = sach
+
+dikhao naam
+dikhao age
+dikhao active`,
+
+            functions: `kaam add(a, b) {
+    wapas a + b
+}
+
+kaam greet(name) {
+    wapas "Namaste, " + name
+}
+
+dikhao add(5, 3)
+dikhao greet("Duniya")`,
+
+            control: `rakho count = 1
+
+baarbaar count <= 5
+    dikhao "Count: " + count
+    count = count + 1
+
+rakho marks = 85
+
+agar marks >= 90
+    dikhao "Grade A+"
+warna_agar marks >= 80
+    dikhao "Grade A"
+warna
+    dikhao "Grade B"`,
+
+            http: `rakho response = http_get("https://api.github.com")
+dikhao response
+
+rakho data = json_stringify({"name": "MANTRA"})
+rakho post_response = http_post("https://httpbin.org/post", data)
+dikhao post_response`,
+
+            async: `async kaam fetchData() {
+    dikhao "Fetching..."
+    await sleep(1000)
+    wapas "Data received!"
+}
+
+async kaam main() {
+    rakho task = async fetchData()
+    dikhao "Waiting..."
+    rakho result = await task
+    dikhao result
+}
+
+async main()`
+        };
+
+        function loadExample(name) {
+            document.getElementById('code').value = examples[name] || '';
+        }
+
+        // Keyboard shortcut
+        document.getElementById('code').addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                runCode();
+            }
+        });
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

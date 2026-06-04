@@ -1,0 +1,44 @@
+# Module System Test - Phase 2 Part 1
+# Test import/export functionality
+
+# Test 1: Import Module
+test "import_module" kaam() {
+    rakho math = import "math"
+    assert_true math != "" "Module should be imported"
+    assert_equal math["__name__"] "math" "Module name should be correct"
+}
+
+# Test 2: Module Exists
+test "module_exists" kaam() {
+    assert_true module_exists("math") "Math module should exist"
+    assert_true module_exists("string") "String module should exist"
+    assert_false module_exists("nonexistent") "Nonexistent module should not exist"
+}
+
+# Test 3: List Modules
+test "list_modules" kaam() {
+    rakho modules = list_modules()
+    assert_true length(modules) >= 0 "Should return array"
+}
+
+# Test 4: Export Function
+test "export_function" kaam() {
+    export kaam test_func() {
+        wapas "exported"
+    }
+
+    rakho exports = export("test_func")
+    assert_true length(exports) > 0 "Should have exports"
+}
+
+rakho results = test_results()
+dikhao "=== MODULE TEST RESULTS ==="
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+
+agar results["failed"] > 0
+    dikhao "Some Module tests failed"
+    wapas 1
+warna
+    dikhao "ALL MODULE TESTS PASSED!"
+    wapas 0

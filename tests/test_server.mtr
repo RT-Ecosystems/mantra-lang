@@ -1,0 +1,36 @@
+# Server Test - Phase 1
+# Test HTTP server functionality
+
+# Test 1: Basic Server
+test "server_start" kaam() {
+    http_route "/" "Hello World!"
+    rakho result = http_server(8080)
+    assert_true result != "" "Server should start"
+    assert_true result.find("8080") != -1 "Should mention port 8080"
+}
+
+# Test 2: Route Handling
+test "route_handling" kaam() {
+    http_route "/test" "Test Route"
+    rakho result = http_route("/test", "Test Content")
+    assert_true result.find("Route added") != -1 "Route should be added"
+}
+
+# Test 3: Server Stop
+test "server_stop" kaam() {
+    http_server(8080)
+    rakho result = http_server_stop()
+    assert_true result != "" "Server should stop"
+}
+
+rakho results = test_results()
+dikhao "=== SERVER TEST RESULTS ==="
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+
+agar results["failed"] > 0
+    dikhao "Some Server tests failed"
+    wapas 1
+warna
+    dikhao "ALL SERVER TESTS PASSED!"
+    wapas 0

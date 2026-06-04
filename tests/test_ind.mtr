@@ -1,0 +1,38 @@
+# IND Package Manager Test - Phase 2 Part 1
+# Test package management functionality
+
+# Test 1: List Packages
+test "ind_list" kaam() {
+    rakho packages = ind_list()
+    assert_true packages != "" "Should return list"
+}
+
+# Test 2: Search Packages
+test "ind_search" kaam() {
+    rakho results = ind_search("networking")
+    assert_true results != "" "Should return search results"
+}
+
+# Test 3: Package Info
+test "ind_info" kaam() {
+    rakho info = ind_info("networking")
+    assert_true info != "" "Should return package info"
+}
+
+# Test 4: Init Package
+test "ind_init" kaam() {
+    rakho result = ind_init("test_package", "Test Author")
+    assert_true result != "" "Should initialize package"
+}
+
+rakho results = test_results()
+dikhao "=== IND TEST RESULTS ==="
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+
+agar results["failed"] > 0
+    dikhao "Some IND tests failed"
+    wapas 1
+warna
+    dikhao "ALL IND TESTS PASSED!"
+    wapas 0

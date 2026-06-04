@@ -1,0 +1,19 @@
+# Web Framework Example - MANTRA Language
+web_get "/" kaam(req) {
+    wapas html_response("<h1>Hello from MANTRA!</h1>")
+}
+
+web_get "/users/:id" kaam(req) {
+    rakho userId = req.params["id"]
+    wapas json_response({"id": userId, "name": "User " + userId})
+}
+
+web_post "/users" kaam(req) {
+    rakho body = json_parse(req.body)
+    wapas json_response({"message": "User created", "data": body})
+}
+
+web_static "/static" "./public"
+
+web_start(8080)
+dikhao "Server running on http://localhost:8080"

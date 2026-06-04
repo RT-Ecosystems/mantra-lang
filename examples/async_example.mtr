@@ -1,0 +1,26 @@
+# Async/Await Example - MANTRA Language
+async kaam fetchData() {
+    dikhao "Fetching data..."
+    await sleep(1000)
+    rakho data = http_get("https://api.example.com/data")
+    wapas data
+}
+
+async kaam processData() {
+    rakho task = async fetchData()
+    dikhao "Waiting for data..."
+    rakho result = await task
+    dikhao "Received: " + result
+}
+
+async processData()
+
+rakho task2 = async kaam() {
+    sleep(500)
+    wapas "Done!"
+}
+
+agar is_complete(task2)
+    dikhao "Task complete!"
+warna
+    dikhao "Task still running..."

@@ -1,138 +1,125 @@
-cmake_minimum_required(VERSION 3.15)
-project(MantraLang VERSION 0.1.0 
-        LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.14)
+project(mantra VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+# Find required packages
+find_package(CURL REQUIRED)
+find_package(Threads REQUIRED)
+
+# Try to find nlohmann_json
+find_package(nlohmann_json QUIET)
+if(NOT nlohmann_json_FOUND)
+    message(STATUS "nlohmann_json not found, using bundled version")
+    include(FetchContent)
+    FetchContent_Declare(
+        json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.2
+    )
+    FetchContent_MakeAvailable(json)
 endif()
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
+# Source files
+set(CORE_SOURCES
+    core/main.cpp
+    core/lexer.cpp
+    core/parser.cpp
+    core/interpreter.cpp
+    core/semantic_analyzer.cpp
+    core/keyword_normalizer.cpp
+    core/typesystem.cpp
+    core/repl.cpp
+    core/module_system.cpp
+    core/async_system.cpp
+    core/ind_package_manager.cpp
 )
 
-# Find SQLite3
-find_package(OpenSSL REQUIRED)
-find_package(SQLite3)
-if(NOT SQLite3_FOUND)
-  message(FATAL_ERROR "SQLite3 not found. Please install libsqlite3-dev")
-endif()
+set(COMPILER_SOURCES
+    compiler/compiler.cpp
+)
 
-add_library(mantra_lib STATIC
-  core/lexer.cpp
-  core/parser.cpp
-  core/interpreter.cpp
-  core/repl.cpp
-  core/keyword_normalizer.cpp
-  core/typesystem.cpp
-  error/error.cpp
-  stdlib/io.cpp
-  stdlib/math.cpp
-  stdlib/string.cpp
-    stdlib/ai.cpp
+set(VM_SOURCES
+    vm/vm.cpp
+)
+
+set(STDLIB_SOURCES
+    stdlib/io.cpp
+    stdlib/math.cpp
+    stdlib/string.cpp
     stdlib/file.cpp
-    stdlib/json.cpp
-    stdlib/csv.cpp
-    stdlib/datetime.cpp
-    stdlib/http.cpp
-    stdlib/server.cpp
-    stdlib/random.cpp
-    stdlib/os.cpp
-    stdlib/base64.cpp
-    stdlib/regex.cpp
-    stdlib/uuid.cpp
-    stdlib/tempfile.cpp
     stdlib/sqlite.cpp
-    stdlib/zip.cpp
-    stdlib/compress.cpp
+    stdlib/network.cpp
+    stdlib/http.cpp
+    stdlib/socket.cpp
+    stdlib/server.cpp
+    stdlib/json.cpp
     stdlib/xml.cpp
     stdlib/yaml.cpp
-    stdlib/ini.cpp
-    stdlib/process.cpp
-    stdlib/socket.cpp
-    stdlib/crypto.cpp
-    stdlib/image.cpp
-    stdlib/audio.cpp
-    stdlib/hash.cpp
-    stdlib/gui.cpp
-    stdlib/chart.cpp
+    stdlib/zip.cpp
     stdlib/pdf.cpp
-    stdlib/email.cpp
-    stdlib/logging.cpp
-    stdlib/serial.cpp
-    stdlib/config.cpp
+    stdlib/gui.cpp
     stdlib/browser.cpp
-    stdlib/app.cpp
-    stdlib/hacking.cpp
-    stdlib/compiler.cpp
-  unicode/unicode.cpp
-  unicode/script_detect.cpp
-  compiler/compiler.cpp
-  semantic/semantic_analyzer.cpp
-  bytecode/chunk.cpp
-  src/vm/value.cpp
-  src/vm/stack.cpp
-  src/vm/bytecode.cpp
-  src/vm/vm.cpp
-  src/runtime/types.cpp
-  src/runtime/runtime.cpp
-  web/html_generator.cpp
-  web/mtr_parser.cpp
+    stdlib/crypto.cpp
+    stdlib/hash.cpp
+    stdlib/process.cpp
+    stdlib/ai.cpp
+    stdlib/web_framework.cpp
+    stdlib/testing.cpp
 )
 
-target_include_directories(mantra_lib
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${SQLite3_INCLUDE_DIRS}
-  ${OPENSSL_INCLUDE_DIR}
+set(WEB_SOURCES
+    web/mtr_parser.cpp
 )
 
-# Link SQLite3 and OpenSSL
-target_link_libraries(mantra_lib 
-  PUBLIC ${SQLite3_LIBRARIES} ${OPENSSL_LIBRARIES})
+set(ALL_SOURCES
+    ${CORE_SOURCES}
+    ${COMPILER_SOURCES}
+    ${VM_SOURCES}
+    ${STDLIB_SOURCES}
+    ${WEB_SOURCES}
+)
 
-if(MSVC)
-  target_compile_options(mantra_lib 
-    PRIVATE /W4 /utf-8)
-else()
-  target_compile_options(mantra_lib 
-    PRIVATE -Wall -Wextra)
+# Executable
+add_executable(mantra ${ALL_SOURCES})
+
+# Include directories
+target_include_directories(mantra PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/core
+    ${CMAKE_CURRENT_SOURCE_DIR}/compiler
+    ${CMAKE_CURRENT_SOURCE_DIR}/vm
+    ${CMAKE_CURRENT_SOURCE_DIR}/stdlib
+    ${CMAKE_CURRENT_SOURCE_DIR}/web
+    ${CMAKE_CURRENT_SOURCE_DIR}/semantic
+)
+
+# Link libraries
+target_link_libraries(mantra PRIVATE
+    CURL::libcurl
+    Threads::Threads
+    nlohmann_json::nlohmann_json
+    sqlite3
+    z
+    ssl
+    crypto
+)
+
+# Compiler options
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(mantra PRIVATE -Wall -Wextra -Wpedantic -O2)
 endif()
 
-add_executable(mantra main.cpp)
-target_link_libraries(mantra 
-  PRIVATE mantra_lib)
+if(MSVC)
+    target_compile_options(mantra PRIVATE /W4 /O2)
+endif()
 
-enable_testing()
-add_executable(mantra_tests
-  tests/test_lexer.cpp
-  tests/test_vm.cpp
-  tests/test_stdlib_math.cpp
-  tests/test_semantic.cpp
-  tests/test_typesystem.cpp
-)
-target_link_libraries(mantra_tests 
-  PRIVATE mantra_lib)
-add_test(NAME AllTests 
-  COMMAND mantra_tests)
+# Install
+install(TARGETS mantra RUNTIME DESTINATION bin)
+install(DIRECTORY stdlib/ DESTINATION include/mantra/stdlib FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY core/ DESTINATION include/mantra/core FILES_MATCHING PATTERN "*.h")
 
-# Separate test executable for KeywordNormalizer and TokenClass
-add_executable(test_keyword_normalizer
-  tests/test_keyword_normalizer.cpp
-)
-target_link_libraries(test_keyword_normalizer 
-  PRIVATE mantra_lib)
-add_test(NAME KeywordNormalizerTests 
-  COMMAND test_keyword_normalizer)
-
-message(STATUS 
-  "MANTRA v${PROJECT_VERSION}")
-message(STATUS 
-  "Build: ${CMAKE_BUILD_TYPE}")
-
-
+message(STATUS "MANTRA v${PROJECT_VERSION} - Configured successfully")

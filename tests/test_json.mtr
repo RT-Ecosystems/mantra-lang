@@ -1,0 +1,57 @@
+# JSON Test - Phase 1
+# Test JSON parse and stringify
+
+# Test 1: JSON Parse
+test "json_parse" kaam() {
+    rakho json_str = "{\"name\": \"Ashutosh\", \"age\": 25, \"active\": true}"
+    rakho obj = json_parse(json_str)
+
+    assert_equal obj["name"] "Ashutosh" "Parse string value"
+    assert_equal obj["age"] 25 "Parse number value"
+    assert_equal obj["active"] sach "Parse boolean value"
+}
+
+# Test 2: JSON Stringify
+test "json_stringify" kaam() {
+    rakho obj = {
+        "name": "MANTRA",
+        "version": 1.0,
+        "active": sach
+    }
+
+    rakho json_str = json_stringify(obj)
+    assert_true json_str != "" "Should create JSON string"
+    assert_true length(json_str) > 0 "JSON should not be empty"
+}
+
+# Test 3: JSON Round-trip
+test "json_roundtrip" kaam() {
+    rakho original = {"key": "value", "number": 42}
+    rakho json_str = json_stringify(original)
+    rakho parsed = json_parse(json_str)
+
+    assert_equal parsed["key"] "value" "Round-trip string"
+    assert_equal parsed["number"] 42 "Round-trip number"
+}
+
+# Test 4: JSON Type Detection
+test "json_type" kaam() {
+    assert_equal json_type("null") "null" "Detect null"
+    assert_equal json_type("true") "boolean" "Detect boolean"
+    assert_equal json_type("123") "number" "Detect number"
+    assert_equal json_type("\"hello\"") "string" "Detect string"
+    assert_equal json_type("[1,2,3]") "array" "Detect array"
+    assert_equal json_type("{\"a\": 1}") "object" "Detect object"
+}
+
+rakho results = test_results()
+dikhao "=== JSON TEST RESULTS ==="
+dikhao "Passed: " + results["passed"]
+dikhao "Failed: " + results["failed"]
+
+agar results["failed"] > 0
+    dikhao "Some JSON tests failed"
+    wapas 1
+warna
+    dikhao "ALL JSON TESTS PASSED!"
+    wapas 0

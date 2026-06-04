@@ -1,15 +1,29 @@
+
 #pragma once
 
-#include "../bytecode/chunk.h"
+#include <vector>
+#include <cstdint>
+#include <iostream>
+#include <string>
 
-#include <memory>
+namespace mantra {
+namespace vm {
 
-namespace mantra::legacy_vm {
+struct Value;
+struct Chunk;
+class VM;
 
 class VM {
 public:
-    VM() = default;
-    bool execute(const std::shared_ptr<bytecode::Chunk>& chunk);
+    VM();
+    ~VM();
+    bool execute(const Chunk& chunk, std::ostream& out);
+    bool executeBytecode(const std::vector<uint8_t>& bytecode, std::ostream& out);
+    std::string lastError() const;
+private:
+    class Impl;
+    std::unique_ptr<Impl> impl;
 };
 
-} // namespace mantra::legacy_vm
+} // namespace vm
+} // namespace mantra
